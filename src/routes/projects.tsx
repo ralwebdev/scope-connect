@@ -469,8 +469,10 @@ function ApplyModal({ project, onClose, onSubmitted }: {
         </div>
       </div>
       <div className="mt-6 flex justify-end gap-2">
-        <Button variant="outline" onClick={onClose}>Cancel</Button>
-        <Button onClick={submit} className="bg-gradient-brand text-brand-foreground">Send Application (+20 XP)</Button>
+        <Button variant="outline" onClick={onClose} disabled={submitting}>Cancel</Button>
+        <Button onClick={submit} disabled={submitting} className="bg-gradient-brand text-brand-foreground">
+          {submitting ? "Sending…" : "Send Application (+20 XP)"}
+        </Button>
       </div>
     </ModalShell>
   );
