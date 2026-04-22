@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as PortfolioRouteImport } from './routes/portfolio'
 import { Route as OpportunitiesRouteImport } from './routes/opportunities'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LeaderboardsRouteImport } from './routes/leaderboards'
@@ -36,6 +37,11 @@ const ProjectsRoute = ProjectsRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortfolioRoute = PortfolioRouteImport.update({
+  id: '/portfolio',
+  path: '/portfolio',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OpportunitiesRoute = OpportunitiesRouteImport.update({
@@ -100,6 +106,7 @@ export interface FileRoutesByFullPath {
   '/leaderboards': typeof LeaderboardsRoute
   '/notifications': typeof NotificationsRoute
   '/opportunities': typeof OpportunitiesRoute
+  '/portfolio': typeof PortfolioRoute
   '/profile': typeof ProfileRoute
   '/projects': typeof ProjectsRoute
   '/settings': typeof SettingsRoute
@@ -115,6 +122,7 @@ export interface FileRoutesByTo {
   '/leaderboards': typeof LeaderboardsRoute
   '/notifications': typeof NotificationsRoute
   '/opportunities': typeof OpportunitiesRoute
+  '/portfolio': typeof PortfolioRoute
   '/profile': typeof ProfileRoute
   '/projects': typeof ProjectsRoute
   '/settings': typeof SettingsRoute
@@ -131,6 +139,7 @@ export interface FileRoutesById {
   '/leaderboards': typeof LeaderboardsRoute
   '/notifications': typeof NotificationsRoute
   '/opportunities': typeof OpportunitiesRoute
+  '/portfolio': typeof PortfolioRoute
   '/profile': typeof ProfileRoute
   '/projects': typeof ProjectsRoute
   '/settings': typeof SettingsRoute
@@ -148,6 +157,7 @@ export interface FileRouteTypes {
     | '/leaderboards'
     | '/notifications'
     | '/opportunities'
+    | '/portfolio'
     | '/profile'
     | '/projects'
     | '/settings'
@@ -163,6 +173,7 @@ export interface FileRouteTypes {
     | '/leaderboards'
     | '/notifications'
     | '/opportunities'
+    | '/portfolio'
     | '/profile'
     | '/projects'
     | '/settings'
@@ -178,6 +189,7 @@ export interface FileRouteTypes {
     | '/leaderboards'
     | '/notifications'
     | '/opportunities'
+    | '/portfolio'
     | '/profile'
     | '/projects'
     | '/settings'
@@ -194,6 +206,7 @@ export interface RootRouteChildren {
   LeaderboardsRoute: typeof LeaderboardsRoute
   NotificationsRoute: typeof NotificationsRoute
   OpportunitiesRoute: typeof OpportunitiesRoute
+  PortfolioRoute: typeof PortfolioRoute
   ProfileRoute: typeof ProfileRoute
   ProjectsRoute: typeof ProjectsRoute
   SettingsRoute: typeof SettingsRoute
@@ -220,6 +233,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portfolio': {
+      id: '/portfolio'
+      path: '/portfolio'
+      fullPath: '/portfolio'
+      preLoaderRoute: typeof PortfolioRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/opportunities': {
@@ -306,6 +326,7 @@ const rootRouteChildren: RootRouteChildren = {
   LeaderboardsRoute: LeaderboardsRoute,
   NotificationsRoute: NotificationsRoute,
   OpportunitiesRoute: OpportunitiesRoute,
+  PortfolioRoute: PortfolioRoute,
   ProfileRoute: ProfileRoute,
   ProjectsRoute: ProjectsRoute,
   SettingsRoute: SettingsRoute,
