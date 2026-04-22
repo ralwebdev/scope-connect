@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { FeatureGate } from "@/components/site/FeatureGate";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/ambassador")({
@@ -19,7 +20,7 @@ export const Route = createFileRoute("/ambassador")({
       { property: "og:description", content: "Lead India's campus innovation network from your institution." },
     ],
   }),
-  component: AmbassadorPage,
+  component: () => <FeatureGate flag="ambassadors"><AmbassadorPage /></FeatureGate>,
 });
 
 const BENEFITS = [

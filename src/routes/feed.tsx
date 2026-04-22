@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { AppShell } from "@/components/site/AppShell";
 import { useStoreValue, useUser, useIsLoggedIn } from "@/hooks/use-scope";
 import { feed } from "@/lib/scope-store";
+import { FeatureGate } from "@/components/site/FeatureGate";
 import { analytics } from "@/lib/analytics";
 import { toast } from "sonner";
 
@@ -18,7 +19,7 @@ export const Route = createFileRoute("/feed")({
       { name: "description", content: "Live activity feed from India's campus innovation network." },
     ],
   }),
-  component: FeedPage,
+  component: () => <FeatureGate flag="feed"><FeedPage /></FeatureGate>,
 });
 
 function FeedPage() {
