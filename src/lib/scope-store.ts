@@ -591,3 +591,241 @@ export function subscribe(cb: () => void): () => void {
     window.removeEventListener("storage", handler);
   };
 }
+
+/* ===================================================================== */
+/* CURATED OPPORTUNITY MODEL — Phase 2                                    */
+/* ===================================================================== */
+
+export type OpportunityScope = "scope" | "campus" | "open";
+export type OpportunityStatus = "live" | "closing-soon" | "closed";
+export type Difficulty = "Beginner" | "Intermediate" | "Advanced";
+
+export type CuratedProject = {
+  id: string;
+  scope: OpportunityScope;
+  title: string;
+  category: string;
+  difficulty: Difficulty;
+  seatsTotal: number;
+  seatsFilled: number;
+  timeline: string;
+  skills: string[];
+  description: string;
+  rewards: string;
+  status: OpportunityStatus;
+  campus?: string;
+  cover: string;
+  postedBy: string;
+  postedAt: number;
+};
+
+export type Application = {
+  id: string;
+  projectId: string;
+  userId: string;
+  fit: string;
+  topSkill: string;
+  availability: string;
+  status: "Under Review" | "Shortlisted" | "Accepted" | "Waitlisted" | "Closed";
+  at: number;
+};
+
+export type PortfolioItem = {
+  id: string;
+  userId: string;
+  type: "Project" | "Design" | "Research" | "Startup Idea" | "Campaign" | "Certificate";
+  title: string;
+  description: string;
+  skills: string[];
+  link?: string;
+  cover: string;
+  createdAt: number;
+};
+
+export type IdeaSubmission = {
+  id: string;
+  userId: string | null;
+  title: string;
+  problem: string;
+  why: string;
+  teamSkills: string;
+  campusRelevance: string;
+  anonymous: boolean;
+  at: number;
+};
+
+const SEED_CURATED: CuratedProject[] = [
+  {
+    id: "sc_1", scope: "scope", title: "Build the AI Student Assistant",
+    category: "AI", difficulty: "Advanced", seatsTotal: 8, seatsFilled: 5,
+    timeline: "6 weeks", skills: ["React", "LLM APIs", "Product Design"],
+    description: "Ship a Gen-Z campus assistant that answers academic, career and event queries. Selected builders get featured nationally.",
+    rewards: "₹25k stipend · Scope Spotlight · Letter of Recommendation",
+    status: "live", cover: "🤖", postedBy: "Scope Official", postedAt: Date.now() - 86400000 * 2,
+  },
+  {
+    id: "sc_2", scope: "scope", title: "Launch the Chapter Growth Campaign",
+    category: "Marketing", difficulty: "Intermediate", seatsTotal: 12, seatsFilled: 9,
+    timeline: "4 weeks", skills: ["Content", "Community", "Design"],
+    description: "Drive 10,000 new builder signups across 50 campuses. Real campaign, real metrics, real impact.",
+    rewards: "₹15k stipend · Campus Leader badge · 500 XP",
+    status: "live", cover: "📣", postedBy: "Scope Official", postedAt: Date.now() - 86400000 * 4,
+  },
+  {
+    id: "sc_3", scope: "scope", title: "Create the National Innovation Magazine",
+    category: "Editorial", difficulty: "Intermediate", seatsTotal: 10, seatsFilled: 3,
+    timeline: "8 weeks", skills: ["Writing", "Editorial", "Design"],
+    description: "Curate India's first student-led innovation publication. Print + digital, distributed to 100+ campuses.",
+    rewards: "Published byline · ₹10k honorarium · Editorial badge",
+    status: "live", cover: "📰", postedBy: "Scope Official", postedAt: Date.now() - 86400000,
+  },
+  {
+    id: "sc_4", scope: "scope", title: "Design the Scope Connect Mobile App",
+    category: "Design", difficulty: "Advanced", seatsTotal: 5, seatsFilled: 4,
+    timeline: "5 weeks", skills: ["Figma", "Mobile UX", "Prototyping"],
+    description: "Lead the visual system for Scope Connect's iOS + Android app. Your work ships to 50,000+ builders.",
+    rewards: "Portfolio feature · ₹20k · Founding Designer credit",
+    status: "closing-soon", cover: "🎨", postedBy: "Scope Official", postedAt: Date.now() - 86400000 * 6,
+  },
+];
+
+const SEED_CAMPUS: CuratedProject[] = [
+  {
+    id: "cp_1", scope: "campus", title: "IIT Bombay Hackathon Ops Team",
+    category: "Operations", difficulty: "Beginner", seatsTotal: 15, seatsFilled: 8,
+    timeline: "3 weeks", skills: ["Coordination", "Logistics"],
+    description: "Run the campus-wide hackathon. Manage logistics, sponsors, and judging panels.",
+    rewards: "Chapter Priority badge · 300 XP · Certificate",
+    status: "live", campus: "IIT Bombay", cover: "🏫", postedBy: "Scope · IIT Bombay Chapter", postedAt: Date.now() - 86400000 * 3,
+  },
+  {
+    id: "cp_2", scope: "campus", title: "BITS Pilani Startup Cell — Founding Member",
+    category: "Startup", difficulty: "Intermediate", seatsTotal: 6, seatsFilled: 2,
+    timeline: "Ongoing", skills: ["Strategy", "Outreach"],
+    description: "Help build the BITS Pilani founding startup cell from scratch with Scope's playbook.",
+    rewards: "Founding Member title · Mentor access · 400 XP",
+    status: "live", campus: "BITS Pilani", cover: "🚀", postedBy: "Scope · BITS Pilani Chapter", postedAt: Date.now() - 86400000 * 2,
+  },
+  {
+    id: "cp_3", scope: "campus", title: "NIT Trichy Robotics Sprint",
+    category: "Robotics", difficulty: "Advanced", seatsTotal: 8, seatsFilled: 6,
+    timeline: "4 weeks", skills: ["ROS", "Python", "Hardware"],
+    description: "Build a swarm of 5 autonomous bots for the national Robotics Showcase.",
+    rewards: "Hardware kit provided · ₹12k team prize · Showcase feature",
+    status: "live", campus: "NIT Trichy", cover: "🤖", postedBy: "Scope · NIT Trichy Chapter", postedAt: Date.now() - 86400000 * 5,
+  },
+];
+
+const SEED_OPEN: CuratedProject[] = [
+  {
+    id: "op_1", scope: "open", title: "Open Research: Mental Health on Indian Campuses",
+    category: "Research", difficulty: "Intermediate", seatsTotal: 20, seatsFilled: 11,
+    timeline: "6 weeks", skills: ["Research", "Survey Design", "Writing"],
+    description: "Co-author India's largest student mental health report. Open to any verified builder.",
+    rewards: "Research credit · 350 XP · Published report",
+    status: "live", cover: "🧠", postedBy: "Scope Official", postedAt: Date.now() - 86400000 * 7,
+  },
+  {
+    id: "op_2", scope: "open", title: "Open Build: Climate Action Dashboard",
+    category: "Engineering", difficulty: "Intermediate", seatsTotal: 10, seatsFilled: 4,
+    timeline: "5 weeks", skills: ["Next.js", "Data Viz", "APIs"],
+    description: "Build an open-source dashboard tracking campus climate initiatives across India.",
+    rewards: "Open-source credit · 400 XP · GitHub spotlight",
+    status: "live", cover: "🌍", postedBy: "Scope Official", postedAt: Date.now() - 86400000 * 4,
+  },
+  {
+    id: "op_3", scope: "open", title: "Open Pitch: Scope Founder Track 2026",
+    category: "Founder", difficulty: "Advanced", seatsTotal: 25, seatsFilled: 18,
+    timeline: "12 weeks", skills: ["Vision", "Execution"],
+    description: "Pitch your startup idea. Top 5 get incubation support, mentor access and demo day.",
+    rewards: "₹2L incubation pool · Mentor network · Demo Day",
+    status: "closing-soon", cover: "💡", postedBy: "Scope Official", postedAt: Date.now() - 86400000 * 10,
+  },
+];
+
+const ALL_CURATED = [...SEED_CURATED, ...SEED_CAMPUS, ...SEED_OPEN];
+
+export const curated = {
+  scopeChallenges(): CuratedProject[] { return SEED_CURATED; },
+  campusFor(campus: string | null): CuratedProject[] {
+    if (!campus) return SEED_CAMPUS;
+    return SEED_CAMPUS.filter((p) => p.campus === campus);
+  },
+  openProjects(): CuratedProject[] { return SEED_OPEN; },
+  byId(id: string): CuratedProject | undefined { return ALL_CURATED.find((p) => p.id === id); },
+  all(): CuratedProject[] { return ALL_CURATED; },
+};
+
+export const applications = {
+  all(): Application[] { return read<Application[]>(KEYS.applications, []); },
+  forUser(userId: string): Application[] { return applications.all().filter((a) => a.userId === userId); },
+  hasApplied(projectId: string, userId: string): boolean {
+    return applications.all().some((a) => a.projectId === projectId && a.userId === userId);
+  },
+  apply(input: { projectId: string; fit: string; topSkill: string; availability: string }) {
+    const u = auth.getUser();
+    if (!u) return null;
+    if (applications.hasApplied(input.projectId, u.id)) return null;
+    const project = curated.byId(input.projectId);
+    const app: Application = {
+      id: `app_${Date.now()}`, projectId: input.projectId, userId: u.id,
+      fit: input.fit, topSkill: input.topSkill, availability: input.availability,
+      status: "Under Review", at: Date.now(),
+    };
+    write(KEYS.applications, [app, ...applications.all()]);
+    xp.add(20, "Application sent");
+    notifications.push({ icon: "spark", text: `Application received for "${project?.title ?? "project"}". Review within 48h.` });
+    return app;
+  },
+};
+
+export const savedProjects = {
+  all(): string[] { return read<string[]>(KEYS.savedProjects, []); },
+  toggle(id: string) {
+    const cur = savedProjects.all();
+    const next = cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id];
+    write(KEYS.savedProjects, next);
+    return next;
+  },
+};
+
+export const portfolio = {
+  all(): PortfolioItem[] { return read<PortfolioItem[]>(KEYS.portfolio, []); },
+  forUser(userId: string): PortfolioItem[] { return portfolio.all().filter((p) => p.userId === userId); },
+  create(input: Omit<PortfolioItem, "id" | "userId" | "createdAt">) {
+    const u = auth.getUser();
+    if (!u) return null;
+    const item: PortfolioItem = { ...input, id: `pf_${Date.now()}`, userId: u.id, createdAt: Date.now() };
+    write(KEYS.portfolio, [item, ...portfolio.all()]);
+    xp.add(30, "Portfolio item added");
+    notifications.push({ icon: "trophy", text: `"${item.title}" added to your portfolio.` });
+    return item;
+  },
+  update(id: string, patch: Partial<Omit<PortfolioItem, "id" | "userId" | "createdAt">>) {
+    write(KEYS.portfolio, portfolio.all().map((p) => (p.id === id ? { ...p, ...patch } : p)));
+  },
+  remove(id: string) {
+    write(KEYS.portfolio, portfolio.all().filter((p) => p.id !== id));
+  },
+  strength(userId: string): number {
+    const count = portfolio.forUser(userId).length;
+    if (count === 0) return 0;
+    if (count >= 6) return 100;
+    return Math.min(100, 25 + count * 15);
+  },
+};
+
+export const ideaSubmissions = {
+  all(): IdeaSubmission[] { return read<IdeaSubmission[]>(KEYS.ideaSubmissions, []); },
+  submit(input: Omit<IdeaSubmission, "id" | "userId" | "at">) {
+    const u = auth.getUser();
+    const item: IdeaSubmission = {
+      ...input, id: `idea_${Date.now()}`,
+      userId: input.anonymous ? null : (u?.id ?? null), at: Date.now(),
+    };
+    write(KEYS.ideaSubmissions, [item, ...ideaSubmissions.all()]);
+    xp.add(15, "Idea submitted to Scope");
+    notifications.push({ icon: "spark", text: "Your idea reached the Scope team. We review every submission." });
+    return item;
+  },
+};
