@@ -200,6 +200,25 @@ export const auth = {
     });
   },
   logout() {
+    // Clear session-specific UI state. Retain public/seed content & user profile
+    // so the next login feels continuous (matches Section 1 spec: clean session,
+    // preserve generic platform data).
+    if (isBrowser) {
+      const sessionKeys = [
+        KEYS.notifications,    // private alerts
+        KEYS.lastSeen,         // unread counters baseline
+      ];
+      sessionKeys.forEach((k) => {
+        try { localStorage.removeItem(k); } catch { /* noop */ }
+      });
+      // Sweep any draft form keys (convention: scope_draft_*)
+      try {
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith("scope_draft_")) localStorage.removeItem(k);
+        }
+      } catch { /* noop */ }
+    }
     write(KEYS.loggedIn, false);
   },
   updateProfile(patch: Partial<ScopeUser>) {

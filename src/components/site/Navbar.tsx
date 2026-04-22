@@ -71,8 +71,8 @@ export function Navbar() {
 
   const handleLogout = () => {
     auth.logout();
-    toast.success("Signed out. See you tomorrow, Builder.");
-    navigate({ to: "/" });
+    toast.success("Logged out successfully. See you soon, Builder.");
+    navigate({ to: "/auth" });
   };
 
   return (
