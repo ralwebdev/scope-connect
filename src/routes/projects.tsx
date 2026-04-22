@@ -20,6 +20,7 @@ import {
   curated, applications, savedProjects, ideaSubmissions,
   type CuratedProject,
 } from "@/lib/scope-store";
+import { analytics } from "@/lib/analytics";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/projects")({
@@ -428,6 +429,7 @@ function ApplyModal({ project, onClose, onSubmitted }: {
     if (!topSkill.trim()) { toast.error("Add your top skill."); return; }
     const result = applications.apply({ projectId: project.id, fit: fit.trim(), topSkill: topSkill.trim(), availability });
     if (result) {
+      analytics.track("project_apply");
       toast.success("Application sent. +20 XP");
       onSubmitted();
     } else {

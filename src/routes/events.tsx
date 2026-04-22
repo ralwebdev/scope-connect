@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { AppShell } from "@/components/site/AppShell";
 import { useStoreValue, useIsLoggedIn } from "@/hooks/use-scope";
 import { events } from "@/lib/scope-store";
+import { analytics } from "@/lib/analytics";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/events")({
@@ -35,6 +36,7 @@ function EventsPage() {
   const onRsvp = (id: string) => {
     if (!isAuthed) { toast.error("Sign in to RSVP."); return; }
     const next = events.toggleRsvp(id);
+    if (next.includes(id)) analytics.track("event_rsvp");
     toast.success(next.includes(id) ? "Seat reserved. You're on the builders list." : "RSVP cancelled.");
   };
 
