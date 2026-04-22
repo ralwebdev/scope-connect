@@ -6,6 +6,8 @@
 
 export type RoleId =
   | "super_admin"
+  | "scope_super_admin"
+  | "scope_admin"
   | "regional_admin"
   | "campus_admin"
   | "content_admin"
@@ -31,6 +33,8 @@ export type PermissionKey =
 
 export const ALL_ROLES: RoleId[] = [
   "super_admin",
+  "scope_super_admin",
+  "scope_admin",
   "regional_admin",
   "campus_admin",
   "content_admin",
@@ -58,6 +62,13 @@ export const ALL_PERMISSIONS: PermissionKey[] = [
 
 export const DEFAULT_ROLE_PERMISSIONS: Record<RoleId, PermissionKey[] | ["*"]> = {
   super_admin: ["*"],
+  scope_super_admin: ["*"],
+  scope_admin: [
+    "view_dashboard",
+    "view_admin",
+    "manage_campuses",
+    "manage_events",
+  ],
   regional_admin: [
     "view_dashboard",
     "view_admin",
@@ -105,8 +116,9 @@ export function roleFromEmail(email: string | undefined | null): RoleId {
   const override = safeRead<Record<string, RoleId>>(ROLE_OVERRIDE_KEY, {});
   if (override[e]) return override[e];
 
-  if (e.includes("super") || e.endsWith("@scope.in") && e.startsWith("founder")) return "super_admin";
-  if (e.includes("admin")) return "super_admin";
+  if (e.includes("super") || e.endsWith("@scope.in") && e.startsWith("founder")) return "scope_super_admin";
+  if (e.includes("scope-admin") || e.includes("scopeadmin") || e.startsWith("admin@")) return "scope_admin";
+  if (e.includes("admin")) return "scope_admin";
   if (e.includes("regional")) return "regional_admin";
   if (e.includes("campus")) return "campus_admin";
   if (e.includes("content") || e.includes("editor")) return "content_admin";
