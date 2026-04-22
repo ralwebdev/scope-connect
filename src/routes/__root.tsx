@@ -33,14 +33,13 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Scope Connect — India's Curated Campus Opportunity Platform" },
+      { name: "description", content: "Verified challenges, campus growth programs, and real opportunities for ambitious student builders." },
+      { name: "author", content: "Scope Connect" },
+      { property: "og:title", content: "Scope Connect" },
+      { property: "og:description", content: "Where campuses build real opportunities." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       {

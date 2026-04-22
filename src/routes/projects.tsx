@@ -427,10 +427,13 @@ function ApplyModal({ project, onClose, onSubmitted }: {
   const [fit, setFit] = useState("");
   const [topSkill, setTopSkill] = useState(project.skills[0] ?? "");
   const [availability, setAvailability] = useState("10 hrs/week");
+  const [submitting, setSubmitting] = useState(false);
 
   const submit = () => {
+    if (submitting) return;
     if (!fit.trim()) { toast.error("Tell us why you're a fit."); return; }
     if (!topSkill.trim()) { toast.error("Add your top skill."); return; }
+    setSubmitting(true);
     const result = applications.apply({ projectId: project.id, fit: fit.trim(), topSkill: topSkill.trim(), availability });
     if (result) {
       analytics.track("project_apply");
@@ -466,8 +469,10 @@ function ApplyModal({ project, onClose, onSubmitted }: {
         </div>
       </div>
       <div className="mt-6 flex justify-end gap-2">
-        <Button variant="outline" onClick={onClose}>Cancel</Button>
-        <Button onClick={submit} className="bg-gradient-brand text-brand-foreground">Send Application (+20 XP)</Button>
+        <Button variant="outline" onClick={onClose} disabled={submitting}>Cancel</Button>
+        <Button onClick={submit} disabled={submitting} className="bg-gradient-brand text-brand-foreground">
+          {submitting ? "Sending…" : "Send Application (+20 XP)"}
+        </Button>
       </div>
     </ModalShell>
   );
