@@ -5,23 +5,26 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useIsLoggedIn, useUser, useUnreadNotifications, useNotifications, useXP, useStreak } from "@/hooks/use-scope";
 import { auth, notifications, meta } from "@/lib/scope-store";
+import { useBrand, useFeature } from "@/hooks/use-platform";
 import { toast } from "sonner";
 
-const publicLinks = [
-  { to: "/feed", label: "Feed" },
-  { to: "/projects", label: "Projects" },
-  { to: "/events", label: "Events" },
-  { to: "/leaderboards", label: "Leaderboards" },
+type NavLink = { to: "/feed" | "/projects" | "/events" | "/leaderboards" | "/dashboard" | "/portfolio" | "/campus"; label: string; flag?: "feed" | "projects" | "events" | "leaderboards" | "portfolio" | "campus" };
+
+const PUBLIC_LINKS: readonly NavLink[] = [
+  { to: "/feed", label: "Feed", flag: "feed" },
+  { to: "/projects", label: "Projects", flag: "projects" },
+  { to: "/events", label: "Events", flag: "events" },
+  { to: "/leaderboards", label: "Leaderboards", flag: "leaderboards" },
 ] as const;
 
-const authedLinks = [
+const AUTHED_LINKS: readonly NavLink[] = [
   { to: "/dashboard", label: "Dashboard" },
-  { to: "/projects", label: "Projects" },
-  { to: "/portfolio", label: "Portfolio" },
-  { to: "/feed", label: "Feed" },
-  { to: "/events", label: "Events" },
-  { to: "/campus", label: "Campus" },
-  { to: "/leaderboards", label: "Leaderboards" },
+  { to: "/projects", label: "Projects", flag: "projects" },
+  { to: "/portfolio", label: "Portfolio", flag: "portfolio" },
+  { to: "/feed", label: "Feed", flag: "feed" },
+  { to: "/events", label: "Events", flag: "events" },
+  { to: "/campus", label: "Campus", flag: "campus" },
+  { to: "/leaderboards", label: "Leaderboards", flag: "leaderboards" },
 ] as const;
 
 const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -56,9 +59,18 @@ export function Navbar() {
 
   useEffect(() => { setMounted(true); }, []);
 
+  const brand = useBrand();
+  const feedOn = useFeature("feed");
+  const projectsOn = useFeature("projects");
+  const eventsOn = useFeature("events");
+  const leaderboardsOn = useFeature("leaderboards");
+  const portfolioOn = useFeature("portfolio");
+  const campusOn = useFeature("campus");
+  const flagMap: Record<string, boolean> = { feed: feedOn, projects: projectsOn, events: eventsOn, leaderboards: leaderboardsOn, portfolio: portfolioOn, campus: campusOn };
+
   // Treat as logged-out until client mount — keeps SSR/CSR markup identical.
   const isAuthed = mounted && isAuthedRaw;
-  const links = isAuthed ? authedLinks : publicLinks;
+  const links = (isAuthed ? AUTHED_LINKS : PUBLIC_LINKS).filter((l) => !l.flag || flagMap[l.flag]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -83,7 +95,7 @@ export function Navbar() {
             <Sparkles className="h-4 w-4 text-brand-foreground" />
           </span>
           <span className="text-lg tracking-tight">
-            Scope<span className="text-brand">Connect</span>
+            {brand.shortName}<span className="text-brand">{brand.accentName}</span>
           </span>
         </Link>
 
