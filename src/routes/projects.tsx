@@ -45,7 +45,11 @@ function ProjectsPage() {
   const [confettiKey, setConfettiKey] = useState(0);
   const [applyTarget, setApplyTarget] = useState<CuratedProject | null>(null);
   const [ideaOpen, setIdeaOpen] = useState(false);
-  const [detailTarget, setDetailTarget] = useState<CuratedProject | null>(null);
+  const [detailTarget, _setDetailTarget] = useState<CuratedProject | null>(null);
+  const setDetailTarget = (p: CuratedProject | null) => {
+    if (p) analytics.track("project_view");
+    _setDetailTarget(p);
+  };
 
   const appliedIds = useMemo(() => new Set(userApps.map((a) => a.projectId)), [userApps]);
 
