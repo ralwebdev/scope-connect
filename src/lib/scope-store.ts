@@ -238,18 +238,35 @@ export const auth = {
     });
   },
   logout() {
-    // Clear session-specific UI state. Retain public/seed content & user profile
-    // so the next login feels continuous (matches Section 1 spec: clean session,
-    // preserve generic platform data).
+    // Hard-clear ALL session identity so role/permissions/sidebar cannot leak
+    // between users. Retain only generic platform/seed content (feed, projects,
+    // events) which is public.
     if (isBrowser) {
       const sessionKeys = [
+        KEYS.user,             // identity → drives role
         KEYS.notifications,    // private alerts
-        KEYS.lastSeen,         // unread counters baseline
+        KEYS.lastSeen,
+        KEYS.points,
+        KEYS.streak,
+        KEYS.streakDate,
+        KEYS.joinedChapter,
+        KEYS.rsvps,
+        KEYS.savedOpps,
+        KEYS.interestedOpps,
+        KEYS.liked,
+        KEYS.votedProjects,
+        KEYS.applications,
+        KEYS.savedProjects,
+        KEYS.portfolio,
+        KEYS.ideaSubmissions,
+        KEYS.rankSnapshot,
+        KEYS.notifDedupRegistry,
+        KEYS.highestLevelSeen,
+        "scope_role_override",   // dev role-impersonation
       ];
       sessionKeys.forEach((k) => {
         try { localStorage.removeItem(k); } catch { /* noop */ }
       });
-      // Sweep any draft form keys (convention: scope_draft_*)
       try {
         for (let i = localStorage.length - 1; i >= 0; i--) {
           const k = localStorage.key(i);
