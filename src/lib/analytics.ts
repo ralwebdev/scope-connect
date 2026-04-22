@@ -262,6 +262,122 @@ export const analytics = {
 
   rageClickCount(): number { return read().rageClicks; },
 
+  /* ---------------- Range-aware exports ---------------- */
+
+  npsInRange(days: number) {
+    if (typeof window === "undefined") return { count: 0, score: 0, promoters: 0, passives: 0, detractors: 0, entries: [] as NPSEntry[] };
+    let list: NPSEntry[] = [];
+    try { list = JSON.parse(localStorage.getItem(NPS_KEY) || "[]"); } catch { /* noop */ }
+    const cutoff = Date.now() - days * 86400_000;
+    const entries = list.filter((n) => n.at >= cutoff);
+    const count = entries.length;
+    const promoters = entries.filter((n) => n.score >= 9).length;
+    const passives = entries.filter((n) => n.score >= 7 && n.score <= 8).length;
+    const detractors = entries.filter((n) => n.score <= 6).length;
+    const score = count > 0 ? Math.round(((promoters - detractors) / count) * 100) : 0;
+    return { count, score, promoters, passives, detractors, entries };
+  },
+
+  feedbackTagCounts(days: number) {
+    if (typeof window === "undefined") return { positive: {} as Record<string, number>, negative: {} as Record<string, number>, requests: [] as string[] };
+    let list: { type?: string; text?: string; rating?: number; at?: number }[] = [];
+    try { list = JSON.parse(localStorage.getItem("scope_feedback") || "[]"); } catch { /* noop */ }
+    const cutoff = Date.now() - days * 86400_000;
+    const recent = list.filter((f) => (f.at ?? 0) >= cutoff);
+    const positive: Record<string, number> = {};
+    const negative: Record<string, number> = {};
+    const requests: string[] = [];
+    for (const f of recent) {
+      const t = (f.type || "note").toLowerCase();
+      const isPos = (f.rating ?? 3) >= 4 || /love|great|good|amazing|nice/i.test(f.text || "");
+      const bucket = isPos ? positive : negative;
+      bucket[t] = (bucket[t] || 0) + 1;
+      if (/want|wish|should|please add|need|request/i.test(f.text || "")) {
+        requests.push((f.text || "").slice(0, 200));
+      }
+    }
+    return { positive, negative, requests: requests.slice(0, 25) };
+  },
+
+  funnelInRange(_days: number) {
+    const f = this.funnel();
+    const s = read();
+    const day1 = s.dailyActive[today()] || 0;
+    const day7 = this.activeLast7();
+    const day1Rate = f.completed > 0 ? Math.round((day1 / f.completed) * 100) : 0;
+    const day7Rate = f.completed > 0 ? Math.round((day7 / f.completed) * 100) : 0;
+    return {
+      landing_visits: f.visits,
+      signup_started: f.started,
+      signup_completed: f.completed,
+      campus_selected: s.events["campus_selected"] || 0,
+      profile_completed: s.events["profile_completed"] || 0,
+      first_application: s.events["project_apply"] || 0,
+      day1_return_rate: day1Rate,
+      day7_return_rate: day7Rate,
+    };
+  },
+
+  engagementMetrics() {
+    const s = read();
+    const top = this.topRoutes(1)[0];
+    const ctas = (s.events["cta_click_primary"] || 0) >= (s.events["cta_click_secondary"] || 0) ? "primary" : "secondary";
+    let checklist = 0;
+    try {
+      const raw = localStorage.getItem("scope_activation_steps");
+      if (raw) {
+        const obj = JSON.parse(raw) as Record<string, boolean>;
+        const total = 4;
+        const done = ["signup_completed","campus_selected","profile_completed","first_application"].filter((k) => obj[k]).length;
+        checklist = Math.round((done / total) * 100);
+      }
+    } catch { /* noop */ }
+    return {
+      avg_sessions_per_user: s.sessions,
+      avg_checklist_completion: checklist,
+      top_clicked_cta: ctas,
+      most_viewed_route: top?.route ?? "—",
+    };
+  },
+
+  exportResults(days: number) {
+    const nps = this.npsInRange(days);
+    const fb = this.feedbackTagCounts(days);
+    const funnel = this.funnelInRange(days);
+    const eng = this.engagementMetrics();
+    const findTop = (m: Record<string, number>): string => {
+      const entries = Object.entries(m).sort((a, b) => b[1] - a[1]);
+      return entries[0]?.[0] ?? "—";
+    };
+    return {
+      meta: {
+        generated_at: new Date().toISOString(),
+        range_days: days,
+        edition_id: (() => {
+          try { return JSON.parse(localStorage.getItem("sc_config_v1") || "{}")?.edition?.edition_id || "scope-connect-main"; }
+          catch { return "scope-connect-main"; }
+        })(),
+      },
+      results: {
+        nps_scores: {
+          responses_count: nps.count,
+          average_score: nps.score,
+          promoters_count: nps.promoters,
+          passives_count: nps.passives,
+          detractors_count: nps.detractors,
+        },
+        feedback_reasons: {
+          most_common_positive_reason: findTop(fb.positive),
+          most_common_negative_reason: findTop(fb.negative),
+          raw_tag_counts: { positive: fb.positive, negative: fb.negative },
+          feature_requests: fb.requests,
+        },
+        funnel_metrics: funnel,
+        engagement_metrics: eng,
+      },
+    };
+  },
+
   reset() {
     if (typeof window === "undefined") return;
     try {
