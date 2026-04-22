@@ -121,7 +121,10 @@ function SettingsPage() {
               </div>
             </div>
           </div>
-          <div className="mt-5 flex justify-end">
+          <div className="mt-5 flex flex-wrap justify-end gap-2">
+            <Button onClick={exportProfile} variant="outline">
+              <Download className="mr-2 h-4 w-4" /> Export profile JSON
+            </Button>
             <Button onClick={saveAccount} className="bg-gradient-brand text-brand-foreground">Save</Button>
           </div>
         </Card>
