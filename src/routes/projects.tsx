@@ -230,6 +230,11 @@ function ProjectsPage() {
         </Card>
       </Section>
 
+      <TrustFAQ
+        heading="Trust questions, answered."
+        subheading="Curation, moderation, data, rewards, participation rules — all in one place."
+      />
+
       {/* APPLY MODAL */}
       {applyTarget && (
         <ApplyModal
