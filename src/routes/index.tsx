@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect } from "react";
 import {
   ArrowRight,
   Sparkles,
@@ -12,11 +13,19 @@ import {
   Star,
   Flame,
   Quote,
+  ShieldCheck,
+  Hammer,
+  Compass,
+  Crown,
+  CheckCircle2,
+  Lock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AppShell } from "@/components/site/AppShell";
+import { analytics } from "@/lib/analytics";
+import { useIsLoggedIn } from "@/hooks/use-scope";
 import {
   campusPartners,
   liveMetrics,
