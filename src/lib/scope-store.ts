@@ -589,7 +589,8 @@ export const chapter = {
   join(name: string) {
     write(KEYS.joinedChapter, name);
     xp.add(40, `Joined ${name}`);
-    notifications.push({ icon: "users", text: `Welcome to ${name}. Say hi to your chapter.` });
+    const u = auth.getUser();
+    notifications.push({ icon: "users", text: `Welcome to ${name}. Say hi to your chapter.`, dedupKey: `chapter_joined:${u?.id ?? "anon"}:${name}` });
   },
 };
 
@@ -829,9 +830,13 @@ export const applications = {
       fit: input.fit, topSkill: input.topSkill, availability: input.availability,
       status: "Under Review", at: Date.now(),
     };
+    const isFirst = applications.forUser(u.id).length === 1; // we just inserted above
     write(KEYS.applications, [app, ...applications.all()]);
     xp.add(20, "Application sent");
     notifications.push({ icon: "spark", text: `Application received for "${project?.title ?? "project"}". Review within 48h.` });
+    if (isFirst) {
+      notifications.push({ icon: "trophy", text: "🎯 First application sent — your builder journey is live.", dedupKey: `first_application:${u.id}` });
+    }
     return app;
   },
 };
