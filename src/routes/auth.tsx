@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { auth, seedInterests } from "@/lib/scope-store";
 import { useIsLoggedIn } from "@/hooks/use-scope";
+import { analytics } from "@/lib/analytics";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/auth")({
@@ -66,9 +67,11 @@ function AuthPage() {
 
     if (mode === "signup") {
       auth.signup({ name: name || email.split("@")[0], email, campus, interests: selectedInterests });
+      analytics.track("signup_completed");
       toast.success("Welcome to Scope Connect. You're in.");
     } else {
       auth.login(email);
+      analytics.track("login_success");
       toast.success("Welcome back, Builder.");
     }
     navigate({ to: "/dashboard" });

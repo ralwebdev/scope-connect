@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { Bell, Trophy, Sparkles, Zap, Users, Heart, Check } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,6 +8,7 @@ import { AppShell } from "@/components/site/AppShell";
 import { AuthGate } from "@/components/site/AuthGate";
 import { useNotifications, useUnreadNotifications } from "@/hooks/use-scope";
 import { notifications } from "@/lib/scope-store";
+import { analytics } from "@/lib/analytics";
 
 export const Route = createFileRoute("/notifications")({
   head: () => ({
@@ -35,6 +37,10 @@ function timeAgo(at: number) {
 function NotificationsPage() {
   const list = useNotifications();
   const unread = useUnreadNotifications();
+
+  useEffect(() => {
+    analytics.track("notification_opened");
+  }, []);
 
   return (
     <AppShell>

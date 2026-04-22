@@ -12,6 +12,7 @@ import { AppShell } from "@/components/site/AppShell";
 import { AuthGate } from "@/components/site/AuthGate";
 import { useStoreValue, useUser } from "@/hooks/use-scope";
 import { portfolio, type PortfolioItem } from "@/lib/scope-store";
+import { analytics } from "@/lib/analytics";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/portfolio")({
@@ -167,6 +168,7 @@ function ItemModal({ existing, onClose }: { existing: PortfolioItem | null; onCl
       toast.success("Portfolio updated.");
     } else {
       portfolio.create({ type, title: title.trim(), description: description.trim(), skills, link: link.trim() || undefined, cover });
+      analytics.track("portfolio_item_added");
       toast.success("Portfolio upgraded. +30 XP");
     }
     onClose();

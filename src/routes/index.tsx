@@ -74,18 +74,17 @@ function Hero() {
       <div className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
         <div className="mx-auto max-w-4xl text-center">
           <Badge className="mb-6 border-cyan/30 bg-cyan/10 text-cyan hover:bg-cyan/15">
-            <Sparkles className="mr-1.5 h-3 w-3" /> Now live across 142 campuses
+            <Sparkles className="mr-1.5 h-3 w-3" /> India's Curated Campus Opportunity Platform
           </Badge>
           <h1 className="text-balance text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
-            India's campus innovation
+            Where campuses build
             <br />
             <span className="bg-gradient-to-r from-cyan via-cyan to-brand bg-clip-text text-transparent">
-              network for Gen Z builders.
+              real opportunities.
             </span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-balance text-lg text-primary-foreground/80 sm:text-xl">
-            Join 12,000+ ambitious students shipping startups, winning hackathons, and leading
-            chapters across India's top universities.
+            Verified challenges, campus growth programs, and real opportunities for ambitious students. Join 12,000+ builders across 142 campuses.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Button asChild size="lg" className="bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-95">

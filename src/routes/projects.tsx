@@ -20,6 +20,7 @@ import {
   curated, applications, savedProjects, ideaSubmissions,
   type CuratedProject,
 } from "@/lib/scope-store";
+import { analytics } from "@/lib/analytics";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/projects")({
@@ -44,7 +45,11 @@ function ProjectsPage() {
   const [confettiKey, setConfettiKey] = useState(0);
   const [applyTarget, setApplyTarget] = useState<CuratedProject | null>(null);
   const [ideaOpen, setIdeaOpen] = useState(false);
-  const [detailTarget, setDetailTarget] = useState<CuratedProject | null>(null);
+  const [detailTarget, _setDetailTarget] = useState<CuratedProject | null>(null);
+  const setDetailTarget = (p: CuratedProject | null) => {
+    if (p) analytics.track("project_view");
+    _setDetailTarget(p);
+  };
 
   const appliedIds = useMemo(() => new Set(userApps.map((a) => a.projectId)), [userApps]);
 
@@ -428,6 +433,7 @@ function ApplyModal({ project, onClose, onSubmitted }: {
     if (!topSkill.trim()) { toast.error("Add your top skill."); return; }
     const result = applications.apply({ projectId: project.id, fit: fit.trim(), topSkill: topSkill.trim(), availability });
     if (result) {
+      analytics.track("project_apply");
       toast.success("Application sent. +20 XP");
       onSubmitted();
     } else {

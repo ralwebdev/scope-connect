@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { AppShell } from "@/components/site/AppShell";
 import { useStoreValue, useUser, useIsLoggedIn } from "@/hooks/use-scope";
 import { feed } from "@/lib/scope-store";
+import { analytics } from "@/lib/analytics";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/feed")({
@@ -32,6 +33,7 @@ function FeedPage() {
     if (!draft.trim()) return;
     if (!isAuthed) { toast.error("Sign in to post."); return; }
     feed.create(draft.trim());
+    analytics.track("feed_post_created");
     setDraft("");
     toast.success("Posted. Your chapter noticed this.");
   };
