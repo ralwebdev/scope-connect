@@ -261,19 +261,38 @@ function AuthPage() {
           </form>
 
           <Card className="mt-6 border-dashed bg-secondary/40 p-4">
-            <div className="flex items-start gap-3">
+            <div className="flex items-center gap-2">
               <Badge className="bg-cyan/15 text-cyan-foreground">Demo</Badge>
-              <div className="space-y-2 text-xs text-muted-foreground">
-                <p>One login, one identity — your role and workspace are resolved automatically.</p>
-                <div className="grid grid-cols-1 gap-1 sm:grid-cols-2">
-                  <span><span className="font-mono text-foreground">founder@scope.in</span> → Super Admin</span>
-                  <span><span className="font-mono text-foreground">scope-admin@…</span> → Scope Admin</span>
-                  <span><span className="font-mono text-foreground">institution-admin@…</span> → Institution</span>
-                  <span><span className="font-mono text-foreground">leader@…</span> → Campus Leader</span>
-                  <span><span className="font-mono text-foreground">faculty@…</span> → Faculty</span>
-                  <span><span className="font-mono text-foreground">you@campus.edu</span> → Student</span>
-                </div>
-              </div>
+              <p className="text-xs text-muted-foreground">One-click login as any role — no password needed.</p>
+            </div>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              {([
+                { label: "Super Admin", email: "founder@scope.in" },
+                { label: "Scope Admin", email: "kolkata.scope-admin@scope.in" },
+                { label: "Institution Admin", email: "abc.institution-admin@scope.in" },
+                { label: "Campus Leader", email: "leader@iitb.edu" },
+                { label: "Faculty", email: "faculty@iitb.edu" },
+                { label: "Student", email: "aarav@iitb.edu" },
+              ] as const).map((d) => (
+                <Button
+                  key={d.email}
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  disabled={loading}
+                  onClick={() => {
+                    auth.login(d.email);
+                    analytics.track("login_success");
+                    const role = roleFromEmail(d.email);
+                    toast.success(`Signed in as ${ROLE_LABELS[role]}`);
+                    navigate({ to: landingRouteForRole(role) });
+                  }}
+                  className="justify-start text-xs"
+                >
+                  <Sparkles className="mr-1.5 h-3 w-3 text-brand" />
+                  {d.label}
+                </Button>
+              ))}
             </div>
           </Card>
         </div>
