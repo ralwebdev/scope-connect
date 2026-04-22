@@ -825,3 +825,103 @@ export const ideaSubmissions = {
     return item;
   },
 };
+
+/* ===================================================================== */
+/* RETENTION LAYER — rank movement, return tracking, smart nudges          */
+/* ===================================================================== */
+
+export type RankSnapshot = { rank: number; xp: number; at: number };
+
+export const retention = {
+  /** Capture current rank/xp snapshot. Called once per session. */
+  snapshotRank(): RankSnapshot | null {
+    const u = auth.getUser();
+    if (!u) return null;
+    const board = memberLeaderboard();
+    const rank = board.findIndex((r) => r.isMe) + 1;
+    if (rank === 0) return null;
+    const prev = read<RankSnapshot | null>(KEYS.rankSnapshot, null);
+    const cur: RankSnapshot = { rank, xp: xp.get(), at: Date.now() };
+    // Only update snapshot once per day to keep movement meaningful
+    if (!prev || Date.now() - prev.at > 86400000 * 0.9) {
+      write(KEYS.rankSnapshot, cur);
+    }
+    return prev;
+  },
+
+  /** Returns delta vs last snapshot. Positive = climbed. */
+  rankMovement(): { delta: number; current: number; xpToTop10: number } | null {
+    const u = auth.getUser();
+    if (!u) return null;
+    const board = memberLeaderboard();
+    const current = board.findIndex((r) => r.isMe) + 1;
+    if (current === 0) return null;
+    const prev = read<RankSnapshot | null>(KEYS.rankSnapshot, null);
+    const tenth = board[9]?.value ?? 0;
+    const myXp = xp.get();
+    const xpToTop10 = current > 10 ? Math.max(1, tenth - myXp + 1) : 0;
+    return {
+      delta: prev ? prev.rank - current : 0, // positive = moved up
+      current,
+      xpToTop10,
+    };
+  },
+
+  /** Days since user last visited (Infinity for first-ever visit). */
+  daysAbsent(): number {
+    const last = read<number>(KEYS.lastVisitAt, 0);
+    if (!last) return 0;
+    return Math.floor((Date.now() - last) / 86400000);
+  },
+
+  /** Mark a visit. Returns previous absence in days. */
+  markVisit(): number {
+    const absent = retention.daysAbsent();
+    write(KEYS.lastVisitAt, Date.now());
+    return absent;
+  },
+
+  /** Three rotating fresh items "this week" — derived from curated newest. */
+  weeklyFresh(): CuratedProject[] {
+    const all = curated.scopeChallenges();
+    return all.slice(0, 3);
+  },
+
+  /** Smart nudge picker — returns the single most-relevant nudge or null. */
+  nextNudge(): { id: string; text: string; cta: string; to: "/campus" | "/profile" | "/projects" | "/portfolio" } | null {
+    const u = auth.getUser();
+    if (!u) return null;
+    const snoozed = read<Record<string, number>>(KEYS.nudgeSnoozedUntil, {});
+    const now = Date.now();
+    const active = (id: string) => !(snoozed[id] && snoozed[id] > now);
+
+    const strength = profileStrength(u);
+    const apps = applications.forUser(u.id);
+    const port = portfolio.forUser(u.id);
+    const lvl = xp.level();
+    const toLevel = lvl.max - xp.get();
+
+    if (!u.campus && active("campus")) {
+      return { id: "campus", text: "Join your campus to unlock chapter-only opportunities.", cta: "Pick campus", to: "/campus" };
+    }
+    if (strength < 60 && active("profile")) {
+      return { id: "profile", text: "Profiles above 60% get 3× more matches. You're at " + strength + "%.", cta: "Finish profile", to: "/profile" };
+    }
+    if (apps.length === 0 && active("apply")) {
+      return { id: "apply", text: "Apply to your first Scope challenge — fastest path to recognition.", cta: "Browse challenges", to: "/projects" };
+    }
+    if (port.length === 0 && active("portfolio")) {
+      return { id: "portfolio", text: "Add a portfolio item — proof-of-work opens doors.", cta: "Add portfolio", to: "/portfolio" };
+    }
+    if (toLevel <= 100 && active("level")) {
+      return { id: "level", text: `One more move to unlock ${lvl.next} tier perks.`, cta: "See challenges", to: "/projects" };
+    }
+    return null;
+  },
+
+  snoozeNudge(id: string, hours = 18) {
+    const snoozed = read<Record<string, number>>(KEYS.nudgeSnoozedUntil, {});
+    snoozed[id] = Date.now() + hours * 3600000;
+    write(KEYS.nudgeSnoozedUntil, snoozed);
+  },
+};
