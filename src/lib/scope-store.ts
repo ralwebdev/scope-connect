@@ -995,3 +995,45 @@ export const retention = {
     write(KEYS.nudgeSnoozedUntil, snoozed);
   },
 };
+
+/* ===================================================================== */
+/* HYDRATION — schema versioning + safe boot recovery                     */
+/* ===================================================================== */
+
+export type HydrationStatus = "idle" | "hydrating" | "ready" | "recovered";
+
+const MICROCOPY = {
+  hydrating: "Restoring your workspace...",
+  ready: "Sync complete.",
+  recovered: "We restored a fresh copy of your data.",
+};
+
+export const hydration = {
+  /** Run once on app boot. Validates schema version, repairs missing keys,
+   *  and returns whether any slice was recovered. Never throws. */
+  boot(): { status: HydrationStatus; recoveredKeys: string[] } {
+    if (!isBrowser) return { status: "ready", recoveredKeys: [] };
+    const recovered: string[] = [];
+    try {
+      const stored = Number(localStorage.getItem(KEYS.schemaVersion) ?? "0");
+      if (stored && stored < SCHEMA_VERSION) {
+        // Future migration hook — for now, only reset notification list
+        // (dedup registry survives so one-shot alerts don't replay).
+        try { localStorage.removeItem(KEYS.notifications); recovered.push(KEYS.notifications); } catch { /* noop */ }
+      }
+      // Validate every persisted JSON key — corrupt slices get reset
+      // independently so one bad key never breaks the whole app.
+      for (const k of Object.values(KEYS)) {
+        const raw = localStorage.getItem(k);
+        if (!raw) continue;
+        try { JSON.parse(raw); } catch {
+          try { localStorage.removeItem(k); } catch { /* noop */ }
+          recovered.push(k);
+        }
+      }
+      localStorage.setItem(KEYS.schemaVersion, String(SCHEMA_VERSION));
+    } catch { /* noop — hydration must never throw */ }
+    return { status: recovered.length > 0 ? "recovered" : "ready", recoveredKeys: recovered };
+  },
+  microcopy: MICROCOPY,
+};
