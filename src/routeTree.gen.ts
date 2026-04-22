@@ -39,6 +39,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UHandleRouteImport } from './routes/u.$handle'
+import { Route as AdminConfigRouteImport } from './routes/admin.config'
 
 const WaitlistRoute = WaitlistRouteImport.update({
   id: '/waitlist',
@@ -190,11 +191,16 @@ const UHandleRoute = UHandleRouteImport.update({
   path: '/u/$handle',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminConfigRoute = AdminConfigRouteImport.update({
+  id: '/config',
+  path: '/config',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/ambassador': typeof AmbassadorRoute
   '/announcements': typeof AnnouncementsRoute
   '/auth': typeof AuthRoute
@@ -221,12 +227,13 @@ export interface FileRoutesByFullPath {
   '/unauthorized': typeof UnauthorizedRoute
   '/updates': typeof UpdatesRoute
   '/waitlist': typeof WaitlistRoute
+  '/admin/config': typeof AdminConfigRoute
   '/u/$handle': typeof UHandleRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/ambassador': typeof AmbassadorRoute
   '/announcements': typeof AnnouncementsRoute
   '/auth': typeof AuthRoute
@@ -253,13 +260,14 @@ export interface FileRoutesByTo {
   '/unauthorized': typeof UnauthorizedRoute
   '/updates': typeof UpdatesRoute
   '/waitlist': typeof WaitlistRoute
+  '/admin/config': typeof AdminConfigRoute
   '/u/$handle': typeof UHandleRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/ambassador': typeof AmbassadorRoute
   '/announcements': typeof AnnouncementsRoute
   '/auth': typeof AuthRoute
@@ -286,6 +294,7 @@ export interface FileRoutesById {
   '/unauthorized': typeof UnauthorizedRoute
   '/updates': typeof UpdatesRoute
   '/waitlist': typeof WaitlistRoute
+  '/admin/config': typeof AdminConfigRoute
   '/u/$handle': typeof UHandleRoute
 }
 export interface FileRouteTypes {
@@ -320,6 +329,7 @@ export interface FileRouteTypes {
     | '/unauthorized'
     | '/updates'
     | '/waitlist'
+    | '/admin/config'
     | '/u/$handle'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -352,6 +362,7 @@ export interface FileRouteTypes {
     | '/unauthorized'
     | '/updates'
     | '/waitlist'
+    | '/admin/config'
     | '/u/$handle'
   id:
     | '__root__'
@@ -384,13 +395,14 @@ export interface FileRouteTypes {
     | '/unauthorized'
     | '/updates'
     | '/waitlist'
+    | '/admin/config'
     | '/u/$handle'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
-  AdminRoute: typeof AdminRoute
+  AdminRoute: typeof AdminRouteWithChildren
   AmbassadorRoute: typeof AmbassadorRoute
   AnnouncementsRoute: typeof AnnouncementsRoute
   AuthRoute: typeof AuthRoute
@@ -632,13 +644,30 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UHandleRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/config': {
+      id: '/admin/config'
+      path: '/config'
+      fullPath: '/admin/config'
+      preLoaderRoute: typeof AdminConfigRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
+
+interface AdminRouteChildren {
+  AdminConfigRoute: typeof AdminConfigRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminConfigRoute: AdminConfigRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
-  AdminRoute: AdminRoute,
+  AdminRoute: AdminRouteWithChildren,
   AmbassadorRoute: AmbassadorRoute,
   AnnouncementsRoute: AnnouncementsRoute,
   AuthRoute: AuthRoute,
