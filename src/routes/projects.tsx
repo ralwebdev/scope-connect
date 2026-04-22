@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import {
   Rocket, Sparkles, ShieldCheck, MapPin, Globe2, Briefcase, Clock, Users,
-  Bookmark, BookmarkCheck, Share2, Lightbulb, Check, X, Lock, ArrowRight, Flame,
+  Bookmark, BookmarkCheck, Share2, Lightbulb, Check, X, Lock, ArrowRight, Flame, Coins,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +13,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { AppShell } from "@/components/site/AppShell";
 import { ConfettiBurst } from "@/components/site/Effects";
+import { TrustFAQ } from "@/components/site/TrustFAQ";
+import { ScopeVerifiedBadge } from "@/components/site/ScopeVerifiedBadge";
 import {
   useStoreValue, useIsLoggedIn, useUser,
 } from "@/hooks/use-scope";
