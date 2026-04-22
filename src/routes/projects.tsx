@@ -324,7 +324,7 @@ function ProjectCard({
   const closed = project.status === "closed";
 
   const toneBadge = {
-    scope: { label: "Scope Official", className: "bg-brand text-brand-foreground" },
+    scope: { label: "Scope Verified", className: "bg-brand text-brand-foreground" },
     campus: { label: "Your Campus", className: "bg-cyan/20 text-cyan-foreground border border-cyan/30" },
     open: { label: "Open Access", className: "bg-secondary text-foreground" },
   }[tone];
@@ -334,17 +334,29 @@ function ProjectCard({
     project.status === "closing-soon" ? { label: "Closing soon", className: "bg-orange-500/15 text-orange-600 dark:text-orange-400" } :
     { label: "Live Now", className: "bg-success/15 text-success" };
 
+  // Detect rare honorarium/stipend rewards (1–2% of projects). Only these
+  // surface a cash badge — every other card stays growth-first.
+  const isHonorarium = /₹|stipend|honorarium/i.test(project.rewards);
+
   return (
     <Card className="group flex flex-col overflow-hidden hover-lift animate-fade-in">
       <div className="relative flex h-32 items-center justify-center bg-gradient-hero text-5xl">
         <span className="transition-transform group-hover:scale-110">{project.cover}</span>
-        <div className="absolute left-3 top-3 flex gap-1.5">
-          <Badge className={toneBadge.className}>
-            {tone === "scope" && <ShieldCheck className="mr-1 h-3 w-3" />}
-            {tone === "campus" && <MapPin className="mr-1 h-3 w-3" />}
-            {tone === "open" && <Globe2 className="mr-1 h-3 w-3" />}
-            {toneBadge.label}
-          </Badge>
+        <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
+          {tone === "scope" ? (
+            <ScopeVerifiedBadge size="sm" />
+          ) : (
+            <Badge className={toneBadge.className}>
+              {tone === "campus" && <MapPin className="mr-1 h-3 w-3" />}
+              {tone === "open" && <Globe2 className="mr-1 h-3 w-3" />}
+              {toneBadge.label}
+            </Badge>
+          )}
+          {isHonorarium && (
+            <Badge className="bg-amber-500/90 text-white text-[10px]">
+              <Coins className="mr-1 h-3 w-3" /> Honorarium Opportunity
+            </Badge>
+          )}
         </div>
         <div className="absolute right-3 top-3">
           <Badge className={statusBadge.className}>{statusBadge.label}</Badge>
