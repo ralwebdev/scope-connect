@@ -300,26 +300,26 @@ export const notifications = {
 
 /* --------------------------- Feed --------------------------- */
 
+// Stable seed — built once at module load, never mutates.
+const SEED_FEED: FeedPost[] = seedFeed.map((p, i) => ({
+  id: p.id,
+  authorId: `seed_${p.id}`,
+  author: p.author,
+  campus: p.campus,
+  time: p.time,
+  createdAt: 1700000000000 - i * 1000 * 60 * 30,
+  type: p.type,
+  content: p.content,
+  likes: p.likes,
+  comments: p.comments,
+  celebrates: p.celebrates,
+  commentList: [],
+}));
+
 export const feed = {
   all(): FeedPost[] {
     const stored = read<FeedPost[]>(KEYS.feed, []);
-    if (stored.length > 0) return stored;
-    const seeded: FeedPost[] = seedFeed.map((p) => ({
-      id: p.id,
-      authorId: `seed_${p.id}`,
-      author: p.author,
-      campus: p.campus,
-      time: p.time,
-      createdAt: Date.now() - parseInt(p.id) * 1000 * 60 * 30,
-      type: p.type,
-      content: p.content,
-      likes: p.likes,
-      comments: p.comments,
-      celebrates: p.celebrates,
-      commentList: [],
-    }));
-    write(KEYS.feed, seeded);
-    return seeded;
+    return stored.length > 0 ? stored : SEED_FEED;
   },
   create(content: string, type = "Update") {
     const u = auth.getUser();
@@ -383,17 +383,13 @@ const SEED_PROJECTS: Project[] = featuredProjects.map((p, i) => ({
   category: p.category,
   votes: p.votes,
   cover: p.cover,
-  createdAt: Date.now() - (i + 1) * 86400000,
+  createdAt: 1700000000000 - (i + 1) * 86400000,
 }));
 
 export const projects = {
   all(): Project[] {
     const stored = read<Project[]>(KEYS.projects, []);
-    if (stored.length === 0) {
-      write(KEYS.projects, SEED_PROJECTS);
-      return SEED_PROJECTS;
-    }
-    return stored;
+    return stored.length > 0 ? stored : SEED_PROJECTS;
   },
   create(input: Omit<Project, "id" | "authorId" | "author" | "campus" | "votes" | "createdAt" | "cover"> & { cover?: string }) {
     const u = auth.getUser();
