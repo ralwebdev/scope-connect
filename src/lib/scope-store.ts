@@ -280,9 +280,22 @@ export const xp = {
     return read<number>(KEYS.points, 0);
   },
   add(amount: number, reason?: string) {
+    const prevLevel = xp.level().name;
     const next = xp.get() + amount;
     write(KEYS.points, next);
     if (reason) notifications.push({ icon: "zap", text: `${reason} · +${amount} XP` });
+    // Level-up alert — fired exactly once per tier per user via dedup registry.
+    const newLevel = xp.level().name;
+    if (newLevel !== prevLevel) {
+      const u = auth.getUser();
+      const uid = u?.id ?? "anon";
+      notifications.push({
+        icon: "trophy",
+        text: `🎉 Level up! You're now ${newLevel}-tier.`,
+        dedupKey: `level_up:${uid}:${newLevel}`,
+      });
+      write(KEYS.highestLevelSeen, newLevel);
+    }
     return next;
   },
   level(): { name: string; min: number; max: number; next: string } {
