@@ -184,7 +184,7 @@ function AuthPage() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <Label htmlFor="fullName">Full name</Label>
-                  <Input id="fullName" value={name} onChange={(e) => setName(e.target.value)} placeholder="Aarav Mehta" required className="mt-1.5" />
+                  <Input id="fullName" value={name} onFocus={markStarted} onChange={(e) => setName(e.target.value)} placeholder="Aarav Mehta" required className="mt-1.5" />
                 </div>
                 <div>
                   <Label htmlFor="campus">Campus</Label>
