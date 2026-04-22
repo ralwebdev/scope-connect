@@ -51,6 +51,17 @@ function ScopeAdminPortal() {
     [all.visits, myAdminId],
   );
 
+  const kpis = useMemo(() => {
+    const month = new Date(); month.setDate(1); month.setHours(0,0,0,0);
+    const monthMs = month.getTime();
+    const meetingsThisMonth = visits.filter(v => new Date(v.date).getTime() >= monthMs).length;
+    const proposals = institutions.filter(i => ["Proposal Sent", "Negotiation", "MoU Draft Shared"].includes(i.stage)).length;
+    const mous = institutions.filter(i => ["MoU Signed", "Launch Pending", "Live Chapter"].includes(i.stage)).length;
+    const live = institutions.filter(i => i.stage === "Live Chapter").length;
+    const potential = institutions.filter(i => !["Live Chapter", "Dormant"].includes(i.stage)).reduce((s, i) => s + i.potentialValue, 0);
+    return { assigned: institutions.length, meetings: meetingsThisMonth, proposals, mous, potential, live };
+  }, [institutions, visits]);
+
   if (!isAllowed) {
     return (
       <AppShell>
@@ -62,24 +73,6 @@ function ScopeAdminPortal() {
       </AppShell>
     );
   }
-
-  const kpis = useMemo(() => {
-    const month = new Date(); month.setDate(1); month.setHours(0,0,0,0);
-    const monthMs = month.getTime();
-    const meetingsThisMonth = visits.filter(v => new Date(v.date).getTime() >= monthMs).length;
-    const proposals = institutions.filter(i => ["Proposal Sent", "Negotiation", "MoU Draft Shared"].includes(i.stage)).length;
-    const mous = institutions.filter(i => ["MoU Signed", "Launch Pending", "Live Chapter"].includes(i.stage)).length;
-    const live = institutions.filter(i => i.stage === "Live Chapter").length;
-    const potential = institutions.filter(i => !["Live Chapter", "Dormant"].includes(i.stage)).reduce((s, i) => s + i.potentialValue, 0);
-    return {
-      assigned: institutions.length,
-      meetings: meetingsThisMonth,
-      proposals,
-      mous,
-      potential,
-      live,
-    };
-  }, [institutions, visits]);
 
   return (
     <AppShell>
