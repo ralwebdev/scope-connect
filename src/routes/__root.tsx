@@ -1,6 +1,8 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { Toaster } from "@/components/ui/sonner";
+import { analytics } from "@/lib/analytics";
+import { useRouteAnalytics } from "@/hooks/use-route-analytics";
 
 import appCss from "../styles.css?url";
 
@@ -74,7 +76,12 @@ function RootComponent() {
       const dark = t === "dark" || (t === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
       document.documentElement.classList.toggle("dark", dark);
     } catch { /* noop */ }
+    // One session_start per app load (frontend-only analytics).
+    analytics.track("session_start");
   }, []);
+
+  // Tracks every pathname change as route_visit.
+  useRouteAnalytics();
 
   return (
     <>
