@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ScopeVerifiedBadge } from "@/components/site/ScopeVerifiedBadge";
-import { useUser, useProfileStrength, useStoreValue } from "@/hooks/use-scope";
+import { useUser, useProfileStrength, useStoreValue, useXP } from "@/hooks/use-scope";
 import { portfolio, meta } from "@/lib/scope-store";
 
 type ActivityState = "Active today" | "Active this week" | "Returning builder" | "New member";
@@ -37,12 +37,15 @@ export function CredibilityPanel() {
   const user = useUser();
   const strength = useProfileStrength();
   const portfolioCount = useStoreValue(() => (user ? portfolio.forUser(user.id).length : 0));
-  const visitMeta = useStoreValue(() => meta.snapshot());
+  const totalVisits = useStoreValue(() => meta.visits());
+  const xpVal = useXP();
 
   if (!user) return null;
 
-  const activity = activityFromVisits(visitMeta.lastVisit, visitMeta.totalVisits);
-  const roles = deriveRoles(undefined, user.xp ?? 0);
+  // No dedicated lastVisit accessor — treat any visit count as "active today"
+  // proxy since visits are bumped on every load.
+  const activity = activityFromVisits(totalVisits > 0 ? Date.now() : null, totalVisits);
+  const roles = deriveRoles(undefined, xpVal);
   const isVerified = strength >= 70;
   const showCompletionCTA = strength < 70;
   const showPortfolioCTA = portfolioCount === 0;
