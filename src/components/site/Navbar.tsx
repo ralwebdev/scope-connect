@@ -84,8 +84,9 @@ export function Navbar() {
 
   const handleLogout = () => {
     auth.logout();
-    toast.success("Logged out successfully. See you soon, Builder.");
-    navigate({ to: "/auth" });
+    toast.success("Signed out (secure reset). See you soon, Builder.");
+    // Replace history so back-nav cannot return to a protected page.
+    navigate({ to: "/auth", replace: true });
   };
 
   return (
@@ -199,7 +200,7 @@ export function Navbar() {
                     </div>
                     <div className="border-t border-border py-1">
                       <button onClick={handleLogout} className="flex w-full items-center gap-3 px-4 py-2 text-sm text-foreground hover:bg-secondary">
-                        <LogOut className="h-4 w-4" /> Sign out
+                        <LogOut className="h-4 w-4" /> Sign out (secure reset)
                       </button>
                     </div>
                   </div>
