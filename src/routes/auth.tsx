@@ -23,7 +23,7 @@ export const Route = createFileRoute("/auth")({
 });
 
 const STAGES = [
-  "Verifying your builder identity…",
+  "Authenticating access…",
   "Syncing your innovation profile…",
   "Calibrating your campus rank…",
 ];
@@ -89,7 +89,7 @@ function AuthPage() {
       toast.success(`Welcome back, ${ROLE_LABELS[role]}.`);
     }
     const role = roleFromEmail(email);
-    navigate({ to: landingRouteForRole(role) });
+    navigate({ to: landingRouteForRole(role), replace: true });
   };
 
   return (
@@ -285,7 +285,7 @@ function AuthPage() {
                     analytics.track("login_success");
                     const role = roleFromEmail(d.email);
                     toast.success(`Signed in as ${ROLE_LABELS[role]}`);
-                    navigate({ to: landingRouteForRole(role) });
+                    navigate({ to: landingRouteForRole(role), replace: true });
                   }}
                   className="justify-start text-xs"
                 >
