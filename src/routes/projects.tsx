@@ -93,8 +93,7 @@ function ProjectsPage() {
             <div className="max-w-2xl">
               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Projects & Opportunities</h1>
               <p className="mt-2 text-primary-foreground/70">
-                Every opportunity here is launched directly by Scope. No spam, no fake listings —
-                just real challenges with real rewards.
+                Every opportunity here is launched directly by Scope. Most rewards are growth-based — recognition, mentor access, workshop invites and priority for future opportunities. A rare few include a stipend or honorarium.
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -136,7 +135,7 @@ function ProjectsPage() {
       <Section
         eyebrow="🚀 Live Scope Challenges"
         title="Premium challenges launched by Scope"
-        subtitle="Hand-picked, high-impact projects with real stipends, mentorship and national visibility."
+        subtitle="Hand-picked, high-impact projects with growth rewards — recognition, mentor access, and priority for future opportunities. A rare few include an honorarium."
         accentBadge={{ label: "High Priority", className: "bg-brand text-brand-foreground" }}
       >
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
