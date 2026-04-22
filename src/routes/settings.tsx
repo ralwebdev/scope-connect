@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { AlertTriangle, Bell, Lock, Crown, Mail } from "lucide-react";
+import { useEffect, useState } from "react";
+import { AlertTriangle, Bell, Lock, Crown, Mail, Download } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,16 @@ import { AuthGate } from "@/components/site/AuthGate";
 import { useUser } from "@/hooks/use-scope";
 import { auth, meta } from "@/lib/scope-store";
 import { toast } from "sonner";
+
+const THEME_KEY = "scope_theme";
+type Theme = "system" | "dark" | "light";
+
+function applyTheme(t: Theme) {
+  if (typeof document === "undefined") return;
+  const root = document.documentElement;
+  const dark = t === "dark" || (t === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  root.classList.toggle("dark", dark);
+}
 
 export const Route = createFileRoute("/settings")({
   head: () => ({
