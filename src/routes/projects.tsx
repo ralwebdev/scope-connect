@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import {
   Rocket, Sparkles, ShieldCheck, MapPin, Globe2, Briefcase, Clock, Users,
-  Bookmark, BookmarkCheck, Share2, Lightbulb, Check, X, Lock, ArrowRight, Flame,
+  Bookmark, BookmarkCheck, Share2, Lightbulb, Check, X, Lock, ArrowRight, Flame, Coins,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +13,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { AppShell } from "@/components/site/AppShell";
 import { ConfettiBurst } from "@/components/site/Effects";
+import { TrustFAQ } from "@/components/site/TrustFAQ";
+import { ScopeVerifiedBadge } from "@/components/site/ScopeVerifiedBadge";
 import {
   useStoreValue, useIsLoggedIn, useUser,
 } from "@/hooks/use-scope";
@@ -93,8 +95,7 @@ function ProjectsPage() {
             <div className="max-w-2xl">
               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Projects & Opportunities</h1>
               <p className="mt-2 text-primary-foreground/70">
-                Every opportunity here is launched directly by Scope. No spam, no fake listings —
-                just real challenges with real rewards.
+                Every opportunity here is launched directly by Scope. Most rewards are growth-based — recognition, mentor access, workshop invites and priority for future opportunities. A rare few include a stipend or honorarium.
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -136,7 +137,7 @@ function ProjectsPage() {
       <Section
         eyebrow="🚀 Live Scope Challenges"
         title="Premium challenges launched by Scope"
-        subtitle="Hand-picked, high-impact projects with real stipends, mentorship and national visibility."
+        subtitle="Hand-picked, high-impact projects with growth rewards — recognition, mentor access, and priority for future opportunities. A rare few include an honorarium."
         accentBadge={{ label: "High Priority", className: "bg-brand text-brand-foreground" }}
       >
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -228,6 +229,11 @@ function ProjectsPage() {
           </Button>
         </Card>
       </Section>
+
+      <TrustFAQ
+        heading="Trust questions, answered."
+        subheading="Curation, moderation, data, rewards, participation rules — all in one place."
+      />
 
       {/* APPLY MODAL */}
       {applyTarget && (
@@ -323,7 +329,7 @@ function ProjectCard({
   const closed = project.status === "closed";
 
   const toneBadge = {
-    scope: { label: "Scope Official", className: "bg-brand text-brand-foreground" },
+    scope: { label: "Scope Verified", className: "bg-brand text-brand-foreground" },
     campus: { label: "Your Campus", className: "bg-cyan/20 text-cyan-foreground border border-cyan/30" },
     open: { label: "Open Access", className: "bg-secondary text-foreground" },
   }[tone];
@@ -333,17 +339,29 @@ function ProjectCard({
     project.status === "closing-soon" ? { label: "Closing soon", className: "bg-orange-500/15 text-orange-600 dark:text-orange-400" } :
     { label: "Live Now", className: "bg-success/15 text-success" };
 
+  // Detect rare honorarium/stipend rewards (1–2% of projects). Only these
+  // surface a cash badge — every other card stays growth-first.
+  const isHonorarium = /₹|stipend|honorarium/i.test(project.rewards);
+
   return (
     <Card className="group flex flex-col overflow-hidden hover-lift animate-fade-in">
       <div className="relative flex h-32 items-center justify-center bg-gradient-hero text-5xl">
         <span className="transition-transform group-hover:scale-110">{project.cover}</span>
-        <div className="absolute left-3 top-3 flex gap-1.5">
-          <Badge className={toneBadge.className}>
-            {tone === "scope" && <ShieldCheck className="mr-1 h-3 w-3" />}
-            {tone === "campus" && <MapPin className="mr-1 h-3 w-3" />}
-            {tone === "open" && <Globe2 className="mr-1 h-3 w-3" />}
-            {toneBadge.label}
-          </Badge>
+        <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
+          {tone === "scope" ? (
+            <ScopeVerifiedBadge size="sm" />
+          ) : (
+            <Badge className={toneBadge.className}>
+              {tone === "campus" && <MapPin className="mr-1 h-3 w-3" />}
+              {tone === "open" && <Globe2 className="mr-1 h-3 w-3" />}
+              {toneBadge.label}
+            </Badge>
+          )}
+          {isHonorarium && (
+            <Badge className="bg-amber-500/90 text-white text-[10px]">
+              <Coins className="mr-1 h-3 w-3" /> Honorarium Opportunity
+            </Badge>
+          )}
         </div>
         <div className="absolute right-3 top-3">
           <Badge className={statusBadge.className}>{statusBadge.label}</Badge>

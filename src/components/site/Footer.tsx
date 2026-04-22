@@ -61,6 +61,7 @@ export function Footer() {
               <li><Link to="/contact" className="hover:text-primary-foreground">Contact</Link></li>
               <li><Link to="/contact" className="hover:text-primary-foreground">Partnerships</Link></li>
               <li><Link to={brand.supportUrl as "/support"} className="hover:text-primary-foreground">Support</Link></li>
+              <li><Link to="/updates" className="hover:text-primary-foreground">Platform updates</Link></li>
               <li><Link to="/feedback" className="hover:text-primary-foreground">Feedback</Link></li>
             </ul>
           </div>
