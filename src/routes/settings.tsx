@@ -46,13 +46,45 @@ function SettingsPage() {
   const [notifEmail, setNotifEmail] = useState(true);
   const [notifPush, setNotifPush] = useState(true);
   const [weekly, setWeekly] = useState(true);
-  const [theme, setTheme] = useState<"system" | "dark" | "light">("system");
+  const [theme, setThemeState] = useState<Theme>(() => {
+    if (typeof window === "undefined") return "system";
+    return ((localStorage.getItem(THEME_KEY) as Theme) ?? "system");
+  });
+
+  // Sync email when user resolves on mount
+  useEffect(() => {
+    if (user?.email) setEmail(user.email);
+  }, [user?.email]);
+
+  const setTheme = (t: Theme) => {
+    setThemeState(t);
+    try { localStorage.setItem(THEME_KEY, t); } catch { /* noop */ }
+    applyTheme(t);
+    toast(`Theme set to ${t}.`);
+  };
 
   if (!user) return null;
 
   const saveAccount = () => {
+    if (!email.includes("@")) { toast.error("Enter a valid email."); return; }
     auth.updateProfile({ email });
     toast.success("Account updated.");
+  };
+
+  const exportProfile = () => {
+    try {
+      const data = JSON.stringify(user, null, 2);
+      const blob = new Blob([data], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `scope-profile-${user.id}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success("Profile exported.");
+    } catch {
+      toast.error("Export failed.");
+    }
   };
 
   const wipe = () => {
