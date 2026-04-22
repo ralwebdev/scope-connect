@@ -43,9 +43,10 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
   const [bellOpen, setBellOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const isAuthed = useIsLoggedIn();
+  const isAuthedRaw = useIsLoggedIn();
   const user = useUser();
   const unread = useUnreadNotifications();
   const notifs = useNotifications();
@@ -54,6 +55,10 @@ export function Navbar() {
   const bellRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => { setMounted(true); }, []);
+
+  // Treat as logged-out until client mount — keeps SSR/CSR markup identical.
+  const isAuthed = mounted && isAuthedRaw;
   const links = isAuthed ? authedLinks : publicLinks;
 
   useEffect(() => {
