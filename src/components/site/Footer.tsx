@@ -41,20 +41,20 @@ export function Footer() {
           <div>
             <h4 className="text-sm font-semibold">Company</h4>
             <ul className="mt-3 space-y-2 text-sm text-primary-foreground/70">
-              <li>About</li>
-              <li>Press</li>
-              <li>Careers</li>
-              <li>Contact</li>
+              <li><Link to="/about" className="hover:text-primary-foreground">About Scope</Link></li>
+              <li><Link to="/support" className="hover:text-primary-foreground">Support</Link></li>
+              <li><Link to="/support" className="hover:text-primary-foreground">Contact</Link></li>
+              <li><Link to="/about" className="hover:text-primary-foreground">National Vision</Link></li>
             </ul>
           </div>
         </div>
 
         <div className="mt-10 flex flex-col items-start justify-between gap-3 border-t border-primary-foreground/10 pt-6 text-xs text-primary-foreground/60 sm:flex-row sm:items-center">
-          <p>© {new Date().getFullYear()} Scope Connect. Built for India's campus builders.</p>
+          <p>© {new Date().getFullYear()} Scope Connect. Every challenge curated. No spam, no fake listings.</p>
           <div className="flex gap-4">
-            <a href="#" className="hover:text-primary-foreground">Privacy</a>
-            <a href="#" className="hover:text-primary-foreground">Terms</a>
-            <a href="#" className="hover:text-primary-foreground">Code of Conduct</a>
+            <Link to="/about" className="hover:text-primary-foreground">Privacy</Link>
+            <Link to="/about" className="hover:text-primary-foreground">Terms</Link>
+            <Link to="/support" className="hover:text-primary-foreground">Code of Conduct</Link>
           </div>
         </div>
       </div>

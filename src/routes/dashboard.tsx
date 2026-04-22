@@ -9,6 +9,7 @@ import { AuthGate } from "@/components/site/AuthGate";
 import { CountUp } from "@/components/site/Effects";
 import { useUser, useXP, useLevel, useLevelProgress, useStreak, useProfileStrength, useStoreValue } from "@/hooks/use-scope";
 import { feed, events, memberLeaderboard, applications, curated, portfolio } from "@/lib/scope-store";
+import { RetentionLayer } from "@/components/site/RetentionLayer";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -68,6 +69,8 @@ function DashboardPage() {
           </div>
         </div>
       </section>
+
+      <RetentionLayer />
 
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="grid gap-6 lg:grid-cols-3">
