@@ -20,6 +20,7 @@ const authedLinks = [
   { to: "/projects", label: "Projects" },
   { to: "/events", label: "Events" },
   { to: "/opportunities", label: "Opportunities" },
+  { to: "/challenges", label: "Challenges" },
   { to: "/campus", label: "Campus" },
   { to: "/leaderboards", label: "Leaderboards" },
 ] as const;
