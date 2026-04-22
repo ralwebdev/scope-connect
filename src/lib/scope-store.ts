@@ -350,7 +350,20 @@ export const notifications = {
   unread(): number {
     return notifications.all().filter((n) => !n.read).length;
   },
+  /** Has a one-time notification with this dedup key ever been pushed? */
+  hasDedup(dedupKey: string): boolean {
+    const reg = read<Record<string, number>>(KEYS.notifDedupRegistry, {});
+    return !!reg[dedupKey];
+  },
   push(n: Omit<Notification, "id" | "at" | "read">) {
+    // Dedup guard: skip if this one-time alert has already fired (registry
+    // survives even if the notification was trimmed/cleared from the list).
+    if (n.dedupKey) {
+      const reg = read<Record<string, number>>(KEYS.notifDedupRegistry, {});
+      if (reg[n.dedupKey]) return;
+      reg[n.dedupKey] = Date.now();
+      write(KEYS.notifDedupRegistry, reg);
+    }
     const list = notifications.all();
     const next: Notification = { ...n, id: `n_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`, at: Date.now(), read: false };
     write(KEYS.notifications, [next, ...list].slice(0, 30));
