@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { auth, seedInterests } from "@/lib/scope-store";
 import { useIsLoggedIn } from "@/hooks/use-scope";
+import { analytics } from "@/lib/analytics";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/auth")({
