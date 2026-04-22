@@ -112,6 +112,7 @@ function ScopeAdminPortal() {
           <TabsContent value="performance" className="mt-6"><PerformanceScorecard institutions={institutions} visits={visits} /></TabsContent>
         </Tabs>
       </section>
+      </RbacSidebar>
     </AppShell>
   );
 }
