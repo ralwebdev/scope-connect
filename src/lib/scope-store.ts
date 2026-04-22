@@ -88,6 +88,10 @@ export type Notification = {
   at: number;
   read: boolean;
   icon: "trophy" | "spark" | "zap" | "users" | "heart";
+  /** Optional dedup key — if present, push() will skip if any existing
+   *  notification (or registry entry) has the same key. Used for one-time
+   *  events (welcome bonus, level-up, first portfolio, etc). */
+  dedupKey?: string;
 };
 
 /* --------------------------- LS helpers --------------------------- */
