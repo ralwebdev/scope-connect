@@ -11,7 +11,11 @@ import {
   CheckCircle2,
   Circle,
   Shield,
+  Rocket,
+  TrendingUp,
+  AlertTriangle,
 } from "lucide-react";
+import { analytics } from "@/lib/analytics";
 import { AppShell } from "@/components/site/AppShell";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -31,7 +35,7 @@ export const Route = createFileRoute("/ops")({
   component: OpsPage,
 });
 
-type Tab = "bugs" | "calendar" | "campus" | "support" | "requests" | "checklist";
+type Tab = "bugs" | "calendar" | "campus" | "support" | "requests" | "checklist" | "softlaunch";
 
 const ADMIN_EMAILS = ["admin@scope.in", "team@scope.in", "founder@scope.in"];
 const PIN = "scope2026";
@@ -131,6 +135,7 @@ function OpsPage() {
         <div className="flex flex-wrap gap-2 border-b border-border pb-3">
           {(
             [
+              { id: "softlaunch", label: "Soft launch", icon: Rocket },
               { id: "checklist", label: "Launch checklist", icon: CheckCircle2 },
               { id: "bugs", label: "Bugs", icon: Wrench },
               { id: "calendar", label: "Content calendar", icon: Calendar },
@@ -152,6 +157,7 @@ function OpsPage() {
         </div>
 
         <div className="mt-6">
+          {tab === "softlaunch" && <SoftLaunchPanel />}
           {tab === "checklist" && <LaunchChecklist />}
           {tab === "bugs" && <BugTracker />}
           {tab === "calendar" && <ContentCalendar />}
@@ -740,4 +746,192 @@ function safeRead<T>(key: string, fallback: T): T {
   } catch {
     return fallback;
   }
+}
+
+/* -------------------- Soft launch panel -------------------- */
+
+function SoftLaunchPanel() {
+  const snap = analytics.snapshot();
+  const funnel = analytics.funnel();
+  const nps = analytics.npsSummary();
+  const top = analytics.topRoutes(8);
+  const active7 = analytics.activeLast7();
+  const rage = analytics.rageClickCount();
+  const tester = analytics.testerId();
+  const source = analytics.testerSource();
+  const recentFeedback = useMemo(() => safeRead<RawEntry[]>("scope_feedback", []).slice(0, 6), []);
+
+  const launchReady =
+    funnel.completed >= 5 &&
+    funnel.activation >= 40 &&
+    nps.score >= 0 &&
+    rage < 10;
+
+  return (
+    <div className="space-y-6">
+      <Card className={`border-l-4 p-5 ${launchReady ? "border-l-success bg-success/5" : "border-l-brand bg-brand/5"}`}>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <Badge className={launchReady ? "bg-success/15 text-success" : "bg-brand/15 text-brand"}>
+              <Rocket className="mr-1 h-3 w-3" /> {launchReady ? "Launch gate: GREEN" : "Launch gate: VALIDATING"}
+            </Badge>
+            <h3 className="mt-2 text-lg font-bold text-foreground">
+              {launchReady ? "Soft-launch signals look healthy." : "Collecting soft-launch signals."}
+            </h3>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Targets: 20+ testers · 5+ signups · ≥40% activation · NPS ≥ 0 · &lt;10 rage clicks.
+            </p>
+          </div>
+          <div className="text-right text-xs text-muted-foreground">
+            <div>This device · <code className="font-mono text-foreground">{tester || "—"}</code></div>
+            <div>Source: <span className="text-foreground">{source}</span></div>
+          </div>
+        </div>
+      </Card>
+
+      <div className="grid gap-4 md:grid-cols-4">
+        <SLStat label="Landing visits" value={funnel.visits} />
+        <SLStat label="Signups started" value={funnel.started} sub={`${funnel.signupCompletion}% completed`} />
+        <SLStat label="Signups completed" value={funnel.completed} sub={`${funnel.visitToSignup}% of visits`} />
+        <SLStat label="First action" value={funnel.firstAction} sub={`${funnel.activation}% activation`} />
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-3">
+        <Card className="p-5 lg:col-span-2">
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold text-foreground">Acquisition → Activation funnel</h3>
+            <TrendingUp className="h-4 w-4 text-cyan" />
+          </div>
+          <ul className="mt-4 space-y-2.5">
+            {[
+              { label: "Visited landing", n: funnel.visits, pct: 100 },
+              { label: "Started signup", n: funnel.started, pct: funnel.visits ? Math.round((funnel.started / funnel.visits) * 100) : 0 },
+              { label: "Completed signup", n: funnel.completed, pct: funnel.visits ? Math.round((funnel.completed / funnel.visits) * 100) : 0 },
+              { label: "Took first action", n: funnel.firstAction, pct: funnel.visits ? Math.round((funnel.firstAction / funnel.visits) * 100) : 0 },
+              { label: "Returned to dashboard", n: funnel.dashReturns, pct: funnel.completed ? Math.round((funnel.dashReturns / funnel.completed) * 100) : 0 },
+            ].map((row) => (
+              <li key={row.label}>
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <span>{row.label}</span>
+                  <span><b className="text-foreground">{row.n}</b> · {row.pct}%</span>
+                </div>
+                <div className="mt-1 h-2 overflow-hidden rounded-full bg-secondary">
+                  <div className="h-full bg-gradient-brand transition-all" style={{ width: `${Math.min(100, row.pct)}%` }} />
+                </div>
+              </li>
+            ))}
+          </ul>
+        </Card>
+
+        <Card className="p-5">
+          <h3 className="font-semibold text-foreground">NPS pulse</h3>
+          <div className="mt-3 flex items-baseline gap-2">
+            <span className={`text-4xl font-bold ${nps.score > 30 ? "text-success" : nps.score < 0 ? "text-destructive" : "text-foreground"}`}>{nps.score}</span>
+            <span className="text-xs text-muted-foreground">from {nps.count} response{nps.count === 1 ? "" : "s"}</span>
+          </div>
+          <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
+            <div className="rounded-md bg-success/10 p-2"><div className="font-bold text-success">{nps.promoters}</div><div className="text-muted-foreground">Promoters</div></div>
+            <div className="rounded-md bg-secondary p-2"><div className="font-bold text-foreground">{nps.passives}</div><div className="text-muted-foreground">Passives</div></div>
+            <div className="rounded-md bg-destructive/10 p-2"><div className="font-bold text-destructive">{nps.detractors}</div><div className="text-muted-foreground">Detractors</div></div>
+          </div>
+          {nps.recent.length > 0 && (
+            <ul className="mt-4 space-y-2 max-h-44 overflow-y-auto">
+              {nps.recent.map((r, i) => (
+                <li key={i} className="rounded-md border border-border p-2 text-xs">
+                  <div className="flex items-center justify-between">
+                    <Badge variant="outline" className="text-[10px]">{r.score}/10</Badge>
+                    <span className="text-muted-foreground">{new Date(r.at).toLocaleDateString()}</span>
+                  </div>
+                  {r.reason && <p className="mt-1 line-clamp-2 text-foreground">{r.reason}</p>}
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-3">
+        <Card className="p-5">
+          <h3 className="font-semibold text-foreground">Retention signals</h3>
+          <div className="mt-3 space-y-2 text-sm">
+            <SLRow label="Active days (last 7)" value={active7} />
+            <SLRow label="Repeat sessions" value={snap.events["session_repeat_visit"] || 0} />
+            <SLRow label="Dashboard returns" value={funnel.dashReturns} />
+            <SLRow label="Sessions total" value={snap.sessions} />
+          </div>
+        </Card>
+
+        <Card className="p-5">
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold text-foreground">Friction proxy</h3>
+            <AlertTriangle className={`h-4 w-4 ${rage >= 10 ? "text-destructive" : "text-muted-foreground"}`} />
+          </div>
+          <div className="mt-3 text-3xl font-bold text-foreground">{rage}</div>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Rage-click clusters detected. {rage >= 10 ? "Investigate hot spots." : "Within healthy range."}
+          </p>
+          <p className="mt-3 text-xs text-muted-foreground">
+            Rage = 3+ clicks within 600ms in a 40px radius — proxy for frustration / unresponsive UI.
+          </p>
+        </Card>
+
+        <Card className="p-5">
+          <h3 className="font-semibold text-foreground">Most-visited routes</h3>
+          {top.length === 0 ? (
+            <p className="mt-3 text-sm text-muted-foreground">No traffic recorded yet.</p>
+          ) : (
+            <ul className="mt-3 space-y-1.5 text-sm">
+              {top.map((r) => (
+                <li key={r.route} className="flex items-center justify-between">
+                  <code className="truncate font-mono text-xs text-foreground">{r.route}</code>
+                  <span className="text-xs text-muted-foreground">{r.count}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
+      </div>
+
+      <Card className="p-5">
+        <div className="flex items-center justify-between">
+          <h3 className="font-semibold text-foreground">Recent qualitative feedback</h3>
+          <Badge variant="outline" className="text-xs">{recentFeedback.length}</Badge>
+        </div>
+        {recentFeedback.length === 0 ? (
+          <p className="mt-3 text-sm text-muted-foreground">No feedback yet — share a tester invite link.</p>
+        ) : (
+          <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+            {recentFeedback.map((f, i) => (
+              <li key={i} className="rounded-md border border-border p-3 text-sm">
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-[10px]">{f.type || "note"}</Badge>
+                  <span className="text-xs text-muted-foreground">{f.at ? new Date(f.at).toLocaleDateString() : "—"}</span>
+                </div>
+                <p className="mt-1.5 line-clamp-3 text-foreground">{f.text || "(no content)"}</p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Card>
+    </div>
+  );
+}
+
+function SLStat({ label, value, sub }: { label: string; value: number; sub?: string }) {
+  return (
+    <Card className="p-4">
+      <div className="text-xs uppercase tracking-wider text-muted-foreground">{label}</div>
+      <div className="mt-1.5 text-3xl font-bold text-foreground">{value.toLocaleString()}</div>
+      {sub && <div className="mt-0.5 text-xs text-muted-foreground">{sub}</div>}
+    </Card>
+  );
+}
+
+function SLRow({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="flex items-center justify-between rounded-md border border-border px-3 py-1.5">
+      <span className="text-xs text-muted-foreground">{label}</span>
+      <span className="text-sm font-bold text-foreground">{value}</span>
+    </div>
+  );
 }
