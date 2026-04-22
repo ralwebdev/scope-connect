@@ -15,6 +15,7 @@ import { Route as UnauthorizedRouteImport } from './routes/unauthorized'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ScopeSuperAdminRouteImport } from './routes/scope-super-admin'
 import { Route as ScopeAdminRouteImport } from './routes/scope-admin'
 import { Route as ReferRouteImport } from './routes/refer'
 import { Route as ProjectsRouteImport } from './routes/projects'
@@ -71,6 +72,11 @@ const SupportRoute = SupportRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ScopeSuperAdminRoute = ScopeSuperAdminRouteImport.update({
+  id: '/scope-super-admin',
+  path: '/scope-super-admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ScopeAdminRoute = ScopeAdminRouteImport.update({
@@ -234,6 +240,7 @@ export interface FileRoutesByFullPath {
   '/projects': typeof ProjectsRoute
   '/refer': typeof ReferRoute
   '/scope-admin': typeof ScopeAdminRoute
+  '/scope-super-admin': typeof ScopeSuperAdminRoute
   '/settings': typeof SettingsRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
@@ -269,6 +276,7 @@ export interface FileRoutesByTo {
   '/projects': typeof ProjectsRoute
   '/refer': typeof ReferRoute
   '/scope-admin': typeof ScopeAdminRoute
+  '/scope-super-admin': typeof ScopeSuperAdminRoute
   '/settings': typeof SettingsRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
@@ -305,6 +313,7 @@ export interface FileRoutesById {
   '/projects': typeof ProjectsRoute
   '/refer': typeof ReferRoute
   '/scope-admin': typeof ScopeAdminRoute
+  '/scope-super-admin': typeof ScopeSuperAdminRoute
   '/settings': typeof SettingsRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
@@ -342,6 +351,7 @@ export interface FileRouteTypes {
     | '/projects'
     | '/refer'
     | '/scope-admin'
+    | '/scope-super-admin'
     | '/settings'
     | '/support'
     | '/terms'
@@ -377,6 +387,7 @@ export interface FileRouteTypes {
     | '/projects'
     | '/refer'
     | '/scope-admin'
+    | '/scope-super-admin'
     | '/settings'
     | '/support'
     | '/terms'
@@ -412,6 +423,7 @@ export interface FileRouteTypes {
     | '/projects'
     | '/refer'
     | '/scope-admin'
+    | '/scope-super-admin'
     | '/settings'
     | '/support'
     | '/terms'
@@ -448,6 +460,7 @@ export interface RootRouteChildren {
   ProjectsRoute: typeof ProjectsRoute
   ReferRoute: typeof ReferRoute
   ScopeAdminRoute: typeof ScopeAdminRoute
+  ScopeSuperAdminRoute: typeof ScopeSuperAdminRoute
   SettingsRoute: typeof SettingsRoute
   SupportRoute: typeof SupportRoute
   TermsRoute: typeof TermsRoute
@@ -499,6 +512,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/scope-super-admin': {
+      id: '/scope-super-admin'
+      path: '/scope-super-admin'
+      fullPath: '/scope-super-admin'
+      preLoaderRoute: typeof ScopeSuperAdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/scope-admin': {
@@ -730,6 +750,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProjectsRoute: ProjectsRoute,
   ReferRoute: ReferRoute,
   ScopeAdminRoute: ScopeAdminRoute,
+  ScopeSuperAdminRoute: ScopeSuperAdminRoute,
   SettingsRoute: SettingsRoute,
   SupportRoute: SupportRoute,
   TermsRoute: TermsRoute,
