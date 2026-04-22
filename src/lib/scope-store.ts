@@ -120,7 +120,16 @@ const KEYS = {
   rankSnapshot: "scope_rank_snapshot",
   lastVisitAt: "scope_last_visit_at",
   nudgeSnoozedUntil: "scope_nudge_snoozed_until",
+  // Persistent registry of one-time notification dedup hashes — survives
+  // notification list trimming so a refresh never replays a one-shot alert.
+  notifDedupRegistry: "scope_notif_dedup_v1",
+  // Tracks the highest level a level-up alert has been issued for.
+  highestLevelSeen: "scope_highest_level_seen",
+  // Schema version — bump to invalidate incompatible persisted state.
+  schemaVersion: "scope_schema_version",
 } as const;
+
+const SCHEMA_VERSION = 2;
 
 const isBrowser = typeof window !== "undefined";
 
