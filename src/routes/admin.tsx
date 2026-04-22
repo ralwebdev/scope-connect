@@ -255,3 +255,105 @@ function ModerationTab() {
     </div>
   );
 }
+
+function AnalyticsTab() {
+  const snap = useMemo(() => analytics.snapshot(), []);
+  const topRoutes = useMemo(() => analytics.topRoutes(6), []);
+  const signups7 = useMemo(() => analytics.signupsLast7(), []);
+  const wau = analytics.activeLast7();
+  const dau = analytics.activeToday();
+  const max = Math.max(1, ...signups7.map((d) => d.count));
+
+  const totalSignups = snap.events.signup_completed || 0;
+  const totalApply = snap.events.project_apply || 0;
+  const totalView = snap.events.project_view || 0;
+  const totalRSVP = snap.events.event_rsvp || 0;
+  const totalPosts = snap.events.feed_post_created || 0;
+  const totalPortfolio = snap.events.portfolio_item_added || 0;
+  const sessions = snap.sessions;
+
+  return (
+    <div className="space-y-6">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Stat label="Total signups" value={totalSignups} />
+        <Stat label="DAU (today)" value={dau} />
+        <Stat label="WAU (7d)" value={wau} />
+        <Stat label="Sessions" value={sessions} />
+        <Stat label="Applications" value={totalApply} />
+        <Stat label="Project views" value={totalView} />
+        <Stat label="Event RSVPs" value={totalRSVP} />
+        <Stat label="Feed posts" value={totalPosts} />
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Card className="p-5">
+          <h3 className="text-sm font-semibold text-foreground">7-day signups trend</h3>
+          <div className="mt-5 flex h-32 items-end gap-2">
+            {signups7.map((d) => (
+              <div key={d.day} className="flex flex-1 flex-col items-center gap-1">
+                <div className="flex w-full flex-1 items-end">
+                  <div
+                    className="w-full rounded-t bg-gradient-brand transition-all"
+                    style={{ height: `${(d.count / max) * 100}%`, minHeight: d.count > 0 ? "4px" : "0" }}
+                    title={`${d.count} signups`}
+                  />
+                </div>
+                <div className="text-[10px] text-muted-foreground">{d.day}</div>
+                <div className="text-[10px] font-semibold text-foreground">{d.count}</div>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        <Card className="p-5">
+          <h3 className="text-sm font-semibold text-foreground">Most visited routes</h3>
+          {topRoutes.length === 0 ? (
+            <p className="mt-3 text-xs text-muted-foreground">No route visits tracked yet.</p>
+          ) : (
+            <ul className="mt-3 space-y-2">
+              {topRoutes.map((r) => {
+                const pct = Math.round((r.count / topRoutes[0].count) * 100);
+                return (
+                  <li key={r.route}>
+                    <div className="flex items-center justify-between text-xs">
+                      <code className="rounded bg-secondary px-1.5 py-0.5 font-mono text-foreground">{r.route}</code>
+                      <span className="font-semibold text-foreground">{r.count}</span>
+                    </div>
+                    <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-secondary">
+                      <div className="h-full bg-cyan" style={{ width: `${pct}%` }} />
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </Card>
+      </div>
+
+      <Card className="p-5">
+        <h3 className="text-sm font-semibold text-foreground">Feature usage breakdown</h3>
+        <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          {Object.entries(snap.events).map(([ev, n]) => (
+            <div key={ev} className="flex items-center justify-between rounded-lg border border-border p-3 text-xs">
+              <span className="text-muted-foreground">{ev}</span>
+              <span className="font-semibold text-foreground">{n}</span>
+            </div>
+          ))}
+        </div>
+        {totalPortfolio === 0 && totalSignups > 0 && (
+          <p className="mt-4 rounded-lg bg-cyan/10 p-3 text-xs text-foreground">
+            💡 Insight: Profile completion drops at the portfolio step.
+          </p>
+        )}
+      </Card>
+
+      <Card className="border-destructive/30 bg-destructive/5 p-5">
+        <h3 className="font-semibold text-foreground">Reset analytics</h3>
+        <p className="mt-1 text-xs text-muted-foreground">Clears all event counters. Aggregate-only — no PII stored.</p>
+        <Button variant="destructive" size="sm" className="mt-3" onClick={() => { analytics.reset(); toast.success("Analytics reset"); }}>
+          <RefreshCw className="mr-1.5 h-3.5 w-3.5" /> Reset
+        </Button>
+      </Card>
+    </div>
+  );
+}
