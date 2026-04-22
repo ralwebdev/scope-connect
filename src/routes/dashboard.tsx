@@ -146,6 +146,7 @@ function DashboardPage() {
           </Card>
 
           <div className="space-y-6">
+            <CredibilityPanel />
             <Card className="p-5 hover-lift">
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold text-foreground">Upcoming events</h3>
@@ -226,7 +227,7 @@ function DashboardPage() {
             {recommended.map((p) => (
               <Card key={p.id} className="flex flex-col p-5 hover-lift">
                 <div className="flex items-center justify-between">
-                  <Badge className="bg-brand text-brand-foreground"><ShieldCheck className="mr-1 h-3 w-3" /> Scope Official</Badge>
+                  <Badge className="bg-brand text-brand-foreground"><ShieldCheck className="mr-1 h-3 w-3" /> Scope Verified</Badge>
                   <span className="text-2xl">{p.cover}</span>
                 </div>
                 <h3 className="mt-3 text-base font-semibold text-foreground">{p.title}</h3>
