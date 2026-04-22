@@ -269,6 +269,10 @@ const SEED_NOTIFICATIONS: Omit<Notification, "id" | "at" | "read">[] = [
 
 export const notifications = {
   all(): Notification[] {
+    return read<Notification[]>(KEYS.notifications, []);
+  },
+  ensureSeeded() {
+    if (!isBrowser) return;
     const list = read<Notification[]>(KEYS.notifications, []);
     if (list.length === 0 && auth.isLoggedIn()) {
       const seeded = SEED_NOTIFICATIONS.map((n, i) => ({
@@ -278,9 +282,7 @@ export const notifications = {
         read: false,
       }));
       write(KEYS.notifications, seeded);
-      return seeded;
     }
-    return list;
   },
   unread(): number {
     return notifications.all().filter((n) => !n.read).length;
