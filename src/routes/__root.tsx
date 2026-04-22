@@ -3,6 +3,8 @@ import { useEffect } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { analytics } from "@/lib/analytics";
 import { useRouteAnalytics } from "@/hooks/use-route-analytics";
+import { useRageClickDetector } from "@/hooks/use-rage-click";
+import { FeedbackWidget } from "@/components/site/FeedbackWidget";
 
 import appCss from "../styles.css?url";
 
@@ -75,16 +77,21 @@ function RootComponent() {
       const dark = t === "dark" || (t === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
       document.documentElement.classList.toggle("dark", dark);
     } catch { /* noop */ }
+    // Soft-launch instrumentation: anonymous tester id + invite-source capture.
+    analytics.init();
     // One session_start per app load (frontend-only analytics).
     analytics.track("session_start");
   }, []);
 
   // Tracks every pathname change as route_visit.
   useRouteAnalytics();
+  // Detects clusters of repeated clicks → soft-launch confusion proxy.
+  useRageClickDetector();
 
   return (
     <>
       <Outlet />
+      <FeedbackWidget />
       <Toaster position="top-right" richColors closeButton />
     </>
   );
