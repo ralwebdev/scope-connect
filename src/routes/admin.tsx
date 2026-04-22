@@ -101,7 +101,13 @@ function AdminPage() {
             <h1 className="mt-2 text-2xl font-bold tracking-tight">Scope Operations</h1>
             <p className="mt-1 text-sm text-primary-foreground/70">Platform pulse looks strong today.</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
+            <Button asChild variant="outline" size="sm" className="border-primary-foreground/20 bg-primary-foreground/5 text-primary-foreground">
+              <Link to="/admin/config"><Sparkles className="mr-1.5 h-3.5 w-3.5" /> Config Center</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm" className="border-primary-foreground/20 bg-primary-foreground/5 text-primary-foreground">
+              <Link to="/admin/campuses/new"><Building2 className="mr-1.5 h-3.5 w-3.5" /> New campus</Link>
+            </Button>
             <Button asChild variant="outline" size="sm" className="border-primary-foreground/20 bg-primary-foreground/5 text-primary-foreground">
               <Link to="/ops"><Wrench className="mr-1.5 h-3.5 w-3.5" /> Ops console</Link>
             </Button>
