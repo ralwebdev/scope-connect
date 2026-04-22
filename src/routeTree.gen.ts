@@ -26,6 +26,7 @@ import { Route as OpsRouteImport } from './routes/ops'
 import { Route as OpportunitiesRouteImport } from './routes/opportunities'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LeaderboardsRouteImport } from './routes/leaderboards'
+import { Route as InstitutionAdminRouteImport } from './routes/institution-admin'
 import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as FeedRouteImport } from './routes/feed'
 import { Route as EventsRouteImport } from './routes/events'
@@ -41,6 +42,9 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UHandleRouteImport } from './routes/u.$handle'
+import { Route as InstitutionAdminMembersRouteImport } from './routes/institution-admin.members'
+import { Route as InstitutionAdminCommunicationsRouteImport } from './routes/institution-admin.communications'
+import { Route as InstitutionAdminAnalyticsRouteImport } from './routes/institution-admin.analytics'
 import { Route as AdminConfigRouteImport } from './routes/admin.config'
 import { Route as AdminCampusesNewRouteImport } from './routes/admin.campuses.new'
 
@@ -129,6 +133,11 @@ const LeaderboardsRoute = LeaderboardsRouteImport.update({
   path: '/leaderboards',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InstitutionAdminRoute = InstitutionAdminRouteImport.update({
+  id: '/institution-admin',
+  path: '/institution-admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FeedbackRoute = FeedbackRouteImport.update({
   id: '/feedback',
   path: '/feedback',
@@ -204,6 +213,23 @@ const UHandleRoute = UHandleRouteImport.update({
   path: '/u/$handle',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InstitutionAdminMembersRoute = InstitutionAdminMembersRouteImport.update({
+  id: '/members',
+  path: '/members',
+  getParentRoute: () => InstitutionAdminRoute,
+} as any)
+const InstitutionAdminCommunicationsRoute =
+  InstitutionAdminCommunicationsRouteImport.update({
+    id: '/communications',
+    path: '/communications',
+    getParentRoute: () => InstitutionAdminRoute,
+  } as any)
+const InstitutionAdminAnalyticsRoute =
+  InstitutionAdminAnalyticsRouteImport.update({
+    id: '/analytics',
+    path: '/analytics',
+    getParentRoute: () => InstitutionAdminRoute,
+  } as any)
 const AdminConfigRoute = AdminConfigRouteImport.update({
   id: '/config',
   path: '/config',
@@ -230,6 +256,7 @@ export interface FileRoutesByFullPath {
   '/events': typeof EventsRoute
   '/feed': typeof FeedRoute
   '/feedback': typeof FeedbackRoute
+  '/institution-admin': typeof InstitutionAdminRouteWithChildren
   '/leaderboards': typeof LeaderboardsRoute
   '/notifications': typeof NotificationsRoute
   '/opportunities': typeof OpportunitiesRoute
@@ -248,6 +275,9 @@ export interface FileRoutesByFullPath {
   '/updates': typeof UpdatesRoute
   '/waitlist': typeof WaitlistRoute
   '/admin/config': typeof AdminConfigRoute
+  '/institution-admin/analytics': typeof InstitutionAdminAnalyticsRoute
+  '/institution-admin/communications': typeof InstitutionAdminCommunicationsRoute
+  '/institution-admin/members': typeof InstitutionAdminMembersRoute
   '/u/$handle': typeof UHandleRoute
   '/admin/campuses/new': typeof AdminCampusesNewRoute
 }
@@ -266,6 +296,7 @@ export interface FileRoutesByTo {
   '/events': typeof EventsRoute
   '/feed': typeof FeedRoute
   '/feedback': typeof FeedbackRoute
+  '/institution-admin': typeof InstitutionAdminRouteWithChildren
   '/leaderboards': typeof LeaderboardsRoute
   '/notifications': typeof NotificationsRoute
   '/opportunities': typeof OpportunitiesRoute
@@ -284,6 +315,9 @@ export interface FileRoutesByTo {
   '/updates': typeof UpdatesRoute
   '/waitlist': typeof WaitlistRoute
   '/admin/config': typeof AdminConfigRoute
+  '/institution-admin/analytics': typeof InstitutionAdminAnalyticsRoute
+  '/institution-admin/communications': typeof InstitutionAdminCommunicationsRoute
+  '/institution-admin/members': typeof InstitutionAdminMembersRoute
   '/u/$handle': typeof UHandleRoute
   '/admin/campuses/new': typeof AdminCampusesNewRoute
 }
@@ -303,6 +337,7 @@ export interface FileRoutesById {
   '/events': typeof EventsRoute
   '/feed': typeof FeedRoute
   '/feedback': typeof FeedbackRoute
+  '/institution-admin': typeof InstitutionAdminRouteWithChildren
   '/leaderboards': typeof LeaderboardsRoute
   '/notifications': typeof NotificationsRoute
   '/opportunities': typeof OpportunitiesRoute
@@ -321,6 +356,9 @@ export interface FileRoutesById {
   '/updates': typeof UpdatesRoute
   '/waitlist': typeof WaitlistRoute
   '/admin/config': typeof AdminConfigRoute
+  '/institution-admin/analytics': typeof InstitutionAdminAnalyticsRoute
+  '/institution-admin/communications': typeof InstitutionAdminCommunicationsRoute
+  '/institution-admin/members': typeof InstitutionAdminMembersRoute
   '/u/$handle': typeof UHandleRoute
   '/admin/campuses/new': typeof AdminCampusesNewRoute
 }
@@ -341,6 +379,7 @@ export interface FileRouteTypes {
     | '/events'
     | '/feed'
     | '/feedback'
+    | '/institution-admin'
     | '/leaderboards'
     | '/notifications'
     | '/opportunities'
@@ -359,6 +398,9 @@ export interface FileRouteTypes {
     | '/updates'
     | '/waitlist'
     | '/admin/config'
+    | '/institution-admin/analytics'
+    | '/institution-admin/communications'
+    | '/institution-admin/members'
     | '/u/$handle'
     | '/admin/campuses/new'
   fileRoutesByTo: FileRoutesByTo
@@ -377,6 +419,7 @@ export interface FileRouteTypes {
     | '/events'
     | '/feed'
     | '/feedback'
+    | '/institution-admin'
     | '/leaderboards'
     | '/notifications'
     | '/opportunities'
@@ -395,6 +438,9 @@ export interface FileRouteTypes {
     | '/updates'
     | '/waitlist'
     | '/admin/config'
+    | '/institution-admin/analytics'
+    | '/institution-admin/communications'
+    | '/institution-admin/members'
     | '/u/$handle'
     | '/admin/campuses/new'
   id:
@@ -413,6 +459,7 @@ export interface FileRouteTypes {
     | '/events'
     | '/feed'
     | '/feedback'
+    | '/institution-admin'
     | '/leaderboards'
     | '/notifications'
     | '/opportunities'
@@ -431,6 +478,9 @@ export interface FileRouteTypes {
     | '/updates'
     | '/waitlist'
     | '/admin/config'
+    | '/institution-admin/analytics'
+    | '/institution-admin/communications'
+    | '/institution-admin/members'
     | '/u/$handle'
     | '/admin/campuses/new'
   fileRoutesById: FileRoutesById
@@ -450,6 +500,7 @@ export interface RootRouteChildren {
   EventsRoute: typeof EventsRoute
   FeedRoute: typeof FeedRoute
   FeedbackRoute: typeof FeedbackRoute
+  InstitutionAdminRoute: typeof InstitutionAdminRouteWithChildren
   LeaderboardsRoute: typeof LeaderboardsRoute
   NotificationsRoute: typeof NotificationsRoute
   OpportunitiesRoute: typeof OpportunitiesRoute
@@ -591,6 +642,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LeaderboardsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/institution-admin': {
+      id: '/institution-admin'
+      path: '/institution-admin'
+      fullPath: '/institution-admin'
+      preLoaderRoute: typeof InstitutionAdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/feedback': {
       id: '/feedback'
       path: '/feedback'
@@ -696,6 +754,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UHandleRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/institution-admin/members': {
+      id: '/institution-admin/members'
+      path: '/members'
+      fullPath: '/institution-admin/members'
+      preLoaderRoute: typeof InstitutionAdminMembersRouteImport
+      parentRoute: typeof InstitutionAdminRoute
+    }
+    '/institution-admin/communications': {
+      id: '/institution-admin/communications'
+      path: '/communications'
+      fullPath: '/institution-admin/communications'
+      preLoaderRoute: typeof InstitutionAdminCommunicationsRouteImport
+      parentRoute: typeof InstitutionAdminRoute
+    }
+    '/institution-admin/analytics': {
+      id: '/institution-admin/analytics'
+      path: '/analytics'
+      fullPath: '/institution-admin/analytics'
+      preLoaderRoute: typeof InstitutionAdminAnalyticsRouteImport
+      parentRoute: typeof InstitutionAdminRoute
+    }
     '/admin/config': {
       id: '/admin/config'
       path: '/config'
@@ -725,6 +804,21 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface InstitutionAdminRouteChildren {
+  InstitutionAdminAnalyticsRoute: typeof InstitutionAdminAnalyticsRoute
+  InstitutionAdminCommunicationsRoute: typeof InstitutionAdminCommunicationsRoute
+  InstitutionAdminMembersRoute: typeof InstitutionAdminMembersRoute
+}
+
+const InstitutionAdminRouteChildren: InstitutionAdminRouteChildren = {
+  InstitutionAdminAnalyticsRoute: InstitutionAdminAnalyticsRoute,
+  InstitutionAdminCommunicationsRoute: InstitutionAdminCommunicationsRoute,
+  InstitutionAdminMembersRoute: InstitutionAdminMembersRoute,
+}
+
+const InstitutionAdminRouteWithChildren =
+  InstitutionAdminRoute._addFileChildren(InstitutionAdminRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
@@ -740,6 +834,7 @@ const rootRouteChildren: RootRouteChildren = {
   EventsRoute: EventsRoute,
   FeedRoute: FeedRoute,
   FeedbackRoute: FeedbackRoute,
+  InstitutionAdminRoute: InstitutionAdminRouteWithChildren,
   LeaderboardsRoute: LeaderboardsRoute,
   NotificationsRoute: NotificationsRoute,
   OpportunitiesRoute: OpportunitiesRoute,

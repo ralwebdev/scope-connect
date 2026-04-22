@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Brain, Building2, Users, TrendingUp, MapPin, IndianRupee, Sliders, ShieldCheck, Sparkles, Trophy, AlertTriangle, CheckCircle2, XCircle, Plus, ArrowUpRight, Activity, Flame } from "lucide-react";
 import { AppShell } from "@/components/site/AppShell";
+import { RbacSidebar } from "@/components/site/RbacSidebar";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -58,7 +59,8 @@ function SuperAdminPortal() {
 
   return (
     <AppShell>
-      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+      <RbacSidebar title="Command Center">
+      <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
         <header>
           <Badge variant="outline" className="mb-2"><Brain className="mr-1 h-3 w-3" /> Super Admin · National HQ</Badge>
           <h1 className="text-3xl font-bold tracking-tight">Command Center</h1>
@@ -95,6 +97,7 @@ function SuperAdminPortal() {
           <TabsContent value="intel" className="mt-6"><StrategicIntel data={data} /></TabsContent>
         </Tabs>
       </section>
+      </RbacSidebar>
     </AppShell>
   );
 }
