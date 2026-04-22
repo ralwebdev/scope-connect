@@ -42,6 +42,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UHandleRouteImport } from './routes/u.$handle'
+import { Route as ScopeSuperAdminRbacAuditRouteImport } from './routes/scope-super-admin.rbac-audit'
 import { Route as InstitutionAdminMembersRouteImport } from './routes/institution-admin.members'
 import { Route as InstitutionAdminCommunicationsRouteImport } from './routes/institution-admin.communications'
 import { Route as InstitutionAdminAnalyticsRouteImport } from './routes/institution-admin.analytics'
@@ -213,6 +214,12 @@ const UHandleRoute = UHandleRouteImport.update({
   path: '/u/$handle',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ScopeSuperAdminRbacAuditRoute =
+  ScopeSuperAdminRbacAuditRouteImport.update({
+    id: '/rbac-audit',
+    path: '/rbac-audit',
+    getParentRoute: () => ScopeSuperAdminRoute,
+  } as any)
 const InstitutionAdminMembersRoute = InstitutionAdminMembersRouteImport.update({
   id: '/members',
   path: '/members',
@@ -267,7 +274,7 @@ export interface FileRoutesByFullPath {
   '/projects': typeof ProjectsRoute
   '/refer': typeof ReferRoute
   '/scope-admin': typeof ScopeAdminRoute
-  '/scope-super-admin': typeof ScopeSuperAdminRoute
+  '/scope-super-admin': typeof ScopeSuperAdminRouteWithChildren
   '/settings': typeof SettingsRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
@@ -278,6 +285,7 @@ export interface FileRoutesByFullPath {
   '/institution-admin/analytics': typeof InstitutionAdminAnalyticsRoute
   '/institution-admin/communications': typeof InstitutionAdminCommunicationsRoute
   '/institution-admin/members': typeof InstitutionAdminMembersRoute
+  '/scope-super-admin/rbac-audit': typeof ScopeSuperAdminRbacAuditRoute
   '/u/$handle': typeof UHandleRoute
   '/admin/campuses/new': typeof AdminCampusesNewRoute
 }
@@ -307,7 +315,7 @@ export interface FileRoutesByTo {
   '/projects': typeof ProjectsRoute
   '/refer': typeof ReferRoute
   '/scope-admin': typeof ScopeAdminRoute
-  '/scope-super-admin': typeof ScopeSuperAdminRoute
+  '/scope-super-admin': typeof ScopeSuperAdminRouteWithChildren
   '/settings': typeof SettingsRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
@@ -318,6 +326,7 @@ export interface FileRoutesByTo {
   '/institution-admin/analytics': typeof InstitutionAdminAnalyticsRoute
   '/institution-admin/communications': typeof InstitutionAdminCommunicationsRoute
   '/institution-admin/members': typeof InstitutionAdminMembersRoute
+  '/scope-super-admin/rbac-audit': typeof ScopeSuperAdminRbacAuditRoute
   '/u/$handle': typeof UHandleRoute
   '/admin/campuses/new': typeof AdminCampusesNewRoute
 }
@@ -348,7 +357,7 @@ export interface FileRoutesById {
   '/projects': typeof ProjectsRoute
   '/refer': typeof ReferRoute
   '/scope-admin': typeof ScopeAdminRoute
-  '/scope-super-admin': typeof ScopeSuperAdminRoute
+  '/scope-super-admin': typeof ScopeSuperAdminRouteWithChildren
   '/settings': typeof SettingsRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
@@ -359,6 +368,7 @@ export interface FileRoutesById {
   '/institution-admin/analytics': typeof InstitutionAdminAnalyticsRoute
   '/institution-admin/communications': typeof InstitutionAdminCommunicationsRoute
   '/institution-admin/members': typeof InstitutionAdminMembersRoute
+  '/scope-super-admin/rbac-audit': typeof ScopeSuperAdminRbacAuditRoute
   '/u/$handle': typeof UHandleRoute
   '/admin/campuses/new': typeof AdminCampusesNewRoute
 }
@@ -401,6 +411,7 @@ export interface FileRouteTypes {
     | '/institution-admin/analytics'
     | '/institution-admin/communications'
     | '/institution-admin/members'
+    | '/scope-super-admin/rbac-audit'
     | '/u/$handle'
     | '/admin/campuses/new'
   fileRoutesByTo: FileRoutesByTo
@@ -441,6 +452,7 @@ export interface FileRouteTypes {
     | '/institution-admin/analytics'
     | '/institution-admin/communications'
     | '/institution-admin/members'
+    | '/scope-super-admin/rbac-audit'
     | '/u/$handle'
     | '/admin/campuses/new'
   id:
@@ -481,6 +493,7 @@ export interface FileRouteTypes {
     | '/institution-admin/analytics'
     | '/institution-admin/communications'
     | '/institution-admin/members'
+    | '/scope-super-admin/rbac-audit'
     | '/u/$handle'
     | '/admin/campuses/new'
   fileRoutesById: FileRoutesById
@@ -511,7 +524,7 @@ export interface RootRouteChildren {
   ProjectsRoute: typeof ProjectsRoute
   ReferRoute: typeof ReferRoute
   ScopeAdminRoute: typeof ScopeAdminRoute
-  ScopeSuperAdminRoute: typeof ScopeSuperAdminRoute
+  ScopeSuperAdminRoute: typeof ScopeSuperAdminRouteWithChildren
   SettingsRoute: typeof SettingsRoute
   SupportRoute: typeof SupportRoute
   TermsRoute: typeof TermsRoute
@@ -754,6 +767,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UHandleRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/scope-super-admin/rbac-audit': {
+      id: '/scope-super-admin/rbac-audit'
+      path: '/rbac-audit'
+      fullPath: '/scope-super-admin/rbac-audit'
+      preLoaderRoute: typeof ScopeSuperAdminRbacAuditRouteImport
+      parentRoute: typeof ScopeSuperAdminRoute
+    }
     '/institution-admin/members': {
       id: '/institution-admin/members'
       path: '/members'
@@ -819,6 +839,18 @@ const InstitutionAdminRouteChildren: InstitutionAdminRouteChildren = {
 const InstitutionAdminRouteWithChildren =
   InstitutionAdminRoute._addFileChildren(InstitutionAdminRouteChildren)
 
+interface ScopeSuperAdminRouteChildren {
+  ScopeSuperAdminRbacAuditRoute: typeof ScopeSuperAdminRbacAuditRoute
+}
+
+const ScopeSuperAdminRouteChildren: ScopeSuperAdminRouteChildren = {
+  ScopeSuperAdminRbacAuditRoute: ScopeSuperAdminRbacAuditRoute,
+}
+
+const ScopeSuperAdminRouteWithChildren = ScopeSuperAdminRoute._addFileChildren(
+  ScopeSuperAdminRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
@@ -845,7 +877,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProjectsRoute: ProjectsRoute,
   ReferRoute: ReferRoute,
   ScopeAdminRoute: ScopeAdminRoute,
-  ScopeSuperAdminRoute: ScopeSuperAdminRoute,
+  ScopeSuperAdminRoute: ScopeSuperAdminRouteWithChildren,
   SettingsRoute: SettingsRoute,
   SupportRoute: SupportRoute,
   TermsRoute: TermsRoute,
