@@ -11,6 +11,7 @@ import { useUser, useXP, useLevel, useLevelProgress, useStreak, useProfileStreng
 import { feed, events, memberLeaderboard, applications, curated, portfolio } from "@/lib/scope-store";
 import { RetentionLayer } from "@/components/site/RetentionLayer";
 import { PortfolioSpotlight } from "@/components/site/PortfolioSpotlight";
+import { CredibilityPanel } from "@/components/site/CredibilityPanel";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({

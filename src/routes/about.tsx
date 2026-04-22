@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ShieldCheck, Sparkles, Users, Rocket, Flag, ArrowRight, Lock, BadgeCheck } from "lucide-react";
 import { AppShell } from "@/components/site/AppShell";
+import { TrustFAQ } from "@/components/site/TrustFAQ";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -137,6 +138,8 @@ function AboutPage() {
           </Card>
         </div>
       </section>
+
+      <TrustFAQ />
     </AppShell>
   );
 }
