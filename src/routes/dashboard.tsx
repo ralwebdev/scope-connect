@@ -262,3 +262,70 @@ function DashboardPage() {
     </AppShell>
   );
 }
+
+/* --------------------------- Activation Checklist --------------------------- */
+
+function ActivationChecklist({
+  hasProfile,
+  hasApplied,
+  hasJoinedCampus,
+  hasPortfolio,
+}: {
+  hasProfile: boolean;
+  hasApplied: boolean;
+  hasJoinedCampus: boolean;
+  hasPortfolio: boolean;
+}) {
+  const steps = [
+    { done: hasJoinedCampus, label: "Joined your campus", xp: "+30 XP", to: "/campus" as const, cta: "Open campus" },
+    { done: hasProfile, label: "Complete your profile", xp: "+40 XP", to: "/profile" as const, cta: "Edit profile" },
+    { done: hasApplied, label: "Apply to your first challenge", xp: "+50 XP", to: "/projects" as const, cta: "Browse challenges" },
+    { done: hasPortfolio, label: "Add your first portfolio link", xp: "+30 XP", to: "/portfolio" as const, cta: "Add portfolio" },
+  ];
+  const doneCount = steps.filter((s) => s.done).length;
+  const allDone = doneCount === steps.length;
+  if (allDone) return null;
+
+  // Find the next undone step → priority CTA
+  const next = steps.find((s) => !s.done);
+  const pct = Math.round((doneCount / steps.length) * 100);
+
+  return (
+    <section className="border-b border-border/40 bg-secondary/30 py-6">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-wrap items-center gap-3">
+          <Sparkles className="h-4 w-4 text-cyan" />
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-foreground">Get started · {doneCount}/{steps.length}</h2>
+          <div className="ml-auto text-xs text-muted-foreground">{pct}% activated</div>
+        </div>
+        <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-secondary">
+          <div className="h-full bg-gradient-brand transition-all duration-500" style={{ width: `${pct}%` }} />
+        </div>
+        <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+          {steps.map((s) => (
+            <Link
+              key={s.label}
+              to={s.to}
+              className={`flex items-center gap-2 rounded-lg border p-2.5 text-xs transition-all ${
+                s.done
+                  ? "border-border bg-background text-muted-foreground"
+                  : s === next
+                    ? "border-brand/40 bg-brand/5 text-foreground hover:shadow-brand"
+                    : "border-border bg-background text-foreground hover:border-brand/40"
+              }`}
+            >
+              <div className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${s.done ? "bg-cyan/15 text-cyan" : "border border-border bg-background text-muted-foreground"}`}>
+                {s.done ? "✓" : ""}
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className={`truncate font-medium ${s.done ? "line-through" : ""}`}>{s.label}</div>
+                <div className="text-[10px] text-muted-foreground">{s.xp}</div>
+              </div>
+              {!s.done && <ArrowRight className="h-3 w-3 shrink-0" />}
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
