@@ -29,8 +29,11 @@ function DashboardPage() {
   const strength = useProfileStrength();
   const recentFeed = useStoreValue(() => feed.all().slice(0, 4));
   const upcoming = useStoreValue(() => events.all().slice(0, 3));
-  const opps = useStoreValue(() => opportunities.all().slice(0, 3));
   const board = useStoreValue(() => memberLeaderboard());
+  const myApplications = useStoreValue(() => (user ? applications.forUser(user.id) : []));
+  const recommended = useStoreValue(() => curated.scopeChallenges().slice(0, 3));
+  const portfolioStrength = useStoreValue(() => (user ? portfolio.strength(user.id) : 0));
+  const portfolioCount = useStoreValue(() => (user ? portfolio.forUser(user.id).length : 0));
 
   if (!user) return null;
   const myRank = board.findIndex((r) => r.isMe) + 1;
