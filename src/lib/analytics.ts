@@ -3,6 +3,7 @@
 
 export type AnalyticsEvent =
   | "signup_completed"
+  | "signup_started"
   | "login_success"
   | "project_view"
   | "project_apply"
@@ -11,7 +12,12 @@ export type AnalyticsEvent =
   | "feed_post_created"
   | "notification_opened"
   | "session_start"
-  | "route_visit";
+  | "route_visit"
+  | "homepage_visit"
+  | "cta_click_primary"
+  | "cta_click_secondary"
+  | "first_action_completed"
+  | "waitlist_joined";
 
 type Counters = Record<string, number>;
 type DayMap = Record<string, number>; // YYYY-MM-DD -> count
