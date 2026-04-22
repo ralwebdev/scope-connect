@@ -263,9 +263,17 @@ function AuthPage() {
           <Card className="mt-6 border-dashed bg-secondary/40 p-4">
             <div className="flex items-start gap-3">
               <Badge className="bg-cyan/15 text-cyan-foreground">Demo</Badge>
-              <p className="text-xs text-muted-foreground">
-                Frontend MVP — any valid-looking email works. Your session and progress are saved in this browser.
-              </p>
+              <div className="space-y-2 text-xs text-muted-foreground">
+                <p>One login, one identity — your role and workspace are resolved automatically.</p>
+                <div className="grid grid-cols-1 gap-1 sm:grid-cols-2">
+                  <span><span className="font-mono text-foreground">founder@scope.in</span> → Super Admin</span>
+                  <span><span className="font-mono text-foreground">scope-admin@…</span> → Scope Admin</span>
+                  <span><span className="font-mono text-foreground">institution-admin@…</span> → Institution</span>
+                  <span><span className="font-mono text-foreground">leader@…</span> → Campus Leader</span>
+                  <span><span className="font-mono text-foreground">faculty@…</span> → Faculty</span>
+                  <span><span className="font-mono text-foreground">you@campus.edu</span> → Student</span>
+                </div>
+              </div>
             </div>
           </Card>
         </div>
