@@ -6,6 +6,7 @@ import { useMemo, useState } from "react";
 import { Building2, Users, BarChart3, Megaphone, CheckCircle2, XCircle, TrendingUp, Award, Calendar, FolderKanban, Send, ImageIcon, Sparkles } from "lucide-react";
 import { AppShell } from "@/components/site/AppShell";
 import { RbacSidebar } from "@/components/site/RbacSidebar";
+import { AccessDenied } from "@/components/site/AccessDenied";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -45,11 +46,13 @@ function InstitutionAdminPortal() {
   if (!allowed) {
     return (
       <AppShell>
-        <section className="mx-auto max-w-md px-4 py-24 text-center">
-          <h1 className="text-2xl font-bold">Restricted</h1>
-          <p className="mt-2 text-sm text-muted-foreground">Institutional Admin access required.</p>
-          <Button asChild className="mt-6"><Link to="/dashboard">Back</Link></Button>
-        </section>
+        <AccessDenied
+          role={role}
+          required="manage_institution"
+          title="Institution Hub restricted"
+          message="Only Institutional Admins (and higher) can access this institution's hub."
+          toastMessage="Institutional Admin access required."
+        />
       </AppShell>
     );
   }
