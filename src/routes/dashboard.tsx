@@ -10,6 +10,7 @@ import { CountUp } from "@/components/site/Effects";
 import { useUser, useXP, useLevel, useLevelProgress, useStreak, useProfileStrength, useStoreValue } from "@/hooks/use-scope";
 import { feed, events, memberLeaderboard, applications, curated, portfolio } from "@/lib/scope-store";
 import { RetentionLayer } from "@/components/site/RetentionLayer";
+import { PortfolioSpotlight } from "@/components/site/PortfolioSpotlight";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -236,6 +237,8 @@ function DashboardPage() {
             ))}
           </div>
         </div>
+
+        <PortfolioSpotlight />
 
         <div className="mt-8 grid gap-6 lg:grid-cols-3">
           <Card className="p-6 hover-lift">

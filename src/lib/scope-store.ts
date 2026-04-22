@@ -88,6 +88,10 @@ export type Notification = {
   at: number;
   read: boolean;
   icon: "trophy" | "spark" | "zap" | "users" | "heart";
+  /** Optional dedup key — if present, push() will skip if any existing
+   *  notification (or registry entry) has the same key. Used for one-time
+   *  events (welcome bonus, level-up, first portfolio, etc). */
+  dedupKey?: string;
 };
 
 /* --------------------------- LS helpers --------------------------- */
@@ -116,7 +120,16 @@ const KEYS = {
   rankSnapshot: "scope_rank_snapshot",
   lastVisitAt: "scope_last_visit_at",
   nudgeSnoozedUntil: "scope_nudge_snoozed_until",
+  // Persistent registry of one-time notification dedup hashes — survives
+  // notification list trimming so a refresh never replays a one-shot alert.
+  notifDedupRegistry: "scope_notif_dedup_v1",
+  // Tracks the highest level a level-up alert has been issued for.
+  highestLevelSeen: "scope_highest_level_seen",
+  // Schema version — bump to invalidate incompatible persisted state.
+  schemaVersion: "scope_schema_version",
 } as const;
+
+const SCHEMA_VERSION = 2;
 
 const isBrowser = typeof window !== "undefined";
 
@@ -205,8 +218,8 @@ export const auth = {
     write(KEYS.streak, 1);
     write(KEYS.streakDate, todayStamp());
     write(KEYS.visits, 1);
-    notifications.push({ icon: "spark", text: "Welcome to Scope Connect! +120 XP signup bonus." });
-    notifications.push({ icon: "trophy", text: "You're ranked #142 nationally. Climb today." });
+    notifications.push({ icon: "spark", text: "Welcome to Scope Connect! +120 XP signup bonus.", dedupKey: `welcome_bonus:${user.id}` });
+    notifications.push({ icon: "trophy", text: "You're ranked #142 nationally. Climb today.", dedupKey: `welcome_rank:${user.id}` });
     return user;
   },
   login(email: string) {
@@ -267,9 +280,22 @@ export const xp = {
     return read<number>(KEYS.points, 0);
   },
   add(amount: number, reason?: string) {
+    const prevLevel = xp.level().name;
     const next = xp.get() + amount;
     write(KEYS.points, next);
     if (reason) notifications.push({ icon: "zap", text: `${reason} · +${amount} XP` });
+    // Level-up alert — fired exactly once per tier per user via dedup registry.
+    const newLevel = xp.level().name;
+    if (newLevel !== prevLevel) {
+      const u = auth.getUser();
+      const uid = u?.id ?? "anon";
+      notifications.push({
+        icon: "trophy",
+        text: `🎉 Level up! You're now ${newLevel}-tier.`,
+        dedupKey: `level_up:${uid}:${newLevel}`,
+      });
+      write(KEYS.highestLevelSeen, newLevel);
+    }
     return next;
   },
   level(): { name: string; min: number; max: number; next: string } {
@@ -337,7 +363,20 @@ export const notifications = {
   unread(): number {
     return notifications.all().filter((n) => !n.read).length;
   },
+  /** Has a one-time notification with this dedup key ever been pushed? */
+  hasDedup(dedupKey: string): boolean {
+    const reg = read<Record<string, number>>(KEYS.notifDedupRegistry, {});
+    return !!reg[dedupKey];
+  },
   push(n: Omit<Notification, "id" | "at" | "read">) {
+    // Dedup guard: skip if this one-time alert has already fired (registry
+    // survives even if the notification was trimmed/cleared from the list).
+    if (n.dedupKey) {
+      const reg = read<Record<string, number>>(KEYS.notifDedupRegistry, {});
+      if (reg[n.dedupKey]) return;
+      reg[n.dedupKey] = Date.now();
+      write(KEYS.notifDedupRegistry, reg);
+    }
     const list = notifications.all();
     const next: Notification = { ...n, id: `n_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`, at: Date.now(), read: false };
     write(KEYS.notifications, [next, ...list].slice(0, 30));
@@ -550,7 +589,8 @@ export const chapter = {
   join(name: string) {
     write(KEYS.joinedChapter, name);
     xp.add(40, `Joined ${name}`);
-    notifications.push({ icon: "users", text: `Welcome to ${name}. Say hi to your chapter.` });
+    const u = auth.getUser();
+    notifications.push({ icon: "users", text: `Welcome to ${name}. Say hi to your chapter.`, dedupKey: `chapter_joined:${u?.id ?? "anon"}:${name}` });
   },
 };
 
@@ -790,9 +830,13 @@ export const applications = {
       fit: input.fit, topSkill: input.topSkill, availability: input.availability,
       status: "Under Review", at: Date.now(),
     };
+    const isFirst = applications.forUser(u.id).length === 0; // before insert
     write(KEYS.applications, [app, ...applications.all()]);
     xp.add(20, "Application sent");
     notifications.push({ icon: "spark", text: `Application received for "${project?.title ?? "project"}". Review within 48h.` });
+    if (isFirst) {
+      notifications.push({ icon: "trophy", text: "🎯 First application sent — your builder journey is live.", dedupKey: `first_application:${u.id}` });
+    }
     return app;
   },
 };
@@ -813,10 +857,14 @@ export const portfolio = {
   create(input: Omit<PortfolioItem, "id" | "userId" | "createdAt">) {
     const u = auth.getUser();
     if (!u) return null;
+    const isFirst = portfolio.forUser(u.id).length === 0;
     const item: PortfolioItem = { ...input, id: `pf_${Date.now()}`, userId: u.id, createdAt: Date.now() };
     write(KEYS.portfolio, [item, ...portfolio.all()]);
     xp.add(30, "Portfolio item added");
     notifications.push({ icon: "trophy", text: `"${item.title}" added to your portfolio.` });
+    if (isFirst) {
+      notifications.push({ icon: "spark", text: "🌟 First portfolio item — proof of work activated.", dedupKey: `first_portfolio:${u.id}` });
+    }
     return item;
   },
   update(id: string, patch: Partial<Omit<PortfolioItem, "id" | "userId" | "createdAt">>) {
@@ -946,4 +994,46 @@ export const retention = {
     snoozed[id] = Date.now() + hours * 3600000;
     write(KEYS.nudgeSnoozedUntil, snoozed);
   },
+};
+
+/* ===================================================================== */
+/* HYDRATION — schema versioning + safe boot recovery                     */
+/* ===================================================================== */
+
+export type HydrationStatus = "idle" | "hydrating" | "ready" | "recovered";
+
+const MICROCOPY = {
+  hydrating: "Restoring your workspace...",
+  ready: "Sync complete.",
+  recovered: "We restored a fresh copy of your data.",
+};
+
+export const hydration = {
+  /** Run once on app boot. Validates schema version, repairs missing keys,
+   *  and returns whether any slice was recovered. Never throws. */
+  boot(): { status: HydrationStatus; recoveredKeys: string[] } {
+    if (!isBrowser) return { status: "ready", recoveredKeys: [] };
+    const recovered: string[] = [];
+    try {
+      const stored = Number(localStorage.getItem(KEYS.schemaVersion) ?? "0");
+      if (stored && stored < SCHEMA_VERSION) {
+        // Future migration hook — for now, only reset notification list
+        // (dedup registry survives so one-shot alerts don't replay).
+        try { localStorage.removeItem(KEYS.notifications); recovered.push(KEYS.notifications); } catch { /* noop */ }
+      }
+      // Validate every persisted JSON key — corrupt slices get reset
+      // independently so one bad key never breaks the whole app.
+      for (const k of Object.values(KEYS)) {
+        const raw = localStorage.getItem(k);
+        if (!raw) continue;
+        try { JSON.parse(raw); } catch {
+          try { localStorage.removeItem(k); } catch { /* noop */ }
+          recovered.push(k);
+        }
+      }
+      localStorage.setItem(KEYS.schemaVersion, String(SCHEMA_VERSION));
+    } catch { /* noop — hydration must never throw */ }
+    return { status: recovered.length > 0 ? "recovered" : "ready", recoveredKeys: recovered };
+  },
+  microcopy: MICROCOPY,
 };

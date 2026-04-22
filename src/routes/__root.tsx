@@ -1,7 +1,9 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import { analytics } from "@/lib/analytics";
+import { hydration } from "@/lib/scope-store";
 import { useRouteAnalytics } from "@/hooks/use-route-analytics";
 import { useRageClickDetector } from "@/hooks/use-rage-click";
 import { FeedbackWidget } from "@/components/site/FeedbackWidget";
@@ -77,6 +79,13 @@ function RootComponent() {
       const dark = t === "dark" || (t === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
       document.documentElement.classList.toggle("dark", dark);
     } catch { /* noop */ }
+    // Boot hydration: validates schema, repairs corrupt slices, never throws.
+    const result = hydration.boot();
+    if (result.status === "recovered" && result.recoveredKeys.length > 0) {
+      toast(hydration.microcopy.recovered, {
+        description: `${result.recoveredKeys.length} slice${result.recoveredKeys.length === 1 ? "" : "s"} repaired.`,
+      });
+    }
     // Soft-launch instrumentation: anonymous tester id + invite-source capture.
     analytics.init();
     // One session_start per app load (frontend-only analytics).
