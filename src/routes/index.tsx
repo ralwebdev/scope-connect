@@ -448,3 +448,91 @@ function FinalCTA() {
     </section>
   );
 }
+
+/* --------------------------- What Is Scope Connect --------------------------- */
+
+const PILLARS = [
+  { icon: Hammer, title: "Build", copy: "Work on real curated projects from day one.", color: "brand" as const },
+  { icon: TrendingUp, title: "Grow", copy: "Earn XP, rank up, strengthen your portfolio.", color: "cyan" as const },
+  { icon: Crown, title: "Lead", copy: "Represent and grow your campus chapter.", color: "brand" as const },
+  { icon: Compass, title: "Connect", copy: "Collaborate with India's most ambitious students.", color: "cyan" as const },
+];
+
+function WhatIsScope() {
+  return (
+    <section className="border-t border-border/40 py-16 sm:py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-2xl text-center">
+          <Badge className="mb-3 bg-brand/10 text-brand">In 10 seconds</Badge>
+          <h2 className="text-balance text-3xl font-bold tracking-tight text-foreground sm:text-4xl">What is Scope Connect?</h2>
+          <p className="mt-3 text-base text-muted-foreground">India's curated network for student builders. Four things, done well.</p>
+        </div>
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {PILLARS.map((p) => (
+            <Card key={p.title} className="p-6 transition-all hover:-translate-y-1 hover:shadow-elegant">
+              <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${p.color === "brand" ? "bg-gradient-brand text-brand-foreground shadow-brand" : "bg-cyan/15 text-cyan"}`}>
+                <p.icon className="h-5 w-5" />
+              </div>
+              <h3 className="mt-4 text-lg font-semibold text-foreground">{p.title}</h3>
+              <p className="mt-1.5 text-sm text-muted-foreground">{p.copy}</p>
+            </Card>
+          ))}
+        </div>
+        <div className="mx-auto mt-10 flex max-w-2xl flex-wrap items-center justify-center gap-3 rounded-xl border border-border bg-secondary/30 p-4 text-xs text-muted-foreground">
+          <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-brand" /> No spam, no fake listings</span>
+          <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-brand" /> Every challenge curated by Scope</span>
+          <span className="inline-flex items-center gap-1.5"><Lock className="h-3.5 w-3.5 text-brand" /> Your ideas remain private</span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* --------------------------- Exit Capture --------------------------- */
+
+function ExitCapture() {
+  const isLoggedIn = useIsLoggedIn();
+  if (isLoggedIn) return null;
+  return (
+    <section className="bg-secondary/40 py-16">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+        <Card className="p-8 text-center">
+          <Badge variant="outline" className="mb-3">Not ready yet?</Badge>
+          <h3 className="text-2xl font-bold text-foreground">Stay in the loop</h3>
+          <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">
+            Join the waitlist for launch updates, browse projects in read-only mode, or refer your campus.
+          </p>
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
+            <Button asChild size="sm" className="bg-gradient-brand text-brand-foreground" onClick={() => analytics.track("waitlist_joined")}>
+              <Link to="/waitlist">Join waitlist</Link>
+            </Button>
+            <Button asChild size="sm" variant="outline">
+              <Link to="/projects">Browse projects</Link>
+            </Button>
+            <Button asChild size="sm" variant="outline">
+              <Link to="/refer">Refer your campus</Link>
+            </Button>
+          </div>
+        </Card>
+      </div>
+    </section>
+  );
+}
+
+/* --------------------------- Sticky Mobile CTA --------------------------- */
+
+function StickyMobileCTA() {
+  return (
+    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 p-3 shadow-lg backdrop-blur sm:hidden">
+      <div className="flex items-center gap-2">
+        <div className="flex-1 text-xs">
+          <div className="font-semibold text-foreground">Your next move starts here.</div>
+          <div className="text-muted-foreground">Takes under 60 seconds.</div>
+        </div>
+        <Button asChild size="sm" className="bg-gradient-brand text-brand-foreground shadow-brand" onClick={() => analytics.track("cta_click_primary")}>
+          <Link to="/auth">Join now <ArrowRight className="ml-1 h-3 w-3" /></Link>
+        </Button>
+      </div>
+    </div>
+  );
+}
