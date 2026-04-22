@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { AppShell } from "@/components/site/AppShell";
 import { AuthGate } from "@/components/site/AuthGate";
+import { FeatureGate } from "@/components/site/FeatureGate";
 import { useStoreValue, useUser } from "@/hooks/use-scope";
 import { portfolio, type PortfolioItem } from "@/lib/scope-store";
 import { analytics } from "@/lib/analytics";
@@ -22,7 +23,11 @@ export const Route = createFileRoute("/portfolio")({
       { name: "description", content: "Showcase your projects, designs, research and achievements." },
     ],
   }),
-  component: () => <AuthGate><PortfolioPage /></AuthGate>,
+  component: () => (
+    <FeatureGate flag="portfolio">
+      <AuthGate><PortfolioPage /></AuthGate>
+    </FeatureGate>
+  ),
 });
 
 const TYPES: PortfolioItem["type"][] = ["Project", "Design", "Research", "Startup Idea", "Campaign", "Certificate"];

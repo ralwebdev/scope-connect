@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { AppShell } from "@/components/site/AppShell";
 import { useStoreValue, useIsLoggedIn } from "@/hooks/use-scope";
 import { events } from "@/lib/scope-store";
+import { FeatureGate } from "@/components/site/FeatureGate";
 import { analytics } from "@/lib/analytics";
 import { toast } from "sonner";
 
@@ -16,7 +17,7 @@ export const Route = createFileRoute("/events")({
       { name: "description", content: "Hackathons, sprints, pitch battles & founder meetups across India." },
     ],
   }),
-  component: EventsPage,
+  component: () => <FeatureGate flag="events"><EventsPage /></FeatureGate>,
 });
 
 function fmtCountdown(ms: number) {

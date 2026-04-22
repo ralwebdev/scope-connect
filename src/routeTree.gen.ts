@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WaitlistRouteImport } from './routes/waitlist'
 import { Route as UpdatesRouteImport } from './routes/updates'
+import { Route as UnauthorizedRouteImport } from './routes/unauthorized'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as SettingsRouteImport } from './routes/settings'
@@ -38,6 +39,8 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UHandleRouteImport } from './routes/u.$handle'
+import { Route as AdminConfigRouteImport } from './routes/admin.config'
+import { Route as AdminCampusesNewRouteImport } from './routes/admin.campuses.new'
 
 const WaitlistRoute = WaitlistRouteImport.update({
   id: '/waitlist',
@@ -47,6 +50,11 @@ const WaitlistRoute = WaitlistRouteImport.update({
 const UpdatesRoute = UpdatesRouteImport.update({
   id: '/updates',
   path: '/updates',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UnauthorizedRoute = UnauthorizedRouteImport.update({
+  id: '/unauthorized',
+  path: '/unauthorized',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TermsRoute = TermsRouteImport.update({
@@ -184,11 +192,21 @@ const UHandleRoute = UHandleRouteImport.update({
   path: '/u/$handle',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminConfigRoute = AdminConfigRouteImport.update({
+  id: '/config',
+  path: '/config',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCampusesNewRoute = AdminCampusesNewRouteImport.update({
+  id: '/campuses/new',
+  path: '/campuses/new',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/ambassador': typeof AmbassadorRoute
   '/announcements': typeof AnnouncementsRoute
   '/auth': typeof AuthRoute
@@ -212,14 +230,17 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
+  '/unauthorized': typeof UnauthorizedRoute
   '/updates': typeof UpdatesRoute
   '/waitlist': typeof WaitlistRoute
+  '/admin/config': typeof AdminConfigRoute
   '/u/$handle': typeof UHandleRoute
+  '/admin/campuses/new': typeof AdminCampusesNewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/ambassador': typeof AmbassadorRoute
   '/announcements': typeof AnnouncementsRoute
   '/auth': typeof AuthRoute
@@ -243,15 +264,18 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
+  '/unauthorized': typeof UnauthorizedRoute
   '/updates': typeof UpdatesRoute
   '/waitlist': typeof WaitlistRoute
+  '/admin/config': typeof AdminConfigRoute
   '/u/$handle': typeof UHandleRoute
+  '/admin/campuses/new': typeof AdminCampusesNewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/ambassador': typeof AmbassadorRoute
   '/announcements': typeof AnnouncementsRoute
   '/auth': typeof AuthRoute
@@ -275,9 +299,12 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
+  '/unauthorized': typeof UnauthorizedRoute
   '/updates': typeof UpdatesRoute
   '/waitlist': typeof WaitlistRoute
+  '/admin/config': typeof AdminConfigRoute
   '/u/$handle': typeof UHandleRoute
+  '/admin/campuses/new': typeof AdminCampusesNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -308,9 +335,12 @@ export interface FileRouteTypes {
     | '/settings'
     | '/support'
     | '/terms'
+    | '/unauthorized'
     | '/updates'
     | '/waitlist'
+    | '/admin/config'
     | '/u/$handle'
+    | '/admin/campuses/new'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -339,9 +369,12 @@ export interface FileRouteTypes {
     | '/settings'
     | '/support'
     | '/terms'
+    | '/unauthorized'
     | '/updates'
     | '/waitlist'
+    | '/admin/config'
     | '/u/$handle'
+    | '/admin/campuses/new'
   id:
     | '__root__'
     | '/'
@@ -370,15 +403,18 @@ export interface FileRouteTypes {
     | '/settings'
     | '/support'
     | '/terms'
+    | '/unauthorized'
     | '/updates'
     | '/waitlist'
+    | '/admin/config'
     | '/u/$handle'
+    | '/admin/campuses/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
-  AdminRoute: typeof AdminRoute
+  AdminRoute: typeof AdminRouteWithChildren
   AmbassadorRoute: typeof AmbassadorRoute
   AnnouncementsRoute: typeof AnnouncementsRoute
   AuthRoute: typeof AuthRoute
@@ -402,6 +438,7 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   SupportRoute: typeof SupportRoute
   TermsRoute: typeof TermsRoute
+  UnauthorizedRoute: typeof UnauthorizedRoute
   UpdatesRoute: typeof UpdatesRoute
   WaitlistRoute: typeof WaitlistRoute
   UHandleRoute: typeof UHandleRoute
@@ -421,6 +458,13 @@ declare module '@tanstack/react-router' {
       path: '/updates'
       fullPath: '/updates'
       preLoaderRoute: typeof UpdatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/unauthorized': {
+      id: '/unauthorized'
+      path: '/unauthorized'
+      fullPath: '/unauthorized'
+      preLoaderRoute: typeof UnauthorizedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/terms': {
@@ -612,13 +656,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UHandleRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/config': {
+      id: '/admin/config'
+      path: '/config'
+      fullPath: '/admin/config'
+      preLoaderRoute: typeof AdminConfigRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/campuses/new': {
+      id: '/admin/campuses/new'
+      path: '/campuses/new'
+      fullPath: '/admin/campuses/new'
+      preLoaderRoute: typeof AdminCampusesNewRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
+
+interface AdminRouteChildren {
+  AdminConfigRoute: typeof AdminConfigRoute
+  AdminCampusesNewRoute: typeof AdminCampusesNewRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminConfigRoute: AdminConfigRoute,
+  AdminCampusesNewRoute: AdminCampusesNewRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
-  AdminRoute: AdminRoute,
+  AdminRoute: AdminRouteWithChildren,
   AmbassadorRoute: AmbassadorRoute,
   AnnouncementsRoute: AnnouncementsRoute,
   AuthRoute: AuthRoute,
@@ -642,6 +712,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   SupportRoute: SupportRoute,
   TermsRoute: TermsRoute,
+  UnauthorizedRoute: UnauthorizedRoute,
   UpdatesRoute: UpdatesRoute,
   WaitlistRoute: WaitlistRoute,
   UHandleRoute: UHandleRoute,
