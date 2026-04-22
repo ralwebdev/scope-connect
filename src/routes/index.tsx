@@ -105,13 +105,20 @@ function Hero() {
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Button asChild size="lg" className="bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-95">
-              <Link to="/auth">
+              <Link to="/auth" onClick={trackPrimary}>
                 Join Scope Connect <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="border-primary-foreground/20 bg-primary-foreground/5 text-primary-foreground hover:bg-primary-foreground/10">
-              <Link to="/feed">Explore the feed</Link>
+              <Link to="/projects" onClick={trackSecondary}>Explore live projects</Link>
             </Button>
+          </div>
+
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-primary-foreground/70">
+            <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-cyan" /> 10+ campuses live</span>
+            <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-cyan" /> Curated challenges only</span>
+            <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-cyan" /> Student-first network</span>
+            <span className="inline-flex items-center gap-1.5"><Lock className="h-3.5 w-3.5 text-cyan" /> Privacy safe</span>
           </div>
 
           <div className="mt-12 grid grid-cols-2 gap-6 sm:grid-cols-4">
