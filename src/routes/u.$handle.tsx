@@ -4,13 +4,29 @@ import { AppShell } from "@/components/site/AppShell";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { auth, portfolio, xp as xpStore } from "@/lib/scope-store";
+import { auth, portfolio, xp as xpStore, type PortfolioItem, type ScopeUser } from "@/lib/scope-store";
+
+type PublicProfileData = {
+  name: string;
+  campus: string;
+  bio: string;
+  skills: string[];
+  interests: string[];
+  avatarColor: string;
+  links: ScopeUser["links"];
+  level: string;
+  points: number;
+  items: PortfolioItem[];
+  portfolioCount: number;
+};
 
 export const Route = createFileRoute("/u/$handle")({
   head: ({ loaderData }) => {
-    const u = loaderData;
+    const u = loaderData as PublicProfileData | null | undefined;
     const title = u ? `${u.name} — Scope Builder` : "Builder — Scope Connect";
-    const desc = u ? `${u.campus} · ${u.level} · ${u.points.toLocaleString()} Scope Points · ${u.portfolioCount} portfolio items` : "Public builder profile on Scope Connect.";
+    const desc = u
+      ? `${u.campus} · ${u.level} · ${u.points.toLocaleString()} Scope Points · ${u.portfolioCount} portfolio items`
+      : "Public builder profile on Scope Connect.";
     return {
       meta: [
         { title },
@@ -21,11 +37,10 @@ export const Route = createFileRoute("/u/$handle")({
       ],
     };
   },
-  loader: ({ params }) => {
+  loader: ({ params }): PublicProfileData | null => {
     if (typeof window === "undefined") return null;
     const u = auth.getUser();
     if (!u) throw notFound();
-    // Public profile resolves only the current local user via handle.
     const handle = u.email.split("@")[0].toLowerCase();
     if (params.handle.toLowerCase() !== handle && params.handle.toLowerCase() !== u.id.toLowerCase()) {
       throw notFound();
