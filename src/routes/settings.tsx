@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { AlertTriangle, Bell, Lock, Crown, Mail } from "lucide-react";
+import { useEffect, useState } from "react";
+import { AlertTriangle, Bell, Lock, Crown, Mail, Download } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,16 @@ import { AuthGate } from "@/components/site/AuthGate";
 import { useUser } from "@/hooks/use-scope";
 import { auth, meta } from "@/lib/scope-store";
 import { toast } from "sonner";
+
+const THEME_KEY = "scope_theme";
+type Theme = "system" | "dark" | "light";
+
+function applyTheme(t: Theme) {
+  if (typeof document === "undefined") return;
+  const root = document.documentElement;
+  const dark = t === "dark" || (t === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  root.classList.toggle("dark", dark);
+}
 
 export const Route = createFileRoute("/settings")({
   head: () => ({
@@ -36,13 +46,45 @@ function SettingsPage() {
   const [notifEmail, setNotifEmail] = useState(true);
   const [notifPush, setNotifPush] = useState(true);
   const [weekly, setWeekly] = useState(true);
-  const [theme, setTheme] = useState<"system" | "dark" | "light">("system");
+  const [theme, setThemeState] = useState<Theme>(() => {
+    if (typeof window === "undefined") return "system";
+    return ((localStorage.getItem(THEME_KEY) as Theme) ?? "system");
+  });
+
+  // Sync email when user resolves on mount
+  useEffect(() => {
+    if (user?.email) setEmail(user.email);
+  }, [user?.email]);
+
+  const setTheme = (t: Theme) => {
+    setThemeState(t);
+    try { localStorage.setItem(THEME_KEY, t); } catch { /* noop */ }
+    applyTheme(t);
+    toast(`Theme set to ${t}.`);
+  };
 
   if (!user) return null;
 
   const saveAccount = () => {
+    if (!email.includes("@")) { toast.error("Enter a valid email."); return; }
     auth.updateProfile({ email });
     toast.success("Account updated.");
+  };
+
+  const exportProfile = () => {
+    try {
+      const data = JSON.stringify(user, null, 2);
+      const blob = new Blob([data], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `scope-profile-${user.id}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success("Profile exported.");
+    } catch {
+      toast.error("Export failed.");
+    }
   };
 
   const wipe = () => {
@@ -79,7 +121,10 @@ function SettingsPage() {
               </div>
             </div>
           </div>
-          <div className="mt-5 flex justify-end">
+          <div className="mt-5 flex flex-wrap justify-end gap-2">
+            <Button onClick={exportProfile} variant="outline">
+              <Download className="mr-2 h-4 w-4" /> Export profile JSON
+            </Button>
             <Button onClick={saveAccount} className="bg-gradient-brand text-brand-foreground">Save</Button>
           </div>
         </Card>

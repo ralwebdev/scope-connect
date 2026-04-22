@@ -1,4 +1,5 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/sonner";
 
 import appCss from "../styles.css?url";
@@ -66,6 +67,15 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
+  // Apply persisted theme on client mount (no SSR mismatch — only sets a class).
+  useEffect(() => {
+    try {
+      const t = (localStorage.getItem("scope_theme") as "system" | "dark" | "light" | null) ?? "system";
+      const dark = t === "dark" || (t === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+      document.documentElement.classList.toggle("dark", dark);
+    } catch { /* noop */ }
+  }, []);
+
   return (
     <>
       <Outlet />

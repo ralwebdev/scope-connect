@@ -347,7 +347,9 @@ function EventsSection() {
                 <div className="flex items-center gap-2"><MapPin className="h-3.5 w-3.5" /> {e.venue}</div>
                 <div className="flex items-center gap-2"><Users className="h-3.5 w-3.5" /> {e.seats} seats</div>
               </div>
-              <Button variant="outline" size="sm" className="mt-5 w-full">Register</Button>
+              <Button asChild variant="outline" size="sm" className="mt-5 w-full">
+                <Link to="/events">Register</Link>
+              </Button>
             </Card>
           ))}
         </div>
