@@ -486,45 +486,6 @@ function FinalCTA() {
   );
 }
 
-/* --------------------------- What Is Scope Connect --------------------------- */
-
-const PILLARS = [
-  { icon: Hammer, title: "Build", copy: "Work on real curated projects from day one.", color: "brand" as const },
-  { icon: TrendingUp, title: "Grow", copy: "Earn XP, rank up, strengthen your portfolio.", color: "cyan" as const },
-  { icon: Crown, title: "Lead", copy: "Represent and grow your campus chapter.", color: "brand" as const },
-  { icon: Compass, title: "Connect", copy: "Collaborate with India's most ambitious students.", color: "cyan" as const },
-];
-
-function WhatIsScope() {
-  return (
-    <section className="border-t border-border/40 py-16 sm:py-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center">
-          <Badge className="mb-3 bg-brand/10 text-brand">In 10 seconds</Badge>
-          <h2 className="text-balance text-3xl font-bold tracking-tight text-foreground sm:text-4xl">What is Scope Connect?</h2>
-          <p className="mt-3 text-base text-muted-foreground">India's curated network for student builders. Four things, done well.</p>
-        </div>
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {PILLARS.map((p) => (
-            <Card key={p.title} className="p-6 transition-all hover:-translate-y-1 hover:shadow-elegant">
-              <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${p.color === "brand" ? "bg-gradient-brand text-brand-foreground shadow-brand" : "bg-cyan/15 text-cyan"}`}>
-                <p.icon className="h-5 w-5" />
-              </div>
-              <h3 className="mt-4 text-lg font-semibold text-foreground">{p.title}</h3>
-              <p className="mt-1.5 text-sm text-muted-foreground">{p.copy}</p>
-            </Card>
-          ))}
-        </div>
-        <div className="mx-auto mt-10 flex max-w-2xl flex-wrap items-center justify-center gap-3 rounded-xl border border-border bg-secondary/30 p-4 text-xs text-muted-foreground">
-          <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-brand" /> No spam, no fake listings</span>
-          <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-brand" /> Every challenge curated by Scope</span>
-          <span className="inline-flex items-center gap-1.5"><Lock className="h-3.5 w-3.5 text-brand" /> Your ideas remain private</span>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 /* --------------------------- Exit Capture --------------------------- */
 
 function ExitCapture() {
