@@ -124,6 +124,8 @@ function read<T>(key: string, fallback: T): T {
     if (!raw) return fallback;
     return JSON.parse(raw) as T;
   } catch {
+    // Self-heal: corrupt JSON gets purged so the app doesn't keep failing on it.
+    try { localStorage.removeItem(key); } catch { /* noop */ }
     return fallback;
   }
 }
