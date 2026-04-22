@@ -66,9 +66,11 @@ function AuthPage() {
 
     if (mode === "signup") {
       auth.signup({ name: name || email.split("@")[0], email, campus, interests: selectedInterests });
+      analytics.track("signup_completed");
       toast.success("Welcome to Scope Connect. You're in.");
     } else {
       auth.login(email);
+      analytics.track("login_success");
       toast.success("Welcome back, Builder.");
     }
     navigate({ to: "/dashboard" });
