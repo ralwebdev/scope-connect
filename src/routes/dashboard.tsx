@@ -12,6 +12,7 @@ import { feed, events, memberLeaderboard, applications, curated, portfolio } fro
 import { RetentionLayer } from "@/components/site/RetentionLayer";
 import { PortfolioSpotlight } from "@/components/site/PortfolioSpotlight";
 import { CredibilityPanel } from "@/components/site/CredibilityPanel";
+import { DropoffNudge } from "@/components/site/DropoffNudge";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -73,6 +74,8 @@ function DashboardPage() {
       </section>
 
       <RetentionLayer />
+
+      <DropoffNudge />
 
       <ActivationChecklist
         hasProfile={strength >= 60}

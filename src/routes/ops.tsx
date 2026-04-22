@@ -16,6 +16,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { analytics } from "@/lib/analytics";
+import { ExportResultsCard } from "@/components/site/ExportResultsCard";
 import { AppShell } from "@/components/site/AppShell";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -769,6 +770,8 @@ function SoftLaunchPanel() {
 
   return (
     <div className="space-y-6">
+      <ExportResultsCard />
+
       <Card className={`border-l-4 p-5 ${launchReady ? "border-l-success bg-success/5" : "border-l-brand bg-brand/5"}`}>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
