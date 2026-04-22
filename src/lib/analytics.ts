@@ -26,7 +26,14 @@ export type AnalyticsEvent =
   | "session_repeat_visit"
   | "rage_click_detected"
   | "feedback_submitted"
-  | "nps_submitted";
+  | "nps_submitted"
+  | "checklist_step_completed"
+  | "nudge_shown"
+  | "nudge_clicked"
+  | "nudge_dismissed"
+  | "export_results_clicked"
+  | "range_selected"
+  | "format_selected";
 
 type Counters = Record<string, number>;
 type DayMap = Record<string, number>; // YYYY-MM-DD -> count
