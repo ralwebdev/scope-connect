@@ -307,7 +307,7 @@ export const feedPosts = [
     content: "We're hiring 2 frontend interns (React + Tailwind) for summer '26. Open to all campuses. DM your portfolio + Scope profile.",
     likes: 246, comments: 92, celebrates: 38 },
   { id: "5", author: "Ananya Iyer", campus: "IIIT Hyderabad", time: "8h", type: "Event Update",
-    content: "Our pitch battle finalists are LIVE at scope.connect/events 🔥 Voting closes at midnight. Show your campus some love.",
+    content: "Our pitch battle finalists are LIVE on Scope Events 🔥 Voting closes at midnight. Show your campus some love.",
     likes: 184, comments: 41, celebrates: 73 },
   { id: "6", author: "Scope Connect", campus: "National HQ", time: "10h", type: "Challenge Launched",
     content: "🚀 New AI challenge live: Build an AI Study Planner for Students. 8 seats, 6-week sprint, ₹25k stipend + Scope Spotlight.",

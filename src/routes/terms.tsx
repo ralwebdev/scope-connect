@@ -42,7 +42,8 @@ function TermsPage() {
         <Section heading="5. Platform Rights">
           Scope curates all public opportunities. We reserve the right to edit,
           remove, archive, or feature content as needed to maintain quality.
-          Scope branding, copy, and design are owned by Scope Innovations.
+          Scope Connect, its branding, copy, and design are owned and operated
+          by Scope Innovation Lab.
         </Section>
         <Section heading="6. Changes">
           We may update these terms. Material changes will be announced via
