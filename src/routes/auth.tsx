@@ -42,7 +42,10 @@ function AuthPage() {
   const [signupStarted, setSignupStarted] = useState(false);
 
   useEffect(() => {
-    if (isAuthed) navigate({ to: "/dashboard" });
+    if (isAuthed) {
+      const u = auth.getUser();
+      navigate({ to: landingRouteForRole(roleFromEmail(u?.email)) });
+    }
   }, [isAuthed, navigate]);
 
   // Fire signup_started once when user first interacts with a signup field.
@@ -82,9 +85,11 @@ function AuthPage() {
     } else {
       auth.login(email);
       analytics.track("login_success");
-      toast.success("Welcome back, Builder.");
+      const role = roleFromEmail(email);
+      toast.success(`Welcome back, ${ROLE_LABELS[role]}.`);
     }
-    navigate({ to: "/dashboard" });
+    const role = roleFromEmail(email);
+    navigate({ to: landingRouteForRole(role) });
   };
 
   return (
