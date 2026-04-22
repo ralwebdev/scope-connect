@@ -40,6 +40,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UHandleRouteImport } from './routes/u.$handle'
 import { Route as AdminConfigRouteImport } from './routes/admin.config'
+import { Route as AdminCampusesNewRouteImport } from './routes/admin.campuses.new'
 
 const WaitlistRoute = WaitlistRouteImport.update({
   id: '/waitlist',
@@ -196,6 +197,11 @@ const AdminConfigRoute = AdminConfigRouteImport.update({
   path: '/config',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminCampusesNewRoute = AdminCampusesNewRouteImport.update({
+  id: '/campuses/new',
+  path: '/campuses/new',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -229,6 +235,7 @@ export interface FileRoutesByFullPath {
   '/waitlist': typeof WaitlistRoute
   '/admin/config': typeof AdminConfigRoute
   '/u/$handle': typeof UHandleRoute
+  '/admin/campuses/new': typeof AdminCampusesNewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -262,6 +269,7 @@ export interface FileRoutesByTo {
   '/waitlist': typeof WaitlistRoute
   '/admin/config': typeof AdminConfigRoute
   '/u/$handle': typeof UHandleRoute
+  '/admin/campuses/new': typeof AdminCampusesNewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -296,6 +304,7 @@ export interface FileRoutesById {
   '/waitlist': typeof WaitlistRoute
   '/admin/config': typeof AdminConfigRoute
   '/u/$handle': typeof UHandleRoute
+  '/admin/campuses/new': typeof AdminCampusesNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -331,6 +340,7 @@ export interface FileRouteTypes {
     | '/waitlist'
     | '/admin/config'
     | '/u/$handle'
+    | '/admin/campuses/new'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -364,6 +374,7 @@ export interface FileRouteTypes {
     | '/waitlist'
     | '/admin/config'
     | '/u/$handle'
+    | '/admin/campuses/new'
   id:
     | '__root__'
     | '/'
@@ -397,6 +408,7 @@ export interface FileRouteTypes {
     | '/waitlist'
     | '/admin/config'
     | '/u/$handle'
+    | '/admin/campuses/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -651,15 +663,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminConfigRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/campuses/new': {
+      id: '/admin/campuses/new'
+      path: '/campuses/new'
+      fullPath: '/admin/campuses/new'
+      preLoaderRoute: typeof AdminCampusesNewRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
 interface AdminRouteChildren {
   AdminConfigRoute: typeof AdminConfigRoute
+  AdminCampusesNewRoute: typeof AdminCampusesNewRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminConfigRoute: AdminConfigRoute,
+  AdminCampusesNewRoute: AdminCampusesNewRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
