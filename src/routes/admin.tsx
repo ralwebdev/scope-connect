@@ -1,6 +1,6 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Shield, Database, Megaphone, Users, BarChart3, AlertTriangle, Trash2, RefreshCw, Plus } from "lucide-react";
+import { Shield, Database, Megaphone, Users, BarChart3, AlertTriangle, Trash2, RefreshCw, Plus, Wrench, LineChart } from "lucide-react";
 import { AppShell } from "@/components/site/AppShell";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useUser } from "@/hooks/use-scope";
 import { curated, applications, ideaSubmissions, feed, projects, notifications, meta } from "@/lib/scope-store";
+import { analytics } from "@/lib/analytics";
 import { toast } from "sonner";
 
 const ADMIN_EMAILS = ["admin@scope.in", "team@scope.in", "founder@scope.in"];
@@ -19,7 +20,7 @@ export const Route = createFileRoute("/admin")({
   component: AdminPage,
 });
 
-type Tab = "overview" | "projects" | "content" | "broadcast" | "moderation";
+type Tab = "overview" | "analytics" | "projects" | "content" | "broadcast" | "moderation";
 
 function AdminPage() {
   const user = useUser();
@@ -75,7 +76,12 @@ function AdminPage() {
             <Badge className="bg-cyan/15 text-cyan"><Shield className="mr-1 h-3 w-3" /> Admin Console</Badge>
             <h1 className="mt-2 text-2xl font-bold tracking-tight">Scope Operations</h1>
           </div>
-          <Button variant="outline" size="sm" className="border-primary-foreground/20 bg-primary-foreground/5 text-primary-foreground" onClick={() => { try { sessionStorage.removeItem("scope_admin_unlocked"); } catch { /* noop */ } setUnlocked(false); }}>Lock</Button>
+          <div className="flex gap-2">
+            <Button asChild variant="outline" size="sm" className="border-primary-foreground/20 bg-primary-foreground/5 text-primary-foreground">
+              <Link to="/ops"><Wrench className="mr-1.5 h-3.5 w-3.5" /> Ops console</Link>
+            </Button>
+            <Button variant="outline" size="sm" className="border-primary-foreground/20 bg-primary-foreground/5 text-primary-foreground" onClick={() => { try { sessionStorage.removeItem("scope_admin_unlocked"); } catch { /* noop */ } setUnlocked(false); }}>Lock</Button>
+          </div>
         </div>
       </section>
 
@@ -83,6 +89,7 @@ function AdminPage() {
         <div className="flex flex-wrap gap-2 border-b border-border pb-3">
           {([
             { id: "overview", label: "Overview", icon: BarChart3 },
+            { id: "analytics", label: "Analytics", icon: LineChart },
             { id: "projects", label: "Projects CMS", icon: Database },
             { id: "content", label: "Content", icon: Users },
             { id: "broadcast", label: "Broadcast", icon: Megaphone },
@@ -96,6 +103,7 @@ function AdminPage() {
 
         <div className="mt-6">
           {tab === "overview" && <Overview />}
+          {tab === "analytics" && <AnalyticsTab />}
           {tab === "projects" && <ProjectsCMS />}
           {tab === "content" && <ContentManager />}
           {tab === "broadcast" && <BroadcastTab />}
