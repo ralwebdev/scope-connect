@@ -162,15 +162,20 @@ export function roleFromEmail(email: string | undefined | null): RoleId {
   const override = safeRead<Record<string, RoleId>>(ROLE_OVERRIDE_KEY, {});
   if (override[e]) return override[e];
 
-  if (e.includes("super") || e.endsWith("@scope.in") && e.startsWith("founder")) return "scope_super_admin";
-  if (e.includes("scope-admin") || e.includes("scopeadmin") || e.startsWith("admin@")) return "scope_admin";
+  if (e.includes("super") || (e.endsWith("@scope.in") && e.startsWith("founder"))) return "scope_super_admin";
+  if (e.includes("scope-admin") || e.includes("scopeadmin")) return "scope_admin";
+  if (e.includes("institution-admin") || e.includes("institutionaladmin") || e.includes("instadmin")) return "institutional_admin";
+  if (e.includes("faculty")) return "faculty_coordinator";
+  if (e.includes("leader") || e.includes("president")) return "campus_leader";
+  if (e.startsWith("admin@")) return "scope_admin";
   if (e.includes("admin")) return "scope_admin";
   if (e.includes("regional")) return "regional_admin";
   if (e.includes("campus")) return "campus_admin";
   if (e.includes("content") || e.includes("editor")) return "content_admin";
   if (e.includes("growth") || e.includes("marketing")) return "growth_admin";
   if (e.includes("support") || e.includes("help")) return "support_admin";
-  return "viewer";
+  if (e.includes("student") || e.includes("builder")) return "student";
+  return "student";
 }
 
 export const rbac = {
