@@ -238,6 +238,8 @@ function DashboardPage() {
           </div>
         </div>
 
+        <PortfolioSpotlight />
+
         <div className="mt-8 grid gap-6 lg:grid-cols-3">
           <Card className="p-6 hover-lift">
             <Briefcase className="h-5 w-5 text-brand" />
