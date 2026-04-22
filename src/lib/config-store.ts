@@ -160,11 +160,5 @@ export const configStore = {
   },
 };
 
-/* --------------- Reactive helpers --------------- */
-
-export function useConfig(): RuntimeConfig {
-  // Lazy import to avoid cycle
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { useStoreValue } = require("@/hooks/use-scope") as typeof import("@/hooks/use-scope");
-  return useStoreValue(() => configStore.get());
-}
+// Reactive hook lives in src/hooks/use-config.ts to avoid a top-level cycle
+// with use-scope (which depends on scope-store). Import it from there.
