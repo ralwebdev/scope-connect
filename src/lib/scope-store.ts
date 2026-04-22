@@ -830,7 +830,7 @@ export const applications = {
       fit: input.fit, topSkill: input.topSkill, availability: input.availability,
       status: "Under Review", at: Date.now(),
     };
-    const isFirst = applications.forUser(u.id).length === 1; // we just inserted above
+    const isFirst = applications.forUser(u.id).length === 0; // before insert
     write(KEYS.applications, [app, ...applications.all()]);
     xp.add(20, "Application sent");
     notifications.push({ icon: "spark", text: `Application received for "${project?.title ?? "project"}". Review within 48h.` });
