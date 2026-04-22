@@ -1,4 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Trophy, Flame, TrendingUp, Calendar, Users, Sparkles, ArrowRight, Target, Zap, Rocket, Briefcase, Lightbulb, ShieldCheck } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +14,8 @@ import { RetentionLayer } from "@/components/site/RetentionLayer";
 import { PortfolioSpotlight } from "@/components/site/PortfolioSpotlight";
 import { CredibilityPanel } from "@/components/site/CredibilityPanel";
 import { DropoffNudge } from "@/components/site/DropoffNudge";
+import { useRole } from "@/hooks/use-rbac";
+import { landingRouteForRole } from "@/lib/rbac";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -21,8 +24,38 @@ export const Route = createFileRoute("/dashboard")({
       { name: "description", content: "Your Scope Connect builder dashboard." },
     ],
   }),
-  component: () => <AuthGate><DashboardPage /></AuthGate>,
+  component: () => <AuthGate><RoleGatedDashboard /></AuthGate>,
 });
+
+/** Role-safe wrapper: /dashboard is the STUDENT dashboard only. Any other
+ *  role that lands here (stale link, refresh, fallback redirect) is bounced
+ *  to their proper landing route. Eliminates the "everyone sees student
+ *  dashboard" bug — no shared component leakage across roles. */
+function RoleGatedDashboard() {
+  const role = useRole();
+  const navigate = useNavigate();
+  const isStudentLike = role === "student" || role === "viewer";
+
+  useEffect(() => {
+    if (isStudentLike) return;
+    const target = landingRouteForRole(role);
+    if (target !== "/dashboard") {
+      navigate({ to: target, replace: true });
+    }
+  }, [role, isStudentLike, navigate]);
+
+  if (!isStudentLike) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="text-center">
+          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          <p className="mt-4 text-sm text-muted-foreground">Resolving user access…</p>
+        </div>
+      </div>
+    );
+  }
+  return <DashboardPage />;
+}
 
 function DashboardPage() {
   const user = useUser();
