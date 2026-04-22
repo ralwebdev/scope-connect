@@ -72,7 +72,7 @@ export const Route = createFileRoute("/u/$handle")({
 });
 
 function PublicProfilePage() {
-  const u = Route.useLoaderData();
+  const u = Route.useLoaderData() as PublicProfileData | null;
   if (!u) return null;
 
   return (
