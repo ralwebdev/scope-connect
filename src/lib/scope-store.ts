@@ -857,10 +857,14 @@ export const portfolio = {
   create(input: Omit<PortfolioItem, "id" | "userId" | "createdAt">) {
     const u = auth.getUser();
     if (!u) return null;
+    const isFirst = portfolio.forUser(u.id).length === 0;
     const item: PortfolioItem = { ...input, id: `pf_${Date.now()}`, userId: u.id, createdAt: Date.now() };
     write(KEYS.portfolio, [item, ...portfolio.all()]);
     xp.add(30, "Portfolio item added");
     notifications.push({ icon: "trophy", text: `"${item.title}" added to your portfolio.` });
+    if (isFirst) {
+      notifications.push({ icon: "spark", text: "🌟 First portfolio item — proof of work activated.", dedupKey: `first_portfolio:${u.id}` });
+    }
     return item;
   },
   update(id: string, patch: Partial<Omit<PortfolioItem, "id" | "userId" | "createdAt">>) {
