@@ -214,6 +214,7 @@ export const rbac = {
     const map = rbac.permissions();
     const perms = map[role] ?? [];
     if ((perms as string[]).includes("*")) return true;
+    if ((perms as string[]).includes("full_system_access")) return true;
     return (perms as string[]).includes(permission);
   },
   permissionsFor(role: RoleId): PermissionKey[] {
