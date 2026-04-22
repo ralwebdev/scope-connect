@@ -58,7 +58,8 @@ function SuperAdminPortal() {
 
   return (
     <AppShell>
-      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+      <RbacSidebar title="Command Center">
+      <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
         <header>
           <Badge variant="outline" className="mb-2"><Brain className="mr-1 h-3 w-3" /> Super Admin · National HQ</Badge>
           <h1 className="text-3xl font-bold tracking-tight">Command Center</h1>
