@@ -15,6 +15,7 @@ import { Route as UnauthorizedRouteImport } from './routes/unauthorized'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ScopeAdminRouteImport } from './routes/scope-admin'
 import { Route as ReferRouteImport } from './routes/refer'
 import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as ProfileRouteImport } from './routes/profile'
@@ -70,6 +71,11 @@ const SupportRoute = SupportRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ScopeAdminRoute = ScopeAdminRouteImport.update({
+  id: '/scope-admin',
+  path: '/scope-admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ReferRoute = ReferRouteImport.update({
@@ -227,6 +233,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof ProfileRoute
   '/projects': typeof ProjectsRoute
   '/refer': typeof ReferRoute
+  '/scope-admin': typeof ScopeAdminRoute
   '/settings': typeof SettingsRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
@@ -261,6 +268,7 @@ export interface FileRoutesByTo {
   '/profile': typeof ProfileRoute
   '/projects': typeof ProjectsRoute
   '/refer': typeof ReferRoute
+  '/scope-admin': typeof ScopeAdminRoute
   '/settings': typeof SettingsRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
@@ -296,6 +304,7 @@ export interface FileRoutesById {
   '/profile': typeof ProfileRoute
   '/projects': typeof ProjectsRoute
   '/refer': typeof ReferRoute
+  '/scope-admin': typeof ScopeAdminRoute
   '/settings': typeof SettingsRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
@@ -332,6 +341,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/projects'
     | '/refer'
+    | '/scope-admin'
     | '/settings'
     | '/support'
     | '/terms'
@@ -366,6 +376,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/projects'
     | '/refer'
+    | '/scope-admin'
     | '/settings'
     | '/support'
     | '/terms'
@@ -400,6 +411,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/projects'
     | '/refer'
+    | '/scope-admin'
     | '/settings'
     | '/support'
     | '/terms'
@@ -435,6 +447,7 @@ export interface RootRouteChildren {
   ProfileRoute: typeof ProfileRoute
   ProjectsRoute: typeof ProjectsRoute
   ReferRoute: typeof ReferRoute
+  ScopeAdminRoute: typeof ScopeAdminRoute
   SettingsRoute: typeof SettingsRoute
   SupportRoute: typeof SupportRoute
   TermsRoute: typeof TermsRoute
@@ -486,6 +499,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/scope-admin': {
+      id: '/scope-admin'
+      path: '/scope-admin'
+      fullPath: '/scope-admin'
+      preLoaderRoute: typeof ScopeAdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/refer': {
@@ -709,6 +729,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileRoute: ProfileRoute,
   ProjectsRoute: ProjectsRoute,
   ReferRoute: ReferRoute,
+  ScopeAdminRoute: ScopeAdminRoute,
   SettingsRoute: SettingsRoute,
   SupportRoute: SupportRoute,
   TermsRoute: TermsRoute,
@@ -720,3 +741,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
