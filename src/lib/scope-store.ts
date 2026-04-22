@@ -238,43 +238,27 @@ export const auth = {
     });
   },
   logout() {
-    // Hard-clear ALL session identity so role/permissions/sidebar cannot leak
-    // between users. Retain only generic platform/seed content (feed, projects,
-    // events) which is public.
+    // 🧨 Hard Sign Out — sweep ALL scope_* keys so no role/permission/sidebar
+    // state survives. Only the schema version is preserved (cheap to recompute,
+    // avoids unnecessary re-seeding loops on next login).
     if (isBrowser) {
-      const sessionKeys = [
-        KEYS.user,             // identity → drives role
-        KEYS.notifications,    // private alerts
-        KEYS.lastSeen,
-        KEYS.points,
-        KEYS.streak,
-        KEYS.streakDate,
-        KEYS.joinedChapter,
-        KEYS.rsvps,
-        KEYS.savedOpps,
-        KEYS.interestedOpps,
-        KEYS.liked,
-        KEYS.votedProjects,
-        KEYS.applications,
-        KEYS.savedProjects,
-        KEYS.portfolio,
-        KEYS.ideaSubmissions,
-        KEYS.rankSnapshot,
-        KEYS.notifDedupRegistry,
-        KEYS.highestLevelSeen,
-        "scope_role_override",   // dev role-impersonation
-      ];
-      sessionKeys.forEach((k) => {
-        try { localStorage.removeItem(k); } catch { /* noop */ }
-      });
       try {
-        for (let i = localStorage.length - 1; i >= 0; i--) {
+        const preserve = new Set<string>([KEYS.schemaVersion]);
+        const toRemove: string[] = [];
+        for (let i = 0; i < localStorage.length; i++) {
           const k = localStorage.key(i);
-          if (k && k.startsWith("scope_draft_")) localStorage.removeItem(k);
+          if (!k) continue;
+          if (k.startsWith("scope_") && !preserve.has(k)) toRemove.push(k);
         }
+        toRemove.forEach((k) => {
+          try { localStorage.removeItem(k); } catch { /* noop */ }
+        });
+      } catch { /* noop */ }
+      // Notify subscribers immediately so the UI rebuilds in the same tick.
+      try {
+        window.dispatchEvent(new CustomEvent("scope:store-change", { detail: { keys: ["*"] } }));
       } catch { /* noop */ }
     }
-    write(KEYS.loggedIn, false);
   },
   updateProfile(patch: Partial<ScopeUser>) {
     const u = auth.getUser();
