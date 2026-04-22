@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WaitlistRouteImport } from './routes/waitlist'
+import { Route as UpdatesRouteImport } from './routes/updates'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as SettingsRouteImport } from './routes/settings'
@@ -41,6 +42,11 @@ import { Route as UHandleRouteImport } from './routes/u.$handle'
 const WaitlistRoute = WaitlistRouteImport.update({
   id: '/waitlist',
   path: '/waitlist',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UpdatesRoute = UpdatesRouteImport.update({
+  id: '/updates',
+  path: '/updates',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TermsRoute = TermsRouteImport.update({
@@ -206,6 +212,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
+  '/updates': typeof UpdatesRoute
   '/waitlist': typeof WaitlistRoute
   '/u/$handle': typeof UHandleRoute
 }
@@ -236,6 +243,7 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
+  '/updates': typeof UpdatesRoute
   '/waitlist': typeof WaitlistRoute
   '/u/$handle': typeof UHandleRoute
 }
@@ -267,6 +275,7 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
+  '/updates': typeof UpdatesRoute
   '/waitlist': typeof WaitlistRoute
   '/u/$handle': typeof UHandleRoute
 }
@@ -299,6 +308,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/support'
     | '/terms'
+    | '/updates'
     | '/waitlist'
     | '/u/$handle'
   fileRoutesByTo: FileRoutesByTo
@@ -329,6 +339,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/support'
     | '/terms'
+    | '/updates'
     | '/waitlist'
     | '/u/$handle'
   id:
@@ -359,6 +370,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/support'
     | '/terms'
+    | '/updates'
     | '/waitlist'
     | '/u/$handle'
   fileRoutesById: FileRoutesById
@@ -390,6 +402,7 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   SupportRoute: typeof SupportRoute
   TermsRoute: typeof TermsRoute
+  UpdatesRoute: typeof UpdatesRoute
   WaitlistRoute: typeof WaitlistRoute
   UHandleRoute: typeof UHandleRoute
 }
@@ -401,6 +414,13 @@ declare module '@tanstack/react-router' {
       path: '/waitlist'
       fullPath: '/waitlist'
       preLoaderRoute: typeof WaitlistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/updates': {
+      id: '/updates'
+      path: '/updates'
+      fullPath: '/updates'
+      preLoaderRoute: typeof UpdatesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/terms': {
@@ -622,6 +642,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   SupportRoute: SupportRoute,
   TermsRoute: TermsRoute,
+  UpdatesRoute: UpdatesRoute,
   WaitlistRoute: WaitlistRoute,
   UHandleRoute: UHandleRoute,
 }
