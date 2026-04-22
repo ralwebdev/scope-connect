@@ -76,7 +76,8 @@ function ScopeAdminPortal() {
 
   return (
     <AppShell>
-      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+      <RbacSidebar title="Territory Command">
+      <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
         <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <Badge variant="outline" className="mb-2"><Building2 className="mr-1 h-3 w-3" /> Scope Admin Portal</Badge>
