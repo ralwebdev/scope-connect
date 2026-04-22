@@ -59,6 +59,20 @@ function AboutPage() {
       </section>
 
       <section className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
+        {/* Ownership / operator clarity */}
+        <Card className="mb-10 border-cyan/30 bg-gradient-to-br from-cyan/5 to-transparent p-8">
+          <Badge className="bg-cyan/15 text-cyan hover:bg-cyan/20"><ShieldCheck className="mr-1 h-3 w-3" /> Operated by Scope Innovation Lab</Badge>
+          <h2 className="mt-3 text-2xl font-bold text-foreground">Who runs Scope Connect?</h2>
+          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+            Scope Connect is the digital operating system built and operated by <strong className="text-foreground">Scope Innovation Lab</strong> — an India-based team focused on giving student builders proof of work, leadership, and real opportunities. We curate every public challenge, vet every partner brief, and ship the platform itself. No anonymous moderators. No outsourced support.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-3 text-xs text-muted-foreground">
+            <span className="rounded-full bg-secondary px-3 py-1">📍 Bengaluru, India</span>
+            <span className="rounded-full bg-secondary px-3 py-1">✉️ hello@scope.in</span>
+            <span className="rounded-full bg-secondary px-3 py-1">🤝 partners@scope.in</span>
+          </div>
+        </Card>
+
         <div className="grid gap-6 sm:grid-cols-2">
           {SECTIONS.map((s) => (
             <Card key={s.title} className="p-6 hover-lift">
@@ -70,6 +84,29 @@ function AboutPage() {
             </Card>
           ))}
         </div>
+
+        {/* Leadership intro placeholder */}
+        <Card className="mt-10 p-8">
+          <div className="flex items-center gap-2">
+            <Users className="h-5 w-5 text-brand" />
+            <h3 className="text-lg font-semibold text-foreground">The team behind Scope</h3>
+          </div>
+          <p className="mt-2 text-sm text-muted-foreground">
+            A small, India-based core team of operators, designers, and engineers — backed by chapter leaders across 50+ campuses. Full team page launching with our public funding announcement.
+          </p>
+          <div className="mt-5 grid gap-3 sm:grid-cols-3">
+            {[
+              { role: "Founding Team", sub: "Product · Operations · Growth" },
+              { role: "Chapter Network", sub: "50+ campus leaders across India" },
+              { role: "Curation Council", sub: "Vets every public opportunity" },
+            ].map((m) => (
+              <div key={m.role} className="rounded-xl border border-border bg-secondary/40 p-4">
+                <div className="text-sm font-semibold text-foreground">{m.role}</div>
+                <div className="mt-1 text-xs text-muted-foreground">{m.sub}</div>
+              </div>
+            ))}
+          </div>
+        </Card>
 
         <Card className="mt-10 border-brand/30 bg-gradient-to-br from-brand/5 to-cyan/5 p-8">
           <div className="flex items-start gap-4">
@@ -83,12 +120,21 @@ function AboutPage() {
           </div>
         </Card>
 
-        <div className="mt-12 text-center">
-          <h3 className="text-2xl font-bold text-foreground">Ready to build with us?</h3>
-          <p className="mt-2 text-sm text-muted-foreground">Join 12,000+ verified student builders across 142 campuses.</p>
-          <Button asChild size="lg" className="mt-6 bg-gradient-brand text-brand-foreground shadow-brand">
-            <Link to="/auth">Join Scope <ArrowRight className="ml-2 h-4 w-4" /></Link>
-          </Button>
+        <div className="mt-12 grid gap-4 text-center sm:grid-cols-2">
+          <Card className="p-8">
+            <h3 className="text-xl font-bold text-foreground">For students</h3>
+            <p className="mt-2 text-sm text-muted-foreground">Free forever. Curated opportunities. Real proof of work.</p>
+            <Button asChild size="lg" className="mt-5 bg-gradient-brand text-brand-foreground shadow-brand">
+              <Link to="/auth">Join Scope <ArrowRight className="ml-2 h-4 w-4" /></Link>
+            </Button>
+          </Card>
+          <Card className="p-8">
+            <h3 className="text-xl font-bold text-foreground">For institutions & sponsors</h3>
+            <p className="mt-2 text-sm text-muted-foreground">Custom campus solutions, analytics, and curated talent pools.</p>
+            <Button asChild size="lg" variant="outline" className="mt-5">
+              <Link to="/contact">Talk to partnerships <ArrowRight className="ml-2 h-4 w-4" /></Link>
+            </Button>
+          </Card>
         </div>
       </section>
     </AppShell>

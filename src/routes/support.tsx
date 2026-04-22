@@ -37,7 +37,7 @@ const FAQS = [
   { q: "How are opportunities selected?", a: "We curate based on quality, relevance, and impact. Every brief is vetted — no spam recruitment, no low-effort gigs. Just real shipping opportunities for student builders." },
   { q: "Is Scope Connect free?", a: "Yes. Scope Connect is free for every student. We monetize through partner organizations and brand sponsorships, never by charging builders." },
   { q: "Is my data safe?", a: "All your activity, profile data, and submissions are stored securely. We never sell your data, and your private submissions stay private to the Scope team." },
-  { q: "How do I contact the Scope team?", a: "Use the contact form below — we reply to every message within 24 hours. For urgent issues, email hello@scope.connect." },
+  { q: "How do I contact the Scope team?", a: "Use the contact form below — we reply to every message within 24 hours. For urgent issues, email hello@scope.in. Partnerships: partners@scope.in. Privacy requests: privacy@scope.in." },
 ];
 
 function SupportPage() {
