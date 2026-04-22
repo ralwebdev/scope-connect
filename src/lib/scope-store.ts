@@ -218,8 +218,8 @@ export const auth = {
     write(KEYS.streak, 1);
     write(KEYS.streakDate, todayStamp());
     write(KEYS.visits, 1);
-    notifications.push({ icon: "spark", text: "Welcome to Scope Connect! +120 XP signup bonus." });
-    notifications.push({ icon: "trophy", text: "You're ranked #142 nationally. Climb today." });
+    notifications.push({ icon: "spark", text: "Welcome to Scope Connect! +120 XP signup bonus.", dedupKey: `welcome_bonus:${user.id}` });
+    notifications.push({ icon: "trophy", text: "You're ranked #142 nationally. Climb today.", dedupKey: `welcome_rank:${user.id}` });
     return user;
   },
   login(email: string) {
