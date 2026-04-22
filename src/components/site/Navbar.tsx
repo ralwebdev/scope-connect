@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { useIsLoggedIn, useUser, useUnreadNotifications, useNotifications, useXP, useStreak } from "@/hooks/use-scope";
 import { auth, notifications, meta } from "@/lib/scope-store";
 import { useBrand, useFeature } from "@/hooks/use-platform";
+import { FormsLauncher } from "@/components/site/FormsLauncher";
 import { toast } from "sonner";
 
 type NavLink = { to: "/feed" | "/projects" | "/events" | "/leaderboards" | "/dashboard" | "/portfolio" | "/campus"; label: string; flag?: "feed" | "projects" | "events" | "leaderboards" | "portfolio" | "campus" };
@@ -120,6 +121,7 @@ export function Navbar() {
         <div className="hidden items-center gap-2 lg:flex">
           {isAuthed && user ? (
             <>
+              <FormsLauncher />
               <div className="hidden items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-foreground xl:flex">
                 <Zap className="h-3 w-3 text-brand" /> {xp.toLocaleString()} XP
               </div>

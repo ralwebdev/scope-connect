@@ -4,6 +4,7 @@ import { Brain, Building2, Users, TrendingUp, MapPin, IndianRupee, Sliders, Shie
 import { AppShell } from "@/components/site/AppShell";
 import { RbacSidebar } from "@/components/site/RbacSidebar";
 import { AccessDenied } from "@/components/site/AccessDenied";
+import { DrilldownCard } from "@/components/site/DrilldownCard";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -70,15 +71,217 @@ function SuperAdminPortal() {
           <p className="mt-1 text-sm text-muted-foreground">India expansion starts with today's pipeline.</p>
         </header>
 
-        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
-          <Kpi label="Pipeline" value={kpis.pipeline} icon={Building2} />
-          <Kpi label="MoUs" value={kpis.mous} icon={CheckCircle2} accent />
-          <Kpi label="Live Chapters" value={kpis.live} icon={Sparkles} accent />
-          <Kpi label="Students" value={kpis.students.toLocaleString()} icon={Users} />
-          <Kpi label="States" value={`${kpis.states}/28`} icon={MapPin} />
-          <Kpi label="Revenue ₹" value={`₹${(kpis.revenue/100000).toFixed(1)}L`} icon={IndianRupee} accent />
-          <Kpi label="Growth MoM" value={`+${kpis.growth}%`} icon={TrendingUp} />
+        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          <DrilldownCard
+            title="Pipeline"
+            value={kpis.pipeline}
+            delta={`+${kpis.growth}% MoM`}
+            icon={Building2}
+            deepDiveTo="/scope-admin"
+            deepDiveLabel="Open CRM"
+            inline={
+              <div className="space-y-1">
+                {PIPELINE_STAGES.map((s) => {
+                  const n = data.institutions.filter((i) => i.stage === s).length;
+                  const pct = data.institutions.length ? (n / data.institutions.length) * 100 : 0;
+                  return (
+                    <div key={s}>
+                      <div className="flex items-center justify-between text-[10px]">
+                        <span>{s}</span>
+                        <span className="text-muted-foreground">{n}</span>
+                      </div>
+                      <div className="h-1.5 overflow-hidden rounded-full bg-secondary">
+                        <div className="h-full bg-gradient-brand" style={{ width: `${pct}%` }} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            }
+            levels={[
+              {
+                label: "Summary",
+                content: (
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <Card className="p-3"><div className="text-xs text-muted-foreground">Total</div><div className="text-lg font-bold">{kpis.pipeline}</div></Card>
+                    <Card className="p-3"><div className="text-xs text-muted-foreground">MoUs</div><div className="text-lg font-bold">{kpis.mous}</div></Card>
+                    <Card className="p-3"><div className="text-xs text-muted-foreground">Live</div><div className="text-lg font-bold">{kpis.live}</div></Card>
+                    <Card className="p-3"><div className="text-xs text-muted-foreground">States</div><div className="text-lg font-bold">{kpis.states}</div></Card>
+                  </div>
+                ),
+              },
+              {
+                label: "By stage",
+                content: (
+                  <div className="space-y-1.5">
+                    {PIPELINE_STAGES.map((s) => {
+                      const n = data.institutions.filter((i) => i.stage === s).length;
+                      return (
+                        <div key={s} className="flex items-center justify-between rounded-md border border-border px-2 py-1.5 text-xs">
+                          <span>{s}</span>
+                          <Badge variant="outline">{n}</Badge>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ),
+              },
+              {
+                label: "By owner",
+                content: (
+                  <div className="space-y-1.5">
+                    {data.admins.map((a) => {
+                      const n = data.institutions.filter((i) => i.ownerId === a.id).length;
+                      return (
+                        <div key={a.id} className="flex items-center justify-between rounded-md border border-border px-2 py-1.5 text-xs">
+                          <span>{a.name} <span className="text-muted-foreground">· {a.region}</span></span>
+                          <Badge variant="outline">{n}</Badge>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ),
+              },
+            ]}
+          />
+
+          <DrilldownCard
+            title="MoUs Signed"
+            value={kpis.mous}
+            icon={CheckCircle2}
+            accent
+            deepDiveTo="/scope-admin"
+            deepDiveLabel="Open CRM"
+            levels={[
+              {
+                label: "Summary",
+                content: <p className="text-sm text-muted-foreground">{kpis.mous} institutions in MoU+ stages, contributing the bulk of forecasted revenue.</p>,
+              },
+              {
+                label: "Institution-wise",
+                content: (
+                  <div className="space-y-1.5">
+                    {data.institutions.filter((i) => ["MoU Signed","Launch Pending","Live Chapter"].includes(i.stage)).map((i) => (
+                      <div key={i.id} className="flex items-center justify-between rounded-md border border-border px-2 py-1.5 text-xs">
+                        <span>{i.name} <span className="text-muted-foreground">· {i.city}</span></span>
+                        <Badge variant="outline">{i.stage}</Badge>
+                      </div>
+                    ))}
+                  </div>
+                ),
+              },
+            ]}
+          />
+
+          <DrilldownCard
+            title="Live Chapters"
+            value={kpis.live}
+            icon={Sparkles}
+            accent
+            deepDiveTo="/institution-admin"
+            deepDiveLabel="Institution Hub"
+            levels={[
+              {
+                label: "Summary",
+                content: <p className="text-sm text-muted-foreground">{kpis.live} active chapters serving ~{(kpis.live * 320).toLocaleString()} students.</p>,
+              },
+              {
+                label: "Campus-level",
+                content: (
+                  <div className="space-y-1.5">
+                    {data.institutions.filter((i) => i.stage === "Live Chapter").map((i) => (
+                      <div key={i.id} className="flex items-center justify-between rounded-md border border-border px-2 py-1.5 text-xs">
+                        <span>{i.name}</span>
+                        <span className="text-muted-foreground">{i.city}, {i.state}</span>
+                      </div>
+                    ))}
+                  </div>
+                ),
+              },
+            ]}
+          />
+
+          <DrilldownCard
+            title="Students"
+            value={kpis.students.toLocaleString()}
+            icon={Users}
+            deepDiveTo="/institution-admin/analytics"
+            deepDiveLabel="Analytics"
+            levels={[
+              {
+                label: "Summary",
+                content: <p className="text-sm text-muted-foreground">Estimated reach across live + onboarding institutions.</p>,
+              },
+              {
+                label: "User roles",
+                content: (
+                  <div className="space-y-1.5 text-xs">
+                    <div className="flex justify-between rounded-md border border-border px-2 py-1.5"><span>Students</span><Badge variant="outline">{kpis.students.toLocaleString()}</Badge></div>
+                    <div className="flex justify-between rounded-md border border-border px-2 py-1.5"><span>Faculty</span><Badge variant="outline">{(kpis.live * 18).toLocaleString()}</Badge></div>
+                    <div className="flex justify-between rounded-md border border-border px-2 py-1.5"><span>Campus leaders</span><Badge variant="outline">{(kpis.live * 4).toLocaleString()}</Badge></div>
+                  </div>
+                ),
+              },
+            ]}
+          />
+
+          <DrilldownCard
+            title="States"
+            value={`${kpis.states}/28`}
+            icon={MapPin}
+            deepDiveTo="/scope-super-admin"
+            deepDiveLabel="Heatmap"
+            levels={[
+              {
+                label: "Coverage",
+                content: <p className="text-sm text-muted-foreground">Active in {kpis.states} of 28 Indian states.</p>,
+              },
+            ]}
+          />
+
+          <DrilldownCard
+            title="Revenue"
+            value={`₹${(kpis.revenue / 100000).toFixed(1)}L`}
+            icon={IndianRupee}
+            accent
+            deepDiveTo="/scope-super-admin"
+            deepDiveLabel="Revenue tab"
+            levels={[
+              {
+                label: "Summary",
+                content: <p className="text-sm text-muted-foreground">Forecast across signed pipeline. Click into the Revenue tab for full split.</p>,
+              },
+              {
+                label: "By institution",
+                content: (
+                  <div className="space-y-1.5">
+                    {data.institutions.filter((i) => ["MoU Signed","Launch Pending","Live Chapter"].includes(i.stage)).map((i) => (
+                      <div key={i.id} className="flex items-center justify-between rounded-md border border-border px-2 py-1.5 text-xs">
+                        <span>{i.name}</span>
+                        <span className="text-muted-foreground">₹{(i.potentialValue/1000).toFixed(0)}k</span>
+                      </div>
+                    ))}
+                  </div>
+                ),
+              },
+            ]}
+          />
+
+          <DrilldownCard
+            title="Growth MoM"
+            value={`+${kpis.growth}%`}
+            icon={TrendingUp}
+            deepDiveTo="/institution-admin/analytics"
+            deepDiveLabel="Analytics"
+            levels={[
+              {
+                label: "System usage",
+                content: <p className="text-sm text-muted-foreground">Composite of pipeline velocity, MoU rate and active campus signups.</p>,
+              },
+            ]}
+          />
         </div>
+
 
         <Tabs defaultValue="admins" className="mt-8">
           <TabsList className="flex-wrap">
