@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Trophy, TrendingUp, Crown } from "lucide-react";
+import { Trophy, TrendingUp, Crown, Sparkles } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AppShell } from "@/components/site/AppShell";
-import { topBuilders, topChapters, campusPartners } from "@/lib/mock-data";
+import { useStoreValue } from "@/hooks/use-scope";
+import { memberLeaderboard, chapterLeaderboard, campusLeaderboard } from "@/lib/scope-store";
+import { topChapters } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/leaderboards")({
@@ -22,6 +24,10 @@ type Tab = (typeof tabs)[number];
 
 function LeaderboardsPage() {
   const [tab, setTab] = useState<Tab>("Members");
+  const members = useStoreValue(() => memberLeaderboard());
+  const chapters = useStoreValue(() => chapterLeaderboard());
+  const campuses = useStoreValue(() => campusLeaderboard());
+  const myRank = members.findIndex((r) => r.isMe) + 1;
 
   return (
     <AppShell>
@@ -32,6 +38,12 @@ function LeaderboardsPage() {
           <p className="mt-2 max-w-xl text-primary-foreground/70">
             Updated in real time. Earn points by shipping projects, attending events, and growing your chapter.
           </p>
+          {myRank > 0 && (
+            <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-cyan/15 px-4 py-2 text-sm">
+              <Sparkles className="h-3.5 w-3.5 text-cyan" />
+              You're #{myRank}. {myRank > 10 ? `Climb ${myRank - 10} more spots to crack Top 10.` : "You're in the Top 10. Hold the line."}
+            </div>
+          )}
         </div>
       </section>
 
@@ -52,17 +64,17 @@ function LeaderboardsPage() {
         </div>
 
         <div className="mt-8">
-          {tab === "Members" && <MembersBoard />}
-          {tab === "Chapters" && <ChaptersBoard />}
-          {tab === "Campuses" && <CampusesBoard />}
+          {tab === "Members" && <Board rows={members} unit="pts" />}
+          {tab === "Chapters" && <Board rows={chapters} unit="members" growths={topChapters.map((c) => c.growth)} />}
+          {tab === "Campuses" && <Board rows={campuses} unit="members" />}
         </div>
       </section>
     </AppShell>
   );
 }
 
-function Podium({ items }: { items: { name: string; sub: string; value: string }[] }) {
-  const order = [1, 0, 2]; // 2nd, 1st, 3rd
+function Podium({ items }: { items: { id: string; name: string; sub: string; value: string; isMe?: boolean }[] }) {
+  const order = [1, 0, 2];
   const heights = ["h-32", "h-40", "h-28"];
   const colors = ["bg-secondary", "bg-gradient-brand text-brand-foreground", "bg-secondary"];
 
@@ -73,12 +85,12 @@ function Podium({ items }: { items: { name: string; sub: string; value: string }
         if (!it) return <div key={pos} />;
         return (
           <div key={pos} className="text-center">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gradient-hero text-lg font-bold text-primary-foreground">
+            <div className={cn("mx-auto flex h-14 w-14 items-center justify-center rounded-full text-lg font-bold text-primary-foreground", it.isMe ? "bg-gradient-brand ring-4 ring-cyan/40" : "bg-gradient-hero")}>
               {it.name.charAt(0)}
             </div>
-            <div className="mt-2 truncate text-sm font-semibold text-foreground">{it.name}</div>
+            <div className="mt-2 truncate text-sm font-semibold text-foreground">{it.name}{it.isMe ? " (You)" : ""}</div>
             <div className="truncate text-xs text-muted-foreground">{it.sub}</div>
-            <div className={cn("mt-2 flex items-end justify-center rounded-t-xl text-sm font-bold", heights[pos], colors[pos])}>
+            <div className={cn("mt-2 flex items-end justify-center rounded-t-xl text-sm font-bold animate-fade-in", heights[pos], colors[pos])}>
               <div className="pb-3">
                 {idx === 0 && <Crown className="mx-auto mb-1 h-4 w-4" />}
                 #{idx + 1}
@@ -92,75 +104,25 @@ function Podium({ items }: { items: { name: string; sub: string; value: string }
   );
 }
 
-function MembersBoard() {
+function Board({ rows, unit, growths }: { rows: { id: string; name: string; sub: string; value: number; isMe?: boolean }[]; unit: string; growths?: string[] }) {
   return (
     <>
-      <Podium items={topBuilders.map((b) => ({ name: b.name, sub: b.campus, value: `${b.points} pts` }))} />
+      <Podium items={rows.slice(0, 3).map((r) => ({ id: r.id, name: r.name, sub: r.sub, value: `${r.value.toLocaleString()} ${unit}`, isMe: r.isMe }))} />
       <Card className="divide-y divide-border">
-        {topBuilders.map((b, i) => (
-          <div key={b.name} className="flex items-center gap-4 p-4">
+        {rows.map((r, i) => (
+          <div key={r.id} className={cn("flex items-center gap-4 p-4 transition-colors", r.isMe ? "bg-cyan/10" : "hover:bg-secondary/40")}>
             <div className="w-8 text-center text-sm font-bold text-muted-foreground">#{i + 1}</div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-brand text-sm font-bold text-brand-foreground">
-              {b.name.charAt(0)}
+            <div className={cn("flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold text-brand-foreground", r.isMe ? "bg-gradient-brand ring-2 ring-cyan" : "bg-gradient-brand")}>
+              {r.name.charAt(0)}
             </div>
             <div className="flex-1">
-              <div className="font-medium text-foreground">{b.name}</div>
-              <div className="text-xs text-muted-foreground">{b.campus} · {b.level}</div>
+              <div className="font-medium text-foreground">{r.name}{r.isMe && <span className="ml-2 rounded-full bg-cyan/20 px-2 py-0.5 text-[10px] font-semibold text-cyan-foreground">YOU</span>}</div>
+              <div className="text-xs text-muted-foreground">{r.sub}</div>
             </div>
+            {growths?.[i] && <Badge className="bg-success/15 text-success hover:bg-success/20"><TrendingUp className="mr-1 h-3 w-3" />{growths[i]}</Badge>}
             <div className="text-right">
-              <div className="text-sm font-bold text-foreground">{b.points.toLocaleString()}</div>
-              <div className="text-[10px] uppercase tracking-wider text-muted-foreground">points</div>
-            </div>
-          </div>
-        ))}
-      </Card>
-    </>
-  );
-}
-
-function ChaptersBoard() {
-  return (
-    <>
-      <Podium items={topChapters.map((c) => ({ name: c.name, sub: c.campus, value: `${c.members} members` }))} />
-      <Card className="divide-y divide-border">
-        {topChapters.map((c) => (
-          <div key={c.name} className="flex items-center gap-4 p-4">
-            <div className="w-8 text-center text-sm font-bold text-muted-foreground">#{c.rank}</div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-hero text-xs font-bold text-primary-foreground">
-              {c.name.charAt(0)}
-            </div>
-            <div className="flex-1">
-              <div className="font-medium text-foreground">{c.name}</div>
-              <div className="text-xs text-muted-foreground">{c.campus}</div>
-            </div>
-            <div className="hidden text-sm text-muted-foreground sm:block">{c.members} members</div>
-            <Badge className="bg-success/15 text-success hover:bg-success/20"><TrendingUp className="mr-1 h-3 w-3" />{c.growth}</Badge>
-          </div>
-        ))}
-      </Card>
-    </>
-  );
-}
-
-function CampusesBoard() {
-  const sorted = [...campusPartners].sort((a, b) => b.members - a.members);
-  return (
-    <>
-      <Podium items={sorted.map((c) => ({ name: c.name, sub: c.city, value: `${c.members}` }))} />
-      <Card className="divide-y divide-border">
-        {sorted.map((c, i) => (
-          <div key={c.name} className="flex items-center gap-4 p-4">
-            <div className="w-8 text-center text-sm font-bold text-muted-foreground">#{i + 1}</div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-cyan text-xs font-bold text-cyan-foreground">
-              {c.name.split(" ").map((w) => w[0]).join("").slice(0, 2)}
-            </div>
-            <div className="flex-1">
-              <div className="font-medium text-foreground">{c.name}</div>
-              <div className="text-xs text-muted-foreground">{c.city}</div>
-            </div>
-            <div className="text-right">
-              <div className="text-sm font-bold text-foreground">{c.members}</div>
-              <div className="text-[10px] uppercase tracking-wider text-muted-foreground">members</div>
+              <div className="text-sm font-bold text-foreground">{r.value.toLocaleString()}</div>
+              <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{unit}</div>
             </div>
           </div>
         ))}
