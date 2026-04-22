@@ -109,6 +109,10 @@ const KEYS = {
   visits: "scope_visit_count",
   liked: "scope_liked_posts",
   votedProjects: "scope_voted_projects",
+  applications: "scope_applications",
+  savedProjects: "scope_saved_projects",
+  portfolio: "scope_portfolio_items",
+  ideaSubmissions: "scope_idea_submissions",
 } as const;
 
 const isBrowser = typeof window !== "undefined";
