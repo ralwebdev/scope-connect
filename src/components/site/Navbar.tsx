@@ -16,11 +16,10 @@ const publicLinks = [
 
 const authedLinks = [
   { to: "/dashboard", label: "Dashboard" },
-  { to: "/feed", label: "Feed" },
   { to: "/projects", label: "Projects" },
+  { to: "/portfolio", label: "Portfolio" },
+  { to: "/feed", label: "Feed" },
   { to: "/events", label: "Events" },
-  { to: "/opportunities", label: "Opportunities" },
-  { to: "/challenges", label: "Challenges" },
   { to: "/campus", label: "Campus" },
   { to: "/leaderboards", label: "Leaderboards" },
 ] as const;
