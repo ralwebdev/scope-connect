@@ -245,4 +245,23 @@
     50% { transform: scale(1.18); filter: drop-shadow(0 0 6px color-mix(in oklab, var(--brand) 70%, transparent)); }
   }
   .animate-flame-pulse { animation: flame-pulse 1.6s ease-in-out infinite; }
+
+  /* Respect reduced-motion: disable heavy looping animations & lift transforms. */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+    .animate-shimmer, .animate-flame-pulse, .animate-pulse-glow { animation: none !important; }
+    .hover-lift:hover { transform: none; }
+  }
+
+  /* Lighter motion on small screens — reduce simultaneous looping effects on low-end mobile. */
+  @media (max-width: 640px) {
+    .animate-pulse-glow { animation-duration: 5s; }
+    .hover-lift { transition: none; }
+    .hover-lift:hover { transform: none; box-shadow: var(--shadow-soft, var(--shadow-elegant)); }
+  }
 }
