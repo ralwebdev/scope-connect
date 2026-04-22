@@ -6,6 +6,8 @@
 
 export type RoleId =
   | "super_admin"
+  | "scope_super_admin"
+  | "scope_admin"
   | "regional_admin"
   | "campus_admin"
   | "content_admin"
@@ -31,6 +33,8 @@ export type PermissionKey =
 
 export const ALL_ROLES: RoleId[] = [
   "super_admin",
+  "scope_super_admin",
+  "scope_admin",
   "regional_admin",
   "campus_admin",
   "content_admin",
