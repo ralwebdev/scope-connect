@@ -38,10 +38,19 @@ function AuthPage() {
   const [selectedInterests, setSelectedInterests] = useState<string[]>(["AI", "Startup"]);
   const [loading, setLoading] = useState(false);
   const [stage, setStage] = useState(0);
+  const [signupStarted, setSignupStarted] = useState(false);
 
   useEffect(() => {
     if (isAuthed) navigate({ to: "/dashboard" });
   }, [isAuthed, navigate]);
+
+  // Fire signup_started once when user first interacts with a signup field.
+  const markStarted = () => {
+    if (!signupStarted && mode === "signup") {
+      setSignupStarted(true);
+      analytics.track("signup_started");
+    }
+  };
 
   const toggleInterest = (t: string) =>
     setSelectedInterests((prev) =>
