@@ -133,13 +133,35 @@ function read<T>(key: string, fallback: T): T {
   }
 }
 
+// Batched write queue — coalesces rapid writes to the same key into one
+// localStorage.setItem + one change event per microtask. Cuts sync I/O during
+// burst actions (likes, comments, XP awards) without changing observable state.
+const pendingWrites = new Map<string, unknown>();
+let flushScheduled = false;
+
+function flushWrites() {
+  flushScheduled = false;
+  const entries = Array.from(pendingWrites.entries());
+  pendingWrites.clear();
+  for (const [key, value] of entries) {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch {
+      // ignore quota errors
+    }
+  }
+  // Single change event covers all keys flushed this tick.
+  try {
+    window.dispatchEvent(new CustomEvent("scope:store-change", { detail: { keys: entries.map(([k]) => k) } }));
+  } catch { /* noop */ }
+}
+
 function write<T>(key: string, value: T) {
   if (!isBrowser) return;
-  try {
-    localStorage.setItem(key, JSON.stringify(value));
-    window.dispatchEvent(new CustomEvent("scope:store-change", { detail: { key } }));
-  } catch {
-    // ignore quota errors
+  pendingWrites.set(key, value);
+  if (!flushScheduled) {
+    flushScheduled = true;
+    queueMicrotask(flushWrites);
   }
 }
 

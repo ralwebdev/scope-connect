@@ -24,6 +24,21 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
     }
   }, [isAuthed, navigate, mounted]);
 
-  if (!mounted || !isAuthed) return null;
+  if (!mounted || !isAuthed) {
+    // Lightweight shell so route transitions don't flash blank — feels instant.
+    return (
+      <div className="flex min-h-screen flex-col bg-background">
+        <div className="h-14 border-b border-border/40 bg-background/80" />
+        <div className="mx-auto w-full max-w-7xl flex-1 space-y-4 px-4 py-10 sm:px-6 lg:px-8">
+          <div className="h-24 animate-pulse rounded-2xl bg-secondary/40" />
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div className="h-32 animate-pulse rounded-xl bg-secondary/40" />
+            <div className="h-32 animate-pulse rounded-xl bg-secondary/40" />
+            <div className="h-32 animate-pulse rounded-xl bg-secondary/40" />
+          </div>
+        </div>
+      </div>
+    );
+  }
   return <>{children}</>;
 }
