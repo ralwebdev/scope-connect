@@ -23,12 +23,21 @@ export const Route = createFileRoute("/support")({
 });
 
 const FAQS = [
+  { q: "What is Scope Connect?", a: "Scope Connect is India's home for student builders — a single platform where you find real opportunities, ship real projects, build a verified portfolio, and grow alongside the most ambitious campuses in the country." },
+  { q: "Who can join Scope Connect?", a: "Any student in an Indian college or university. Whether you're a designer, developer, marketer, researcher, founder or community lead — if you build, you belong." },
+  { q: "Are the projects on Scope real?", a: "Yes. Every Scope Challenge, Campus Project and Open Project is curated and posted by the Scope team or verified campus chapters. They come with real briefs, real timelines and real rewards." },
   { q: "Who creates the public projects on Scope?", a: "Every public challenge is curated and posted by the Scope team. Students and institutions cannot publicly post projects — this keeps quality high and listings trustworthy." },
   { q: "Can I submit my own idea?", a: "Yes. Use the 'Suggest an Idea' button on /projects or /dashboard. Your submission is private and reviewed by the Scope team." },
-  { q: "How are applications reviewed?", a: "Scope reviews every application within 48 hours. You'll see status updates (Under Review, Shortlisted, Accepted) directly on your dashboard." },
-  { q: "Is my data safe?", a: "All your activity, profile data, and submissions are stored securely in your browser for this MVP. We never publish private data." },
-  { q: "How do I earn XP and level up?", a: "Every meaningful action — applying, posting, RSVP-ing, completing your profile — earns XP. Levels unlock perks and visibility." },
-  { q: "What happens when I join a chapter?", a: "You unlock campus-exclusive opportunities, chapter-only events, and a path to becoming a chapter leader." },
+  { q: "How does XP work?", a: "Every meaningful action — applying to a project, posting an update, RSVP-ing to an event, completing your profile, maintaining a daily streak — earns XP. XP unlocks levels (Explorer → Builder → Innovator → Leader → Ambassador) and visibility across the platform." },
+  { q: "How do I level up?", a: "Stack consistent actions. Most builders reach Builder tier within their first month and Innovator by month three. Your level appears on your profile, in the feed, and on every leaderboard." },
+  { q: "How do campus chapters work?", a: "Each campus has a Scope chapter. Joining unlocks campus-only projects, chapter events, and a path to becoming a chapter leader. You can switch chapters anytime from your profile." },
+  { q: "What if my campus isn't on Scope yet?", a: "Pick the closest match for now and tell us via /support. New chapters launch every week — we'll get yours added within 7 days." },
+  { q: "Can I build a portfolio on Scope?", a: "Absolutely. Your portfolio is one of the most powerful trust signals on the platform. Add projects, designs, research, startup ideas, campaigns or certificates — public to recruiters and collaborators." },
+  { q: "How are applications reviewed?", a: "Scope reviews every application within 48 hours. You'll see status updates (Under Review, Shortlisted, Accepted, Waitlisted) directly on your dashboard." },
+  { q: "How are opportunities selected?", a: "We curate based on quality, relevance, and impact. Every brief is vetted — no spam recruitment, no low-effort gigs. Just real shipping opportunities for student builders." },
+  { q: "Is Scope Connect free?", a: "Yes. Scope Connect is free for every student. We monetize through partner organizations and brand sponsorships, never by charging builders." },
+  { q: "Is my data safe?", a: "All your activity, profile data, and submissions are stored securely. We never sell your data, and your private submissions stay private to the Scope team." },
+  { q: "How do I contact the Scope team?", a: "Use the contact form below — we reply to every message within 24 hours. For urgent issues, email hello@scope.connect." },
 ];
 
 function SupportPage() {
