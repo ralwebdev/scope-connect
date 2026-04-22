@@ -1,20 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import {
-  Trophy,
-  Flame,
-  TrendingUp,
-  Calendar,
-  Users,
-  Sparkles,
-  ArrowRight,
-  Target,
-} from "lucide-react";
+import { Trophy, Flame, TrendingUp, Calendar, Users, Sparkles, ArrowRight, Target, Zap, Rocket } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { AppShell } from "@/components/site/AppShell";
-import { upcomingEvents, feedPosts, topBuilders } from "@/lib/mock-data";
+import { AuthGate } from "@/components/site/AuthGate";
+import { CountUp } from "@/components/site/Effects";
+import { useUser, useXP, useLevel, useLevelProgress, useStreak, useProfileStrength, useStoreValue } from "@/hooks/use-scope";
+import { feed, events, opportunities, memberLeaderboard } from "@/lib/scope-store";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -23,40 +17,49 @@ export const Route = createFileRoute("/dashboard")({
       { name: "description", content: "Your Scope Connect builder dashboard." },
     ],
   }),
-  component: DashboardPage,
+  component: () => <AuthGate><DashboardPage /></AuthGate>,
 });
 
 function DashboardPage() {
-  const me = {
-    name: "Aarav Mehta",
-    campus: "IIT Bombay",
-    level: "Innovator",
-    points: 4820,
-    nextLevel: "Leader",
-    progress: 72,
-    rank: 14,
-  };
+  const user = useUser();
+  const xp = useXP();
+  const level = useLevel();
+  const levelProgress = useLevelProgress();
+  const streak = useStreak();
+  const strength = useProfileStrength();
+  const recentFeed = useStoreValue(() => feed.all().slice(0, 4));
+  const upcoming = useStoreValue(() => events.all().slice(0, 3));
+  const opps = useStoreValue(() => opportunities.all().slice(0, 3));
+  const board = useStoreValue(() => memberLeaderboard());
+
+  if (!user) return null;
+  const myRank = board.findIndex((r) => r.isMe) + 1;
+  const xpToNext = level.max - xp;
 
   return (
     <AppShell>
       <section className="border-b border-border/40 bg-gradient-hero py-10 text-primary-foreground">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap items-center gap-6">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-brand text-2xl font-bold text-brand-foreground shadow-brand">
-              {me.name.charAt(0)}
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl text-2xl font-bold text-brand-foreground shadow-brand" style={{ background: user.avatarColor }}>
+              {user.name.charAt(0).toUpperCase()}
             </div>
             <div className="flex-1">
-              <h1 className="text-2xl font-bold sm:text-3xl">Welcome back, {me.name.split(" ")[0]} 👋</h1>
-              <p className="text-sm text-primary-foreground/70">{me.campus} · {me.level}</p>
+              <h1 className="text-2xl font-bold sm:text-3xl">Welcome back, {user.name.split(" ")[0]} 👋</h1>
+              <p className="text-sm text-primary-foreground/70">{user.campus} · {level.name}</p>
             </div>
             <div className="flex items-center gap-6">
               <div>
                 <div className="text-xs text-primary-foreground/60">Scope Points</div>
-                <div className="text-2xl font-bold">{me.points.toLocaleString()}</div>
+                <div className="text-2xl font-bold"><CountUp to={xp} /></div>
               </div>
               <div>
                 <div className="text-xs text-primary-foreground/60">National Rank</div>
-                <div className="text-2xl font-bold">#{me.rank}</div>
+                <div className="text-2xl font-bold">#{myRank || "—"}</div>
+              </div>
+              <div>
+                <div className="text-xs text-primary-foreground/60">Streak</div>
+                <div className="flex items-center gap-1 text-2xl font-bold"><Flame className="h-5 w-5 text-brand" /> {streak}d</div>
               </div>
             </div>
           </div>
@@ -65,41 +68,42 @@ function DashboardPage() {
 
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="grid gap-6 lg:grid-cols-3">
-          {/* Profile strength */}
-          <Card className="p-6">
+          <Card className="p-6 hover-lift">
             <div className="flex items-center justify-between">
               <h3 className="font-semibold text-foreground">Profile strength</h3>
               <Target className="h-4 w-4 text-brand" />
             </div>
-            <div className="mt-4 text-3xl font-bold text-foreground">82%</div>
-            <Progress value={82} className="mt-3" />
-            <p className="mt-3 text-xs text-muted-foreground">Add a portfolio link & 1 project to reach 100%.</p>
+            <div className="mt-4 text-3xl font-bold text-foreground"><CountUp to={strength} suffix="%" /></div>
+            <Progress value={strength} className="mt-3" />
+            <p className="mt-3 text-xs text-muted-foreground">
+              {strength < 100 ? "Complete your bio, skills & links to attract collaborators." : "Your profile is fully optimized."}
+            </p>
+            <Button asChild size="sm" variant="outline" className="mt-4 w-full">
+              <Link to="/profile">Complete profile <ArrowRight className="ml-1 h-3 w-3" /></Link>
+            </Button>
           </Card>
 
-          {/* Level progress */}
-          <Card className="p-6">
+          <Card className="p-6 hover-lift">
             <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-foreground">Next level: {me.nextLevel}</h3>
+              <h3 className="font-semibold text-foreground">Next level: {level.next}</h3>
               <Sparkles className="h-4 w-4 text-cyan" />
             </div>
-            <div className="mt-4 text-3xl font-bold text-foreground">{me.progress}%</div>
-            <Progress value={me.progress} className="mt-3" />
-            <p className="mt-3 text-xs text-muted-foreground">680 points to unlock Leader-tier perks.</p>
+            <div className="mt-4 text-3xl font-bold text-foreground"><CountUp to={levelProgress} suffix="%" /></div>
+            <Progress value={levelProgress} className="mt-3" />
+            <p className="mt-3 text-xs text-muted-foreground">{xpToNext.toLocaleString()} XP to unlock {level.next}-tier perks.</p>
           </Card>
 
-          {/* Streak */}
-          <Card className="p-6">
+          <Card className="bg-gradient-brand p-6 text-brand-foreground hover-lift">
             <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-foreground">Login streak</h3>
-              <Flame className="h-4 w-4 text-brand" />
+              <h3 className="font-semibold">Login streak</h3>
+              <Flame className="h-4 w-4" />
             </div>
-            <div className="mt-4 text-3xl font-bold text-foreground">12 days 🔥</div>
-            <p className="mt-3 text-xs text-muted-foreground">+50 points awarded today. Don't break the streak!</p>
+            <div className="mt-4 text-3xl font-bold">{streak} day{streak === 1 ? "" : "s"} 🔥</div>
+            <p className="mt-3 text-xs text-brand-foreground/80">+50 XP every consecutive day. Don't break the streak!</p>
           </Card>
         </div>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-3">
-          {/* Recent feed */}
           <Card className="lg:col-span-2">
             <div className="flex items-center justify-between border-b border-border p-5">
               <h3 className="font-semibold text-foreground">Recent feed</h3>
@@ -108,8 +112,8 @@ function DashboardPage() {
               </Button>
             </div>
             <div className="divide-y divide-border">
-              {feedPosts.slice(0, 3).map((p) => (
-                <div key={p.id} className="p-5">
+              {recentFeed.map((p) => (
+                <div key={p.id} className="p-5 transition-colors hover:bg-secondary/40">
                   <div className="flex items-center gap-3">
                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-brand text-sm font-bold text-brand-foreground">
                       {p.author.charAt(0)}
@@ -120,22 +124,21 @@ function DashboardPage() {
                     </div>
                     <Badge variant="outline" className="text-xs">{p.type}</Badge>
                   </div>
-                  <p className="mt-3 text-sm text-foreground/90">{p.content}</p>
+                  <p className="mt-3 line-clamp-2 text-sm text-foreground/90">{p.content}</p>
                 </div>
               ))}
             </div>
           </Card>
 
-          {/* Sidebar */}
           <div className="space-y-6">
-            <Card className="p-5">
+            <Card className="p-5 hover-lift">
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold text-foreground">Upcoming events</h3>
                 <Calendar className="h-4 w-4 text-muted-foreground" />
               </div>
               <ul className="mt-4 space-y-3">
-                {upcomingEvents.slice(0, 3).map((e) => (
-                  <li key={e.title} className="flex items-start gap-3">
+                {upcoming.map((e) => (
+                  <li key={e.id} className="flex items-start gap-3">
                     <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-brand text-xs font-bold text-brand-foreground">
                       {e.date.split(" ")[1] ?? e.date}
                     </div>
@@ -146,41 +149,65 @@ function DashboardPage() {
                   </li>
                 ))}
               </ul>
+              <Button asChild size="sm" variant="outline" className="mt-4 w-full">
+                <Link to="/events">Browse events</Link>
+              </Button>
             </Card>
 
-            <Card className="p-5">
+            <Card className="p-5 hover-lift">
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold text-foreground">Recommended collabs</h3>
                 <Users className="h-4 w-4 text-muted-foreground" />
               </div>
               <ul className="mt-4 space-y-3">
-                {topBuilders.slice(0, 4).map((b) => (
-                  <li key={b.name} className="flex items-center gap-3">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-xs font-bold text-foreground">
-                      {b.name.charAt(0)}
+                {opps.map((o) => (
+                  <li key={o.id} className="rounded-lg border border-border p-3">
+                    <div className="flex items-center gap-2">
+                      <Badge className="bg-cyan/20 text-cyan-foreground hover:bg-cyan/30">{o.match}% match</Badge>
+                      <span className="text-xs text-muted-foreground">{o.category}</span>
                     </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="truncate text-sm font-medium text-foreground">{b.name}</div>
-                      <div className="text-xs text-muted-foreground">{b.campus}</div>
-                    </div>
-                    <Button size="sm" variant="outline" className="h-7 text-xs">Connect</Button>
+                    <div className="mt-2 line-clamp-2 text-sm font-medium text-foreground">{o.title}</div>
                   </li>
                 ))}
               </ul>
+              <Button asChild size="sm" variant="outline" className="mt-4 w-full">
+                <Link to="/opportunities">See all opportunities</Link>
+              </Button>
             </Card>
 
-            <Card className="bg-gradient-hero p-5 text-primary-foreground">
+            <Card className="bg-gradient-hero p-5 text-primary-foreground hover-lift">
               <Trophy className="h-5 w-5 text-cyan" />
               <h3 className="mt-3 font-semibold">Leaderboard position</h3>
-              <p className="mt-1 text-sm text-primary-foreground/70">You're #{me.rank} in the national leaderboard.</p>
+              <p className="mt-1 text-sm text-primary-foreground/70">You're #{myRank || "—"} on the national board.</p>
               <div className="mt-3 flex items-center gap-2 text-xs text-cyan">
-                <TrendingUp className="h-3.5 w-3.5" /> +6 spots this week
+                <TrendingUp className="h-3.5 w-3.5" /> You're {Math.max(0, myRank - 10)} moves from Top 10.
               </div>
               <Button asChild variant="outline" size="sm" className="mt-4 w-full border-primary-foreground/20 bg-primary-foreground/5 text-primary-foreground hover:bg-primary-foreground/10">
                 <Link to="/leaderboards">View leaderboards</Link>
               </Button>
             </Card>
           </div>
+        </div>
+
+        <div className="mt-8 grid gap-6 lg:grid-cols-3">
+          <Card className="p-6 hover-lift">
+            <Rocket className="h-5 w-5 text-brand" />
+            <h3 className="mt-3 font-semibold text-foreground">Launch a project</h3>
+            <p className="mt-1 text-sm text-muted-foreground">Ship what you're building. Earn +50 XP on launch.</p>
+            <Button asChild size="sm" className="mt-4 bg-gradient-brand text-brand-foreground"><Link to="/projects">Launch Project</Link></Button>
+          </Card>
+          <Card className="p-6 hover-lift">
+            <Zap className="h-5 w-5 text-cyan" />
+            <h3 className="mt-3 font-semibold text-foreground">Join a chapter</h3>
+            <p className="mt-1 text-sm text-muted-foreground">Plug into your campus tribe. Lead, ship, win together.</p>
+            <Button asChild size="sm" variant="outline" className="mt-4"><Link to="/campus">Open Campus Hub</Link></Button>
+          </Card>
+          <Card className="p-6 hover-lift">
+            <Sparkles className="h-5 w-5 text-brand" />
+            <h3 className="mt-3 font-semibold text-foreground">Share momentum</h3>
+            <p className="mt-1 text-sm text-muted-foreground">Post a milestone. Your chapter notices.</p>
+            <Button asChild size="sm" variant="outline" className="mt-4"><Link to="/feed">Open feed</Link></Button>
+          </Card>
         </div>
       </section>
     </AppShell>

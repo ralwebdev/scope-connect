@@ -1,12 +1,14 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import { Sparkles, ArrowRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Sparkles, ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { interestTags } from "@/lib/mock-data";
+import { auth, seedInterests } from "@/lib/scope-store";
+import { useIsLoggedIn } from "@/hooks/use-scope";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -18,19 +20,57 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
+const STAGES = [
+  "Verifying your builder identity…",
+  "Syncing your innovation profile…",
+  "Calibrating your campus rank…",
+];
+
 function AuthPage() {
   const navigate = useNavigate();
+  const isAuthed = useIsLoggedIn();
   const [mode, setMode] = useState<"login" | "signup">("signup");
-  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+  const [name, setName] = useState("");
+  const [campus, setCampus] = useState("IIT Bombay");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [selectedInterests, setSelectedInterests] = useState<string[]>(["AI", "Startup"]);
+  const [loading, setLoading] = useState(false);
+  const [stage, setStage] = useState(0);
+
+  useEffect(() => {
+    if (isAuthed) navigate({ to: "/dashboard" });
+  }, [isAuthed, navigate]);
 
   const toggleInterest = (t: string) =>
     setSelectedInterests((prev) =>
       prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t],
     );
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Frontend-only demo: skip straight to dashboard.
+    if (!email || !email.includes("@")) {
+      toast.error("Please enter a valid email.");
+      return;
+    }
+    if (password.length < 4) {
+      toast.error("Password should be at least 4 characters.");
+      return;
+    }
+    setLoading(true);
+    setStage(0);
+    const t1 = setTimeout(() => setStage(1), 450);
+    const t2 = setTimeout(() => setStage(2), 900);
+    await new Promise((r) => setTimeout(r, 1300));
+    clearTimeout(t1); clearTimeout(t2);
+
+    if (mode === "signup") {
+      auth.signup({ name: name || email.split("@")[0], email, campus, interests: selectedInterests });
+      toast.success("Welcome to Scope Connect. You're in.");
+    } else {
+      auth.login(email);
+      toast.success("Welcome back, Builder.");
+    }
     navigate({ to: "/dashboard" });
   };
 
@@ -88,6 +128,7 @@ function AuthPage() {
 
           <div className="mb-6 flex rounded-xl bg-secondary p-1">
             <button
+              type="button"
               onClick={() => setMode("signup")}
               className={`flex-1 rounded-lg py-2 text-sm font-medium transition-all ${
                 mode === "signup" ? "bg-background text-foreground shadow-soft" : "text-muted-foreground"
@@ -96,6 +137,7 @@ function AuthPage() {
               Create account
             </button>
             <button
+              type="button"
               onClick={() => setMode("login")}
               className={`flex-1 rounded-lg py-2 text-sm font-medium transition-all ${
                 mode === "login" ? "bg-background text-foreground shadow-soft" : "text-muted-foreground"
@@ -119,30 +161,30 @@ function AuthPage() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <Label htmlFor="fullName">Full name</Label>
-                  <Input id="fullName" placeholder="Aarav Mehta" required className="mt-1.5" />
+                  <Input id="fullName" value={name} onChange={(e) => setName(e.target.value)} placeholder="Aarav Mehta" required className="mt-1.5" />
                 </div>
                 <div>
                   <Label htmlFor="campus">Campus</Label>
-                  <Input id="campus" placeholder="IIT Bombay" required className="mt-1.5" />
+                  <Input id="campus" value={campus} onChange={(e) => setCampus(e.target.value)} placeholder="IIT Bombay" required className="mt-1.5" />
                 </div>
               </div>
             )}
 
             <div>
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="you@campus.edu" required className="mt-1.5" />
+              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@campus.edu" required className="mt-1.5" />
             </div>
 
             <div>
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" placeholder="••••••••" required className="mt-1.5" />
+              <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" required className="mt-1.5" />
             </div>
 
             {mode === "signup" && (
               <div>
                 <Label>Pick your interests</Label>
                 <div className="mt-2 flex flex-wrap gap-2">
-                  {interestTags.map((t) => {
+                  {seedInterests.map((t) => {
                     const active = selectedInterests.includes(t);
                     return (
                       <button
@@ -163,8 +205,14 @@ function AuthPage() {
               </div>
             )}
 
-            <Button type="submit" size="lg" className="w-full bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-95">
-              {mode === "signup" ? "Create account" : "Log in"} <ArrowRight className="ml-2 h-4 w-4" />
+            <Button type="submit" disabled={loading} size="lg" className="w-full bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-95">
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> {STAGES[stage]}
+                </>
+              ) : (
+                <>{mode === "signup" ? "Create account" : "Log in"} <ArrowRight className="ml-2 h-4 w-4" /></>
+              )}
             </Button>
 
             <p className="text-center text-xs text-muted-foreground">
@@ -176,7 +224,7 @@ function AuthPage() {
             <div className="flex items-start gap-3">
               <Badge className="bg-cyan/15 text-cyan-foreground">Demo</Badge>
               <p className="text-xs text-muted-foreground">
-                This is a frontend preview. Connect Lovable Cloud later to enable real authentication, profiles, and persistence.
+                Frontend MVP — any valid-looking email works. Your session and progress are saved in this browser.
               </p>
             </div>
           </Card>
