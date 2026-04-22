@@ -229,4 +229,20 @@
 
   .hover-lift { transition: transform .25s ease, box-shadow .25s ease; }
   .hover-lift:hover { transform: translateY(-3px); box-shadow: var(--shadow-elegant); }
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  .animate-shimmer {
+    background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--brand) 25%, transparent), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 2.4s linear infinite;
+  }
+
+  @keyframes flame-pulse {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0 transparent); }
+    50% { transform: scale(1.18); filter: drop-shadow(0 0 6px color-mix(in oklab, var(--brand) 70%, transparent)); }
+  }
+  .animate-flame-pulse { animation: flame-pulse 1.6s ease-in-out infinite; }
 }

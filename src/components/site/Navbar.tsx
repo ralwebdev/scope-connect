@@ -112,7 +112,7 @@ export function Navbar() {
                 <Zap className="h-3 w-3 text-brand" /> {xp.toLocaleString()} XP
               </div>
               <div className="hidden items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-foreground xl:flex">
-                <Flame className="h-3 w-3 text-brand" /> {streak}d
+                <Flame className={cn("h-3 w-3 text-brand", streak >= 3 && "animate-flame-pulse")} /> {streak}d
               </div>
 
               {/* Bell */}
