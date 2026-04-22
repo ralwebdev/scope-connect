@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { Building2, Calendar, FileText, Rocket, Trophy, MapPin, Phone, Mail, Plus, ChevronRight, CheckCircle2, Circle, Download, Send, Star, ArrowRight, Target, Activity } from "lucide-react";
 import { AppShell } from "@/components/site/AppShell";
 import { RbacSidebar } from "@/components/site/RbacSidebar";
+import { AccessDenied } from "@/components/site/AccessDenied";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -66,11 +67,13 @@ function ScopeAdminPortal() {
   if (!isAllowed) {
     return (
       <AppShell>
-        <section className="mx-auto max-w-md px-4 py-24 text-center">
-          <h1 className="text-2xl font-bold">Restricted</h1>
-          <p className="mt-2 text-sm text-muted-foreground">Scope Admin access required.</p>
-          <Button asChild className="mt-6"><Link to="/dashboard">Back to dashboard</Link></Button>
-        </section>
+        <AccessDenied
+          role={role}
+          required="manage_partnerships"
+          title="Scope Admin only"
+          message="The Territory CRM is restricted to Scope Admins, Scope Super Admins, and Super Admins."
+          toastMessage="Restricted area. Scope Admin access required."
+        />
       </AppShell>
     );
   }

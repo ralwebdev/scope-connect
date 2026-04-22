@@ -42,9 +42,11 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UHandleRouteImport } from './routes/u.$handle'
+import { Route as ScopeSuperAdminRbacAuditRouteImport } from './routes/scope-super-admin.rbac-audit'
 import { Route as InstitutionAdminMembersRouteImport } from './routes/institution-admin.members'
 import { Route as InstitutionAdminCommunicationsRouteImport } from './routes/institution-admin.communications'
 import { Route as InstitutionAdminAnalyticsRouteImport } from './routes/institution-admin.analytics'
+import { Route as DevBuildDiagnosticsRouteImport } from './routes/dev.build-diagnostics'
 import { Route as AdminConfigRouteImport } from './routes/admin.config'
 import { Route as AdminCampusesNewRouteImport } from './routes/admin.campuses.new'
 
@@ -213,6 +215,12 @@ const UHandleRoute = UHandleRouteImport.update({
   path: '/u/$handle',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ScopeSuperAdminRbacAuditRoute =
+  ScopeSuperAdminRbacAuditRouteImport.update({
+    id: '/rbac-audit',
+    path: '/rbac-audit',
+    getParentRoute: () => ScopeSuperAdminRoute,
+  } as any)
 const InstitutionAdminMembersRoute = InstitutionAdminMembersRouteImport.update({
   id: '/members',
   path: '/members',
@@ -230,6 +238,11 @@ const InstitutionAdminAnalyticsRoute =
     path: '/analytics',
     getParentRoute: () => InstitutionAdminRoute,
   } as any)
+const DevBuildDiagnosticsRoute = DevBuildDiagnosticsRouteImport.update({
+  id: '/dev/build-diagnostics',
+  path: '/dev/build-diagnostics',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminConfigRoute = AdminConfigRouteImport.update({
   id: '/config',
   path: '/config',
@@ -267,7 +280,7 @@ export interface FileRoutesByFullPath {
   '/projects': typeof ProjectsRoute
   '/refer': typeof ReferRoute
   '/scope-admin': typeof ScopeAdminRoute
-  '/scope-super-admin': typeof ScopeSuperAdminRoute
+  '/scope-super-admin': typeof ScopeSuperAdminRouteWithChildren
   '/settings': typeof SettingsRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
@@ -275,9 +288,11 @@ export interface FileRoutesByFullPath {
   '/updates': typeof UpdatesRoute
   '/waitlist': typeof WaitlistRoute
   '/admin/config': typeof AdminConfigRoute
+  '/dev/build-diagnostics': typeof DevBuildDiagnosticsRoute
   '/institution-admin/analytics': typeof InstitutionAdminAnalyticsRoute
   '/institution-admin/communications': typeof InstitutionAdminCommunicationsRoute
   '/institution-admin/members': typeof InstitutionAdminMembersRoute
+  '/scope-super-admin/rbac-audit': typeof ScopeSuperAdminRbacAuditRoute
   '/u/$handle': typeof UHandleRoute
   '/admin/campuses/new': typeof AdminCampusesNewRoute
 }
@@ -307,7 +322,7 @@ export interface FileRoutesByTo {
   '/projects': typeof ProjectsRoute
   '/refer': typeof ReferRoute
   '/scope-admin': typeof ScopeAdminRoute
-  '/scope-super-admin': typeof ScopeSuperAdminRoute
+  '/scope-super-admin': typeof ScopeSuperAdminRouteWithChildren
   '/settings': typeof SettingsRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
@@ -315,9 +330,11 @@ export interface FileRoutesByTo {
   '/updates': typeof UpdatesRoute
   '/waitlist': typeof WaitlistRoute
   '/admin/config': typeof AdminConfigRoute
+  '/dev/build-diagnostics': typeof DevBuildDiagnosticsRoute
   '/institution-admin/analytics': typeof InstitutionAdminAnalyticsRoute
   '/institution-admin/communications': typeof InstitutionAdminCommunicationsRoute
   '/institution-admin/members': typeof InstitutionAdminMembersRoute
+  '/scope-super-admin/rbac-audit': typeof ScopeSuperAdminRbacAuditRoute
   '/u/$handle': typeof UHandleRoute
   '/admin/campuses/new': typeof AdminCampusesNewRoute
 }
@@ -348,7 +365,7 @@ export interface FileRoutesById {
   '/projects': typeof ProjectsRoute
   '/refer': typeof ReferRoute
   '/scope-admin': typeof ScopeAdminRoute
-  '/scope-super-admin': typeof ScopeSuperAdminRoute
+  '/scope-super-admin': typeof ScopeSuperAdminRouteWithChildren
   '/settings': typeof SettingsRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
@@ -356,9 +373,11 @@ export interface FileRoutesById {
   '/updates': typeof UpdatesRoute
   '/waitlist': typeof WaitlistRoute
   '/admin/config': typeof AdminConfigRoute
+  '/dev/build-diagnostics': typeof DevBuildDiagnosticsRoute
   '/institution-admin/analytics': typeof InstitutionAdminAnalyticsRoute
   '/institution-admin/communications': typeof InstitutionAdminCommunicationsRoute
   '/institution-admin/members': typeof InstitutionAdminMembersRoute
+  '/scope-super-admin/rbac-audit': typeof ScopeSuperAdminRbacAuditRoute
   '/u/$handle': typeof UHandleRoute
   '/admin/campuses/new': typeof AdminCampusesNewRoute
 }
@@ -398,9 +417,11 @@ export interface FileRouteTypes {
     | '/updates'
     | '/waitlist'
     | '/admin/config'
+    | '/dev/build-diagnostics'
     | '/institution-admin/analytics'
     | '/institution-admin/communications'
     | '/institution-admin/members'
+    | '/scope-super-admin/rbac-audit'
     | '/u/$handle'
     | '/admin/campuses/new'
   fileRoutesByTo: FileRoutesByTo
@@ -438,9 +459,11 @@ export interface FileRouteTypes {
     | '/updates'
     | '/waitlist'
     | '/admin/config'
+    | '/dev/build-diagnostics'
     | '/institution-admin/analytics'
     | '/institution-admin/communications'
     | '/institution-admin/members'
+    | '/scope-super-admin/rbac-audit'
     | '/u/$handle'
     | '/admin/campuses/new'
   id:
@@ -478,9 +501,11 @@ export interface FileRouteTypes {
     | '/updates'
     | '/waitlist'
     | '/admin/config'
+    | '/dev/build-diagnostics'
     | '/institution-admin/analytics'
     | '/institution-admin/communications'
     | '/institution-admin/members'
+    | '/scope-super-admin/rbac-audit'
     | '/u/$handle'
     | '/admin/campuses/new'
   fileRoutesById: FileRoutesById
@@ -511,13 +536,14 @@ export interface RootRouteChildren {
   ProjectsRoute: typeof ProjectsRoute
   ReferRoute: typeof ReferRoute
   ScopeAdminRoute: typeof ScopeAdminRoute
-  ScopeSuperAdminRoute: typeof ScopeSuperAdminRoute
+  ScopeSuperAdminRoute: typeof ScopeSuperAdminRouteWithChildren
   SettingsRoute: typeof SettingsRoute
   SupportRoute: typeof SupportRoute
   TermsRoute: typeof TermsRoute
   UnauthorizedRoute: typeof UnauthorizedRoute
   UpdatesRoute: typeof UpdatesRoute
   WaitlistRoute: typeof WaitlistRoute
+  DevBuildDiagnosticsRoute: typeof DevBuildDiagnosticsRoute
   UHandleRoute: typeof UHandleRoute
 }
 
@@ -754,6 +780,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UHandleRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/scope-super-admin/rbac-audit': {
+      id: '/scope-super-admin/rbac-audit'
+      path: '/rbac-audit'
+      fullPath: '/scope-super-admin/rbac-audit'
+      preLoaderRoute: typeof ScopeSuperAdminRbacAuditRouteImport
+      parentRoute: typeof ScopeSuperAdminRoute
+    }
     '/institution-admin/members': {
       id: '/institution-admin/members'
       path: '/members'
@@ -774,6 +807,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/institution-admin/analytics'
       preLoaderRoute: typeof InstitutionAdminAnalyticsRouteImport
       parentRoute: typeof InstitutionAdminRoute
+    }
+    '/dev/build-diagnostics': {
+      id: '/dev/build-diagnostics'
+      path: '/dev/build-diagnostics'
+      fullPath: '/dev/build-diagnostics'
+      preLoaderRoute: typeof DevBuildDiagnosticsRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/admin/config': {
       id: '/admin/config'
@@ -819,6 +859,18 @@ const InstitutionAdminRouteChildren: InstitutionAdminRouteChildren = {
 const InstitutionAdminRouteWithChildren =
   InstitutionAdminRoute._addFileChildren(InstitutionAdminRouteChildren)
 
+interface ScopeSuperAdminRouteChildren {
+  ScopeSuperAdminRbacAuditRoute: typeof ScopeSuperAdminRbacAuditRoute
+}
+
+const ScopeSuperAdminRouteChildren: ScopeSuperAdminRouteChildren = {
+  ScopeSuperAdminRbacAuditRoute: ScopeSuperAdminRbacAuditRoute,
+}
+
+const ScopeSuperAdminRouteWithChildren = ScopeSuperAdminRoute._addFileChildren(
+  ScopeSuperAdminRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
@@ -845,15 +897,25 @@ const rootRouteChildren: RootRouteChildren = {
   ProjectsRoute: ProjectsRoute,
   ReferRoute: ReferRoute,
   ScopeAdminRoute: ScopeAdminRoute,
-  ScopeSuperAdminRoute: ScopeSuperAdminRoute,
+  ScopeSuperAdminRoute: ScopeSuperAdminRouteWithChildren,
   SettingsRoute: SettingsRoute,
   SupportRoute: SupportRoute,
   TermsRoute: TermsRoute,
   UnauthorizedRoute: UnauthorizedRoute,
   UpdatesRoute: UpdatesRoute,
   WaitlistRoute: WaitlistRoute,
+  DevBuildDiagnosticsRoute: DevBuildDiagnosticsRoute,
   UHandleRoute: UHandleRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}

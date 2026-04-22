@@ -3,9 +3,10 @@
 // helper. Falls back to a seeded default for demo users.
 import { createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Building2, Users, BarChart3, Megaphone, CheckCircle2, XCircle, TrendingUp, Award, Calendar, FolderKanban, Send, ImageIcon, Sparkles } from "lucide-react";
+import { Building2, Users, BarChart3, Megaphone, CheckCircle2, XCircle, TrendingUp, Award, Calendar, FolderKanban, Send, ImageIcon, Sparkles, ChevronRight, ShieldCheck } from "lucide-react";
 import { AppShell } from "@/components/site/AppShell";
 import { RbacSidebar } from "@/components/site/RbacSidebar";
+import { AccessDenied } from "@/components/site/AccessDenied";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +18,7 @@ import { useUser } from "@/hooks/use-scope";
 import { useRole } from "@/hooks/use-rbac";
 import { useStoreValue } from "@/hooks/use-scope";
 import { crm } from "@/lib/crm-store";
+import { rbac, type PermissionKey } from "@/lib/rbac";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/institution-admin")({
@@ -45,11 +47,13 @@ function InstitutionAdminPortal() {
   if (!allowed) {
     return (
       <AppShell>
-        <section className="mx-auto max-w-md px-4 py-24 text-center">
-          <h1 className="text-2xl font-bold">Restricted</h1>
-          <p className="mt-2 text-sm text-muted-foreground">Institutional Admin access required.</p>
-          <Button asChild className="mt-6"><Link to="/dashboard">Back</Link></Button>
-        </section>
+        <AccessDenied
+          role={role}
+          required="manage_institution"
+          title="Institution Hub restricted"
+          message="Only Institutional Admins (and higher) can access this institution's hub."
+          toastMessage="Institutional Admin access required."
+        />
       </AppShell>
     );
   }
@@ -154,8 +158,61 @@ function HubView({ institutionId, institutionName }: { institutionId: string; in
           </Card>
         ))}
       </div>
+      <QuickActionsPanel />
       <InstitutionProfileEditor institutionId={institutionId} institutionName={institutionName} />
     </div>
+  );
+}
+
+/* Permission-aware quick actions for the Institutional Admin hub.
+ * Items are filtered by `rbac.hasPermission(role, ...)` so users only see
+ * shortcuts they can actually use. Frequently-used routes float to the top. */
+function QuickActionsPanel() {
+  const role = useRole();
+  const actions: Array<{ label: string; to: string; permission: PermissionKey; icon: typeof Users; weight: number; description: string }> = [
+    { label: "Manage Members", to: "/institution-admin/members", permission: "manage_members", icon: Users, weight: 10, description: "Approve, deactivate, assign roles" },
+    { label: "Analytics Overview", to: "/institution-admin/analytics", permission: "view_institution_analytics", icon: BarChart3, weight: 9, description: "DAU, WAU, top performers" },
+    { label: "Communications", to: "/institution-admin/communications", permission: "manage_content", icon: Megaphone, weight: 8, description: "Broadcasts, notices, emails" },
+    { label: "Projects", to: "/projects", permission: "manage_projects", icon: FolderKanban, weight: 7, description: "Campus project pipeline" },
+    { label: "Events", to: "/events", permission: "manage_events", icon: Calendar, weight: 6, description: "Run on-campus events" },
+    { label: "Approve Leaders", to: "/institution-admin/members", permission: "approve_leaders", icon: ShieldCheck, weight: 5, description: "Confirm campus leadership" },
+  ];
+  const visible = actions
+    .filter((a) => rbac.hasPermission(role, a.permission))
+    .sort((a, b) => b.weight - a.weight);
+
+  if (visible.length === 0) return null;
+
+  return (
+    <Card className="p-5">
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-sm font-bold">Quick actions</h3>
+          <p className="mt-0.5 text-xs text-muted-foreground">Permission-aware shortcuts for your role.</p>
+        </div>
+        <Badge variant="outline" className="text-[10px]">{visible.length} available</Badge>
+      </div>
+      <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+        {visible.map((a) => (
+          <Link
+            key={`${a.label}-${a.to}`}
+            to={a.to}
+            className="group flex items-start gap-3 rounded-xl border border-border bg-card/40 p-3 transition-colors hover:border-brand/40 hover:bg-secondary/40"
+          >
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-brand text-brand-foreground">
+              <a.icon className="h-4 w-4" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center justify-between gap-2">
+                <div className="truncate text-sm font-semibold">{a.label}</div>
+                <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+              </div>
+              <div className="truncate text-xs text-muted-foreground">{a.description}</div>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </Card>
   );
 }
 

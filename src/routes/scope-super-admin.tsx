@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { Brain, Building2, Users, TrendingUp, MapPin, IndianRupee, Sliders, ShieldCheck, Sparkles, Trophy, AlertTriangle, CheckCircle2, XCircle, Plus, ArrowUpRight, Activity, Flame } from "lucide-react";
 import { AppShell } from "@/components/site/AppShell";
 import { RbacSidebar } from "@/components/site/RbacSidebar";
+import { AccessDenied } from "@/components/site/AccessDenied";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -48,11 +49,13 @@ function SuperAdminPortal() {
   if (!isAllowed) {
     return (
       <AppShell>
-        <section className="mx-auto max-w-md px-4 py-24 text-center">
-          <h1 className="text-2xl font-bold">HQ access only</h1>
-          <p className="mt-2 text-sm text-muted-foreground">Scope Super Admin role required.</p>
-          <Button asChild className="mt-6"><Link to="/dashboard">Back</Link></Button>
-        </section>
+        <AccessDenied
+          role={role}
+          required="view_national_analytics"
+          title="HQ access only"
+          message="The Super Admin Command Center is restricted to Scope Super Admin and Super Admin roles."
+          toastMessage="HQ-only area. You don't have permission to view the Command Center."
+        />
       </AppShell>
     );
   }
