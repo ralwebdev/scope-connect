@@ -159,22 +159,29 @@ function DashboardPage() {
 
             <Card className="p-5 hover-lift">
               <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-foreground">Recommended collabs</h3>
-                <Users className="h-4 w-4 text-muted-foreground" />
+                <h3 className="font-semibold text-foreground">My Applications</h3>
+                <Briefcase className="h-4 w-4 text-muted-foreground" />
               </div>
-              <ul className="mt-4 space-y-3">
-                {opps.map((o) => (
-                  <li key={o.id} className="rounded-lg border border-border p-3">
-                    <div className="flex items-center gap-2">
-                      <Badge className="bg-cyan/20 text-cyan-foreground hover:bg-cyan/30">{o.match}% match</Badge>
-                      <span className="text-xs text-muted-foreground">{o.category}</span>
-                    </div>
-                    <div className="mt-2 line-clamp-2 text-sm font-medium text-foreground">{o.title}</div>
-                  </li>
-                ))}
-              </ul>
+              {myApplications.length === 0 ? (
+                <p className="mt-3 text-sm text-muted-foreground">No applications yet. Your next move starts here.</p>
+              ) : (
+                <ul className="mt-4 space-y-3">
+                  {myApplications.slice(0, 3).map((a) => {
+                    const project = curated.byId(a.projectId);
+                    return (
+                      <li key={a.id} className="rounded-lg border border-border p-3">
+                        <div className="flex items-center justify-between gap-2">
+                          <Badge variant="outline" className="text-xs">{a.status}</Badge>
+                          <span className="text-xs text-muted-foreground">{a.topSkill}</span>
+                        </div>
+                        <div className="mt-2 line-clamp-2 text-sm font-medium text-foreground">{project?.title ?? "Project"}</div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
               <Button asChild size="sm" variant="outline" className="mt-4 w-full">
-                <Link to="/opportunities">See all opportunities</Link>
+                <Link to="/projects">Browse opportunities <ArrowRight className="ml-1 h-3 w-3" /></Link>
               </Button>
             </Card>
 
@@ -192,24 +199,53 @@ function DashboardPage() {
           </div>
         </div>
 
+        {/* Recommended Scope challenges */}
+        <div className="mt-8">
+          <div className="mb-4 flex items-end justify-between gap-3">
+            <div>
+              <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">🚀 Recommended for you</div>
+              <h2 className="mt-1 text-xl font-bold text-foreground">Live Scope Challenges</h2>
+            </div>
+            <Button asChild size="sm" variant="ghost">
+              <Link to="/projects">See all <ArrowRight className="ml-1 h-3 w-3" /></Link>
+            </Button>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-3">
+            {recommended.map((p) => (
+              <Card key={p.id} className="flex flex-col p-5 hover-lift">
+                <div className="flex items-center justify-between">
+                  <Badge className="bg-brand text-brand-foreground"><ShieldCheck className="mr-1 h-3 w-3" /> Scope Official</Badge>
+                  <span className="text-2xl">{p.cover}</span>
+                </div>
+                <h3 className="mt-3 text-base font-semibold text-foreground">{p.title}</h3>
+                <p className="mt-1 line-clamp-2 flex-1 text-sm text-muted-foreground">{p.description}</p>
+                <Button asChild size="sm" className="mt-4 bg-gradient-brand text-brand-foreground">
+                  <Link to="/projects">View opportunity</Link>
+                </Button>
+              </Card>
+            ))}
+          </div>
+        </div>
+
         <div className="mt-8 grid gap-6 lg:grid-cols-3">
           <Card className="p-6 hover-lift">
-            <Rocket className="h-5 w-5 text-brand" />
-            <h3 className="mt-3 font-semibold text-foreground">Launch a project</h3>
-            <p className="mt-1 text-sm text-muted-foreground">Ship what you're building. Earn +50 XP on launch.</p>
-            <Button asChild size="sm" className="mt-4 bg-gradient-brand text-brand-foreground"><Link to="/projects">Launch Project</Link></Button>
+            <Briefcase className="h-5 w-5 text-brand" />
+            <h3 className="mt-3 font-semibold text-foreground">Portfolio strength</h3>
+            <p className="mt-1 text-sm text-muted-foreground">{portfolioCount} item{portfolioCount === 1 ? "" : "s"} · {portfolioStrength}% complete</p>
+            <Progress value={portfolioStrength} className="mt-3" />
+            <Button asChild size="sm" className="mt-4 bg-gradient-brand text-brand-foreground"><Link to="/portfolio">Open Portfolio</Link></Button>
           </Card>
           <Card className="p-6 hover-lift">
-            <Zap className="h-5 w-5 text-cyan" />
+            <Lightbulb className="h-5 w-5 text-cyan" />
+            <h3 className="mt-3 font-semibold text-foreground">Got a bigger idea?</h3>
+            <p className="mt-1 text-sm text-muted-foreground">Pitch directly to Scope. Stays private. +15 XP.</p>
+            <Button asChild size="sm" variant="outline" className="mt-4"><Link to="/projects">Suggest an Idea</Link></Button>
+          </Card>
+          <Card className="p-6 hover-lift">
+            <Zap className="h-5 w-5 text-brand" />
             <h3 className="mt-3 font-semibold text-foreground">Join a chapter</h3>
             <p className="mt-1 text-sm text-muted-foreground">Plug into your campus tribe. Lead, ship, win together.</p>
             <Button asChild size="sm" variant="outline" className="mt-4"><Link to="/campus">Open Campus Hub</Link></Button>
-          </Card>
-          <Card className="p-6 hover-lift">
-            <Sparkles className="h-5 w-5 text-brand" />
-            <h3 className="mt-3 font-semibold text-foreground">Share momentum</h3>
-            <p className="mt-1 text-sm text-muted-foreground">Post a milestone. Your chapter notices.</p>
-            <Button asChild size="sm" variant="outline" className="mt-4"><Link to="/feed">Open feed</Link></Button>
           </Card>
         </div>
       </section>
