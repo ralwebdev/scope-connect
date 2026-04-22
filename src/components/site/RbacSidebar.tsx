@@ -2,7 +2,7 @@
 // Used inside admin portals (institution / scope / super) for consistent navigation.
 import type { ReactNode } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
-import { LayoutDashboard, FolderKanban, Newspaper, Calendar, Award, User, Building2, Users, BarChart3, Brain, Shield, Settings, FileText, Megaphone, Sparkles, IndianRupee } from "lucide-react";
+import { LayoutDashboard, FolderKanban, Newspaper, Calendar, Award, User, Building2, Users, BarChart3, Brain, Shield, Settings, FileText, Megaphone, Sparkles, IndianRupee, ShieldCheck, Wrench } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { useRole } from "@/hooks/use-rbac";
@@ -37,9 +37,11 @@ const ITEMS: SidebarItem[] = [
 
   // Super Admin
   { to: "/scope-super-admin", label: "Command Center", permission: "view_national_analytics", icon: Brain, group: "super" },
+  { to: "/scope-super-admin/rbac-audit", label: "RBAC Audit", permission: "manage_roles", icon: ShieldCheck, group: "super" },
   { to: "/admin/config", label: "Roles & Config", permission: "manage_roles", icon: Settings, group: "super" },
   { to: "/scope-super-admin", label: "Finance", permission: "view_finance", icon: IndianRupee, group: "super" },
   { to: "/admin/config", label: "Feature Flags", permission: "manage_feature_flags", icon: Sparkles, group: "super" },
+  { to: "/dev/build-diagnostics", label: "Build Diagnostics", permission: "full_system_access", icon: Wrench, group: "super" },
 ];
 
 const GROUP_LABELS: Record<SidebarItem["group"], string> = {

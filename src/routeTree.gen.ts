@@ -46,6 +46,7 @@ import { Route as ScopeSuperAdminRbacAuditRouteImport } from './routes/scope-sup
 import { Route as InstitutionAdminMembersRouteImport } from './routes/institution-admin.members'
 import { Route as InstitutionAdminCommunicationsRouteImport } from './routes/institution-admin.communications'
 import { Route as InstitutionAdminAnalyticsRouteImport } from './routes/institution-admin.analytics'
+import { Route as DevBuildDiagnosticsRouteImport } from './routes/dev.build-diagnostics'
 import { Route as AdminConfigRouteImport } from './routes/admin.config'
 import { Route as AdminCampusesNewRouteImport } from './routes/admin.campuses.new'
 
@@ -237,6 +238,11 @@ const InstitutionAdminAnalyticsRoute =
     path: '/analytics',
     getParentRoute: () => InstitutionAdminRoute,
   } as any)
+const DevBuildDiagnosticsRoute = DevBuildDiagnosticsRouteImport.update({
+  id: '/dev/build-diagnostics',
+  path: '/dev/build-diagnostics',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminConfigRoute = AdminConfigRouteImport.update({
   id: '/config',
   path: '/config',
@@ -282,6 +288,7 @@ export interface FileRoutesByFullPath {
   '/updates': typeof UpdatesRoute
   '/waitlist': typeof WaitlistRoute
   '/admin/config': typeof AdminConfigRoute
+  '/dev/build-diagnostics': typeof DevBuildDiagnosticsRoute
   '/institution-admin/analytics': typeof InstitutionAdminAnalyticsRoute
   '/institution-admin/communications': typeof InstitutionAdminCommunicationsRoute
   '/institution-admin/members': typeof InstitutionAdminMembersRoute
@@ -323,6 +330,7 @@ export interface FileRoutesByTo {
   '/updates': typeof UpdatesRoute
   '/waitlist': typeof WaitlistRoute
   '/admin/config': typeof AdminConfigRoute
+  '/dev/build-diagnostics': typeof DevBuildDiagnosticsRoute
   '/institution-admin/analytics': typeof InstitutionAdminAnalyticsRoute
   '/institution-admin/communications': typeof InstitutionAdminCommunicationsRoute
   '/institution-admin/members': typeof InstitutionAdminMembersRoute
@@ -365,6 +373,7 @@ export interface FileRoutesById {
   '/updates': typeof UpdatesRoute
   '/waitlist': typeof WaitlistRoute
   '/admin/config': typeof AdminConfigRoute
+  '/dev/build-diagnostics': typeof DevBuildDiagnosticsRoute
   '/institution-admin/analytics': typeof InstitutionAdminAnalyticsRoute
   '/institution-admin/communications': typeof InstitutionAdminCommunicationsRoute
   '/institution-admin/members': typeof InstitutionAdminMembersRoute
@@ -408,6 +417,7 @@ export interface FileRouteTypes {
     | '/updates'
     | '/waitlist'
     | '/admin/config'
+    | '/dev/build-diagnostics'
     | '/institution-admin/analytics'
     | '/institution-admin/communications'
     | '/institution-admin/members'
@@ -449,6 +459,7 @@ export interface FileRouteTypes {
     | '/updates'
     | '/waitlist'
     | '/admin/config'
+    | '/dev/build-diagnostics'
     | '/institution-admin/analytics'
     | '/institution-admin/communications'
     | '/institution-admin/members'
@@ -490,6 +501,7 @@ export interface FileRouteTypes {
     | '/updates'
     | '/waitlist'
     | '/admin/config'
+    | '/dev/build-diagnostics'
     | '/institution-admin/analytics'
     | '/institution-admin/communications'
     | '/institution-admin/members'
@@ -531,6 +543,7 @@ export interface RootRouteChildren {
   UnauthorizedRoute: typeof UnauthorizedRoute
   UpdatesRoute: typeof UpdatesRoute
   WaitlistRoute: typeof WaitlistRoute
+  DevBuildDiagnosticsRoute: typeof DevBuildDiagnosticsRoute
   UHandleRoute: typeof UHandleRoute
 }
 
@@ -795,6 +808,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InstitutionAdminAnalyticsRouteImport
       parentRoute: typeof InstitutionAdminRoute
     }
+    '/dev/build-diagnostics': {
+      id: '/dev/build-diagnostics'
+      path: '/dev/build-diagnostics'
+      fullPath: '/dev/build-diagnostics'
+      preLoaderRoute: typeof DevBuildDiagnosticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/config': {
       id: '/admin/config'
       path: '/config'
@@ -884,6 +904,7 @@ const rootRouteChildren: RootRouteChildren = {
   UnauthorizedRoute: UnauthorizedRoute,
   UpdatesRoute: UpdatesRoute,
   WaitlistRoute: WaitlistRoute,
+  DevBuildDiagnosticsRoute: DevBuildDiagnosticsRoute,
   UHandleRoute: UHandleRoute,
 }
 export const routeTree = rootRouteImport
