@@ -113,6 +113,9 @@ const KEYS = {
   savedProjects: "scope_saved_projects",
   portfolio: "scope_portfolio_items",
   ideaSubmissions: "scope_idea_submissions",
+  rankSnapshot: "scope_rank_snapshot",
+  lastVisitAt: "scope_last_visit_at",
+  nudgeSnoozedUntil: "scope_nudge_snoozed_until",
 } as const;
 
 const isBrowser = typeof window !== "undefined";
