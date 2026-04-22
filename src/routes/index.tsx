@@ -57,10 +57,14 @@ export const Route = createFileRoute("/")({
 });
 
 function LandingPage() {
+  const isLoggedIn = useIsLoggedIn();
+  useEffect(() => { analytics.track("homepage_visit"); }, []);
+
   return (
     <AppShell>
       <Hero />
       <Partners />
+      <WhatIsScope />
       <WhyJoin />
       <LiveMetricsSection />
       <TopChaptersSection />
@@ -68,12 +72,16 @@ function LandingPage() {
       <ProjectsShowcase />
       <EventsSection />
       <Testimonials />
+      <ExitCapture />
       <FinalCTA />
+      {!isLoggedIn && <StickyMobileCTA />}
     </AppShell>
   );
 }
 
 function Hero() {
+  const trackPrimary = () => analytics.track("cta_click_primary");
+  const trackSecondary = () => analytics.track("cta_click_secondary");
   return (
     <section className="relative overflow-hidden bg-gradient-hero text-primary-foreground">
       <div className="pointer-events-none absolute inset-0 bg-gradient-glow" />
