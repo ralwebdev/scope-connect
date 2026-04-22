@@ -154,6 +154,27 @@ function safeWrite<T>(key: string, value: T) {
   }
 }
 
+/** Map a role to its preferred landing route after login. */
+export function landingRouteForRole(role: RoleId): string {
+  switch (role) {
+    case "scope_super_admin": return "/scope-super-admin";
+    case "scope_admin": return "/scope-admin";
+    case "institutional_admin": return "/institution-admin";
+    case "faculty_coordinator": return "/dashboard";
+    case "campus_leader": return "/campus";
+    case "regional_admin":
+    case "campus_admin":
+    case "content_admin":
+    case "growth_admin":
+    case "support_admin":
+      return "/admin";
+    case "student":
+    case "viewer":
+    default:
+      return "/dashboard";
+  }
+}
+
 /** Resolve role from email pattern. Demo-grade: deterministic + obvious. */
 export function roleFromEmail(email: string | undefined | null): RoleId {
   if (!email) return "viewer";

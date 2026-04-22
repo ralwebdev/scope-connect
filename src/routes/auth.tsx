@@ -10,6 +10,7 @@ import { auth, seedInterests } from "@/lib/scope-store";
 import { useIsLoggedIn } from "@/hooks/use-scope";
 import { analytics } from "@/lib/analytics";
 import { toast } from "sonner";
+import { roleFromEmail, landingRouteForRole, ROLE_LABELS } from "@/lib/rbac";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
