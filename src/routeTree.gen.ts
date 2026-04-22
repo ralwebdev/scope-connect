@@ -46,6 +46,7 @@ import { Route as ScopeSuperAdminRbacAuditRouteImport } from './routes/scope-sup
 import { Route as InstitutionAdminMembersRouteImport } from './routes/institution-admin.members'
 import { Route as InstitutionAdminCommunicationsRouteImport } from './routes/institution-admin.communications'
 import { Route as InstitutionAdminAnalyticsRouteImport } from './routes/institution-admin.analytics'
+import { Route as FormsFormSlugRouteImport } from './routes/forms.$formSlug'
 import { Route as DevBuildDiagnosticsRouteImport } from './routes/dev.build-diagnostics'
 import { Route as AdminConfigRouteImport } from './routes/admin.config'
 import { Route as AdminCampusesNewRouteImport } from './routes/admin.campuses.new'
@@ -238,6 +239,11 @@ const InstitutionAdminAnalyticsRoute =
     path: '/analytics',
     getParentRoute: () => InstitutionAdminRoute,
   } as any)
+const FormsFormSlugRoute = FormsFormSlugRouteImport.update({
+  id: '/forms/$formSlug',
+  path: '/forms/$formSlug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DevBuildDiagnosticsRoute = DevBuildDiagnosticsRouteImport.update({
   id: '/dev/build-diagnostics',
   path: '/dev/build-diagnostics',
@@ -289,6 +295,7 @@ export interface FileRoutesByFullPath {
   '/waitlist': typeof WaitlistRoute
   '/admin/config': typeof AdminConfigRoute
   '/dev/build-diagnostics': typeof DevBuildDiagnosticsRoute
+  '/forms/$formSlug': typeof FormsFormSlugRoute
   '/institution-admin/analytics': typeof InstitutionAdminAnalyticsRoute
   '/institution-admin/communications': typeof InstitutionAdminCommunicationsRoute
   '/institution-admin/members': typeof InstitutionAdminMembersRoute
@@ -331,6 +338,7 @@ export interface FileRoutesByTo {
   '/waitlist': typeof WaitlistRoute
   '/admin/config': typeof AdminConfigRoute
   '/dev/build-diagnostics': typeof DevBuildDiagnosticsRoute
+  '/forms/$formSlug': typeof FormsFormSlugRoute
   '/institution-admin/analytics': typeof InstitutionAdminAnalyticsRoute
   '/institution-admin/communications': typeof InstitutionAdminCommunicationsRoute
   '/institution-admin/members': typeof InstitutionAdminMembersRoute
@@ -374,6 +382,7 @@ export interface FileRoutesById {
   '/waitlist': typeof WaitlistRoute
   '/admin/config': typeof AdminConfigRoute
   '/dev/build-diagnostics': typeof DevBuildDiagnosticsRoute
+  '/forms/$formSlug': typeof FormsFormSlugRoute
   '/institution-admin/analytics': typeof InstitutionAdminAnalyticsRoute
   '/institution-admin/communications': typeof InstitutionAdminCommunicationsRoute
   '/institution-admin/members': typeof InstitutionAdminMembersRoute
@@ -418,6 +427,7 @@ export interface FileRouteTypes {
     | '/waitlist'
     | '/admin/config'
     | '/dev/build-diagnostics'
+    | '/forms/$formSlug'
     | '/institution-admin/analytics'
     | '/institution-admin/communications'
     | '/institution-admin/members'
@@ -460,6 +470,7 @@ export interface FileRouteTypes {
     | '/waitlist'
     | '/admin/config'
     | '/dev/build-diagnostics'
+    | '/forms/$formSlug'
     | '/institution-admin/analytics'
     | '/institution-admin/communications'
     | '/institution-admin/members'
@@ -502,6 +513,7 @@ export interface FileRouteTypes {
     | '/waitlist'
     | '/admin/config'
     | '/dev/build-diagnostics'
+    | '/forms/$formSlug'
     | '/institution-admin/analytics'
     | '/institution-admin/communications'
     | '/institution-admin/members'
@@ -544,6 +556,7 @@ export interface RootRouteChildren {
   UpdatesRoute: typeof UpdatesRoute
   WaitlistRoute: typeof WaitlistRoute
   DevBuildDiagnosticsRoute: typeof DevBuildDiagnosticsRoute
+  FormsFormSlugRoute: typeof FormsFormSlugRoute
   UHandleRoute: typeof UHandleRoute
 }
 
@@ -808,6 +821,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InstitutionAdminAnalyticsRouteImport
       parentRoute: typeof InstitutionAdminRoute
     }
+    '/forms/$formSlug': {
+      id: '/forms/$formSlug'
+      path: '/forms/$formSlug'
+      fullPath: '/forms/$formSlug'
+      preLoaderRoute: typeof FormsFormSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dev/build-diagnostics': {
       id: '/dev/build-diagnostics'
       path: '/dev/build-diagnostics'
@@ -905,6 +925,7 @@ const rootRouteChildren: RootRouteChildren = {
   UpdatesRoute: UpdatesRoute,
   WaitlistRoute: WaitlistRoute,
   DevBuildDiagnosticsRoute: DevBuildDiagnosticsRoute,
+  FormsFormSlugRoute: FormsFormSlugRoute,
   UHandleRoute: UHandleRoute,
 }
 export const routeTree = rootRouteImport

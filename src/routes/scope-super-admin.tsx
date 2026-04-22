@@ -4,6 +4,7 @@ import { Brain, Building2, Users, TrendingUp, MapPin, IndianRupee, Sliders, Shie
 import { AppShell } from "@/components/site/AppShell";
 import { RbacSidebar } from "@/components/site/RbacSidebar";
 import { AccessDenied } from "@/components/site/AccessDenied";
+import { DrilldownCard } from "@/components/site/DrilldownCard";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
