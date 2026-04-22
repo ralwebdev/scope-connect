@@ -11,7 +11,11 @@ import {
   CheckCircle2,
   Circle,
   Shield,
+  Rocket,
+  TrendingUp,
+  AlertTriangle,
 } from "lucide-react";
+import { analytics } from "@/lib/analytics";
 import { AppShell } from "@/components/site/AppShell";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -31,7 +35,7 @@ export const Route = createFileRoute("/ops")({
   component: OpsPage,
 });
 
-type Tab = "bugs" | "calendar" | "campus" | "support" | "requests" | "checklist";
+type Tab = "bugs" | "calendar" | "campus" | "support" | "requests" | "checklist" | "softlaunch";
 
 const ADMIN_EMAILS = ["admin@scope.in", "team@scope.in", "founder@scope.in"];
 const PIN = "scope2026";
@@ -131,6 +135,7 @@ function OpsPage() {
         <div className="flex flex-wrap gap-2 border-b border-border pb-3">
           {(
             [
+              { id: "softlaunch", label: "Soft launch", icon: Rocket },
               { id: "checklist", label: "Launch checklist", icon: CheckCircle2 },
               { id: "bugs", label: "Bugs", icon: Wrench },
               { id: "calendar", label: "Content calendar", icon: Calendar },
@@ -152,6 +157,7 @@ function OpsPage() {
         </div>
 
         <div className="mt-6">
+          {tab === "softlaunch" && <SoftLaunchPanel />}
           {tab === "checklist" && <LaunchChecklist />}
           {tab === "bugs" && <BugTracker />}
           {tab === "calendar" && <ContentCalendar />}
