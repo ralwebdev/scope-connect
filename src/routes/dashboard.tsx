@@ -72,6 +72,13 @@ function DashboardPage() {
 
       <RetentionLayer />
 
+      <ActivationChecklist
+        hasProfile={strength >= 60}
+        hasApplied={myApplications.length > 0}
+        hasJoinedCampus={!!user.campus}
+        hasPortfolio={portfolioCount > 0}
+      />
+
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="grid gap-6 lg:grid-cols-3">
           <Card className="p-6 hover-lift">
