@@ -552,7 +552,7 @@ function SupportInbox() {
                     <div className="flex items-center gap-2">
                       <Badge variant="outline" className="text-[10px]">{it.type || "general"}</Badge>
                       {it.at && <span className="text-[10px] text-muted-foreground">{new Date(it.at).toLocaleString()}</span>}
-                      {isRes && <Badge className="bg-emerald-500/15 text-emerald-500 text-[10px]"><Check className="mr-0.5 h-2.5 w-2.5" /> Resolved</Badge>}
+                      {isRes && <Badge className="bg-cyan/15 text-cyan text-[10px]"><Check className="mr-0.5 h-2.5 w-2.5" /> Resolved</Badge>}
                     </div>
                     <div className="mt-2 text-sm text-foreground">{it.message || "(no message)"}</div>
                     {it.email && <div className="mt-1 text-xs text-muted-foreground">{it.email}</div>}
