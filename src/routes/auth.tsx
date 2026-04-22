@@ -164,9 +164,20 @@ function AuthPage() {
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
             {mode === "signup"
-              ? "Takes less than a minute. Start earning Scope Points today."
+              ? "Takes under 60 seconds. Start building today."
               : "Pick up where you left off."}
           </p>
+
+          {mode === "signup" && (
+            <div className="mt-4 rounded-xl border border-border bg-secondary/40 p-3 text-xs text-muted-foreground">
+              <div className="font-semibold text-foreground">What you get instantly</div>
+              <ul className="mt-1 space-y-0.5">
+                <li>⚡ +120 XP welcome bonus</li>
+                <li>🎯 National rank assigned</li>
+                <li>🚀 Curated challenges unlocked</li>
+              </ul>
+            </div>
+          )}
 
           <form onSubmit={onSubmit} className="mt-6 space-y-4">
             {mode === "signup" && (
