@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Navbar } from "./Navbar";
+import { MobileDock } from "./MobileDock";
 import { Footer } from "./Footer";
 
 export function AppShell({ children, hideFooter = false }: { children: ReactNode; hideFooter?: boolean }) {
@@ -8,6 +9,7 @@ export function AppShell({ children, hideFooter = false }: { children: ReactNode
       <Navbar />
       <main className="flex-1">{children}</main>
       {!hideFooter && <Footer />}
+      <MobileDock />
     </div>
   );
 }
