@@ -404,14 +404,14 @@ function ProgressBrain() {
 
 /* -------- Right Brain — theme quick toggle (3-state) -------- */
 function ThemeQuickToggle() {
-  const { mode, setMode } = useTheme();
+  const { mode, setTheme } = useTheme();
   const next = mode === "light" ? "dark" : mode === "dark" ? "system" : "light";
   const Icon = mode === "light" ? Sun : mode === "dark" ? Moon : Monitor;
   return (
     <button
       type="button"
       aria-label={`Theme: ${mode}. Click to switch to ${next}.`}
-      onClick={() => setMode(next)}
+      onClick={() => setTheme(next)}
       className="flex h-9 w-9 items-center justify-center rounded-full text-foreground transition-colors hover:bg-secondary"
       title={`Theme: ${mode}`}
     >
