@@ -267,7 +267,7 @@ export function MobileDock() {
               <Link
                 key={item.key}
                 to={item.to}
-                className="flex flex-1 items-center justify-center py-1"
+                className="flex w-full items-center justify-center py-1"
                 aria-label={item.label}
               >
                 {inner}
@@ -275,7 +275,7 @@ export function MobileDock() {
             ) : (
               <button
                 key={item.key}
-                className="flex flex-1 items-center justify-center py-1"
+                className="flex w-full items-center justify-center py-1"
                 aria-label={item.label}
               >
                 {inner}
