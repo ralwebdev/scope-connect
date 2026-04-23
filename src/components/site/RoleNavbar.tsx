@@ -6,6 +6,7 @@
 //   • role leakage is impossible (the wrong KPI rail simply isn't mounted),
 //   • each navbar can evolve independently without touching the others,
 //   • the visual chrome stays consistent across roles.
+import type * as React from "react";
 import { useUserSession } from "@/hooks/use-session";
 import { NavbarShell } from "@/components/site/NavbarShell";
 import {
