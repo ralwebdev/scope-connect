@@ -247,6 +247,43 @@
   }
   .animate-flame-pulse { animation: flame-pulse 1.6s ease-in-out infinite; }
 
+  /* ============ Adaptive Floating Glass Navbar ============ */
+  /* Idle micro-float to make the capsule feel alive without being distracting. */
+  @keyframes nav-float {
+    0%, 100% { transform: translate(-50%, 0); }
+    50%      { transform: translate(-50%, -2px); }
+  }
+  .animate-nav-float { animation: nav-float 6s ease-in-out infinite; }
+
+  /* Role-glow pulse for the role badge chip. */
+  @keyframes nav-glow-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 var(--nav-glow, transparent); }
+    50%      { box-shadow: 0 0 18px 2px var(--nav-glow, transparent); }
+  }
+  .animate-nav-glow { animation: nav-glow-pulse 2.4s ease-in-out infinite; }
+
+  /* Glass shimmer sweep on first paint after hydration. */
+  @keyframes nav-shimmer-sweep {
+    0%   { transform: translateX(-120%); opacity: 0; }
+    20%  { opacity: 0.6; }
+    100% { transform: translateX(120%); opacity: 0; }
+  }
+  .nav-shimmer { position: relative; overflow: hidden; }
+  .nav-shimmer::before {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(110deg, transparent 35%, color-mix(in oklab, var(--nav-glow, var(--brand)) 30%, transparent) 50%, transparent 65%);
+    animation: nav-shimmer-sweep 1.4s ease-out 0.2s 1;
+    pointer-events: none; border-radius: inherit;
+  }
+
+  /* Milestone celebration burst on the progress ring. */
+  @keyframes nav-milestone-burst {
+    0%   { box-shadow: 0 0 0 0 color-mix(in oklab, var(--nav-glow, var(--brand)) 70%, transparent); }
+    70%  { box-shadow: 0 0 0 14px transparent; }
+    100% { box-shadow: 0 0 0 0 transparent; }
+  }
+  .animate-nav-burst { animation: nav-milestone-burst 1.4s ease-out 1; }
+
   /* Respect reduced-motion: disable heavy looping animations & lift transforms. */
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
@@ -255,7 +292,9 @@
       transition-duration: 0.001ms !important;
       scroll-behavior: auto !important;
     }
-    .animate-shimmer, .animate-flame-pulse, .animate-pulse-glow { animation: none !important; }
+    .animate-shimmer, .animate-flame-pulse, .animate-pulse-glow,
+    .animate-nav-float, .animate-nav-glow, .animate-nav-burst,
+    .nav-shimmer::before { animation: none !important; }
     .hover-lift:hover { transform: none; }
   }
 
