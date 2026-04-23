@@ -184,14 +184,23 @@ export function MobileDock() {
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
         className={cn(
-          "fixed bottom-3 left-1/2 z-40 -translate-x-1/2 transition-[transform,opacity] duration-300 md:hidden",
-          hidden ? "translate-y-[140%] opacity-0" : "translate-y-0 opacity-100",
+          "fixed z-[9999] transition-[transform,opacity] duration-300 md:hidden",
+          hidden ? "opacity-0" : "opacity-100",
         )}
-        style={{ width: "min(420px, calc(100vw - 16px))" }}
+        style={{
+          left: "50%",
+          transform: hidden ? "translate(-50%, 160%)" : "translate(-50%, 0)",
+          bottom: "calc(12px + env(safe-area-inset-bottom, 0px))",
+          width: "calc(100vw - 20px)",
+          maxWidth: "420px",
+          boxSizing: "border-box",
+        }}
       >
         <div
-          className="relative flex items-center justify-between gap-1 rounded-full border border-border/60 bg-background/70 px-2 py-1.5 backdrop-blur-xl"
+          className="relative grid items-center gap-1.5 overflow-hidden rounded-[20px] border border-border/60 bg-background/70 px-3 py-2 backdrop-blur-xl"
           style={{
+            gridTemplateColumns: `repeat(${dockItems.length}, minmax(0, 1fr))`,
+            justifyItems: "center",
             boxShadow: `0 12px 36px -12px rgba(0,0,0,0.35), 0 0 24px -8px color-mix(in oklab, ${roleTheme.glow} 30%, transparent)`,
           }}
         >
@@ -258,7 +267,7 @@ export function MobileDock() {
               <Link
                 key={item.key}
                 to={item.to}
-                className="flex flex-1 items-center justify-center py-1"
+                className="flex w-full items-center justify-center py-1"
                 aria-label={item.label}
               >
                 {inner}
@@ -266,7 +275,7 @@ export function MobileDock() {
             ) : (
               <button
                 key={item.key}
-                className="flex flex-1 items-center justify-center py-1"
+                className="flex w-full items-center justify-center py-1"
                 aria-label={item.label}
               >
                 {inner}
