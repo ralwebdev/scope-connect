@@ -57,7 +57,7 @@ function Chip({ kpi }: { kpi: Kpi }) {
 }
 
 /* ---------------- Student / Viewer — Growth psychology ---------------- */
-function StudentKpis() {
+export function StudentKpis() {
   const xpTotal = useXP();
   const level = useLevel();
   const levelProgress = useLevelProgress();
@@ -141,7 +141,7 @@ function MetricsRail({ kpis }: { kpis: Kpi[] }) {
 }
 
 /* ---------------- Per-role KPI sets (mock-aware) ---------------- */
-function CampusLeaderKpis() {
+export function CampusLeaderKpis() {
   return (
     <MetricsRail
       kpis={[
@@ -154,7 +154,7 @@ function CampusLeaderKpis() {
   );
 }
 
-function FacultyKpis() {
+export function FacultyKpis() {
   return (
     <MetricsRail
       kpis={[
@@ -167,7 +167,7 @@ function FacultyKpis() {
   );
 }
 
-function InstitutionKpis() {
+export function InstitutionKpis() {
   return (
     <MetricsRail
       kpis={[
@@ -180,7 +180,7 @@ function InstitutionKpis() {
   );
 }
 
-function ScopeAdminKpis() {
+export function ScopeAdminKpis() {
   return (
     <MetricsRail
       kpis={[
@@ -193,7 +193,7 @@ function ScopeAdminKpis() {
   );
 }
 
-function SuperAdminKpis() {
+export function SuperAdminKpis() {
   return (
     <MetricsRail
       kpis={[
@@ -207,7 +207,7 @@ function SuperAdminKpis() {
   );
 }
 
-function GenericAdminKpis() {
+export function GenericAdminKpis() {
   // Regional / campus / content / growth / support — operational summary.
   return (
     <MetricsRail
