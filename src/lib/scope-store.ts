@@ -355,15 +355,12 @@ export const streak = {
 // structurally impossible because the active list is filtered through the
 // `roles` field on every read, AND we re-seed when the active role changes.
 
-// Lazy import to avoid pulling rbac into module init order.
-import type { NotificationSeed } from "./notifications-seed";
+// Static import — notifications-seed has no runtime dep on this module so
+// there is no cycle. Bundlers handle this safely.
+import { seedsForRole, type NotificationSeed } from "./notifications-seed";
 
 function loadSeedsForRole(role: string): NotificationSeed[] {
-  // Use require-style dynamic import so we don't create a top-level cycle.
-  // (notifications-seed.ts has no runtime dependency on this file.)
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const mod = require("./notifications-seed") as typeof import("./notifications-seed");
-  return mod.seedsForRole(role as Parameters<typeof mod.seedsForRole>[0]);
+  return seedsForRole(role as Parameters<typeof seedsForRole>[0]);
 }
 
 function priorityRank(p?: Notification["priority"]): number {
