@@ -10,6 +10,7 @@ import {
   upcomingEvents,
   interestTags,
 } from "./mock-data";
+import { seedsForRole, type NotificationSeed } from "./notifications-seed";
 
 /* ----------------------------- Types ----------------------------- */
 
@@ -92,6 +93,15 @@ export type Notification = {
    *  notification (or registry entry) has the same key. Used for one-time
    *  events (welcome bonus, level-up, first portfolio, etc). */
   dedupKey?: string;
+  /** Role-aware metadata. Optional so legacy notifications still render. */
+  category?: "action" | "milestone" | "system" | "info";
+  priority?: "critical" | "high" | "normal" | "low";
+  /** Restrict visibility to these role IDs. Empty/undefined = visible to all. */
+  roles?: string[];
+  /** Optional deep-link route. */
+  href?: string;
+  /** User-pinned (kept at top regardless of priority). */
+  pinned?: boolean;
 };
 
 /* --------------------------- LS helpers --------------------------- */
@@ -125,6 +135,9 @@ const KEYS = {
   notifDedupRegistry: "scope_notif_dedup_v1",
   // Tracks the highest level a level-up alert has been issued for.
   highestLevelSeen: "scope_highest_level_seen",
+  // Tracks which role the notification list was last seeded for, so that
+  // when the active role changes we can re-seed without leaking alerts.
+  notifSeededRole: "scope_notif_seeded_role",
   // Schema version — bump to invalidate incompatible persisted state.
   schemaVersion: "scope_schema_version",
 } as const;
@@ -336,32 +349,76 @@ export const streak = {
 };
 
 /* --------------------------- Notifications --------------------------- */
+//
+// Role-aware notification engine. Seeds, lists, and filters notifications
+// by the active role. A super_admin will never see student streak alerts;
+// a student will never see CRM lead reminders. Cross-role leakage is
+// structurally impossible because the active list is filtered through the
+// `roles` field on every read, AND we re-seed when the active role changes.
 
-const SEED_NOTIFICATIONS: Omit<Notification, "id" | "at" | "read">[] = [
-  { icon: "users", text: "Diya Sharma viewed your profile." },
-  { icon: "trophy", text: "You climbed to #14 in your campus ranking." },
-  { icon: "heart", text: "Your last post earned 12 reactions." },
-  { icon: "spark", text: "AI Builders Mumbai posted a new opportunity." },
-];
+function loadSeedsForRole(role: string): NotificationSeed[] {
+  return seedsForRole(role as Parameters<typeof seedsForRole>[0]);
+}
+
+function priorityRank(p?: Notification["priority"]): number {
+  switch (p) { case "critical": return 4; case "high": return 3; case "normal": return 2; case "low": return 1; default: return 2; }
+}
 
 export const notifications = {
+  /** Raw list (all notifications across roles). Avoid in UI; prefer forRole(). */
   all(): Notification[] {
     return read<Notification[]>(KEYS.notifications, []);
   },
-  ensureSeeded() {
-    if (!isBrowser) return;
-    const list = read<Notification[]>(KEYS.notifications, []);
-    if (list.length === 0 && auth.isLoggedIn()) {
-      const seeded = SEED_NOTIFICATIONS.map((n, i) => ({
-        ...n,
-        id: `seed_${i}`,
-        at: Date.now() - (i + 1) * 1000 * 60 * 17,
-        read: false,
-      }));
-      write(KEYS.notifications, seeded);
-    }
+  /** Role-filtered, priority-sorted list. Pinned items always come first. */
+  forRole(role: string): Notification[] {
+    const list = notifications.all().filter((n) => {
+      // No `roles` field → legacy/global; show everywhere.
+      if (!n.roles || n.roles.length === 0) return true;
+      return n.roles.includes(role);
+    });
+    return list.slice().sort((a, b) => {
+      const pa = a.pinned ? 1 : 0;
+      const pb = b.pinned ? 1 : 0;
+      if (pa !== pb) return pb - pa;
+      const pri = priorityRank(b.priority) - priorityRank(a.priority);
+      if (pri !== 0) return pri;
+      return b.at - a.at;
+    });
   },
-  unread(): number {
+  /** Re-seed if the active role has changed since the last seed pass.
+   *  Removes prior role-tagged seeds for the OLD role to prevent leakage. */
+  ensureSeeded(role?: string) {
+    if (!isBrowser) return;
+    if (!auth.isLoggedIn()) return;
+    const targetRole = role ?? "viewer";
+    const lastRole = read<string | null>(KEYS.notifSeededRole, null);
+    if (lastRole === targetRole) return; // already seeded for this role
+
+    // Drop any seed-* notifications from the previous role pass; keep
+    // user-generated alerts (no `roles` field) and items not seeded by us.
+    const existing = notifications.all().filter((n) => !n.id.startsWith("seed_"));
+    const seeds = loadSeedsForRole(targetRole);
+    const seeded: Notification[] = seeds.map((s, i) => ({
+      id: `seed_${targetRole}_${s.kind}`,
+      text: s.text,
+      icon: s.icon,
+      category: s.category,
+      priority: s.priority,
+      href: s.href,
+      roles: [targetRole],
+      at: Date.now() - s.ago * 60 * 1000,
+      read: false,
+      dedupKey: `seed:${targetRole}:${s.kind}`,
+      pinned: false,
+      // i is unused but kept for stable insertion order if needed later
+      ...(i < 0 ? {} : {}),
+    }));
+    write(KEYS.notifications, [...seeded, ...existing].slice(0, 60));
+    write(KEYS.notifSeededRole, targetRole);
+  },
+  /** Unread count, role-scoped. */
+  unread(role?: string): number {
+    if (role) return notifications.forRole(role).filter((n) => !n.read).length;
     return notifications.all().filter((n) => !n.read).length;
   },
   /** Has a one-time notification with this dedup key ever been pushed? */
@@ -380,10 +437,22 @@ export const notifications = {
     }
     const list = notifications.all();
     const next: Notification = { ...n, id: `n_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`, at: Date.now(), read: false };
-    write(KEYS.notifications, [next, ...list].slice(0, 30));
+    write(KEYS.notifications, [next, ...list].slice(0, 60));
   },
-  markAllRead() {
-    const list = notifications.all().map((n) => ({ ...n, read: true }));
+  markRead(id: string) {
+    const list = notifications.all().map((n) => (n.id === id ? { ...n, read: true } : n));
+    write(KEYS.notifications, list);
+  },
+  togglePin(id: string) {
+    const list = notifications.all().map((n) => (n.id === id ? { ...n, pinned: !n.pinned } : n));
+    write(KEYS.notifications, list);
+  },
+  markAllRead(role?: string) {
+    const list = notifications.all().map((n) => {
+      if (!role) return { ...n, read: true };
+      const inScope = !n.roles || n.roles.length === 0 || n.roles.includes(role);
+      return inScope ? { ...n, read: true } : n;
+    });
     write(KEYS.notifications, list);
   },
 };

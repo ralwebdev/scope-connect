@@ -28,6 +28,7 @@ import { useTheme } from "@/hooks/use-theme";
 import { landingRouteForRole } from "@/lib/rbac";
 import { themeForRole } from "@/lib/role-theme";
 import { RoleKpiBar } from "@/components/site/RoleKpiBar";
+import { RoleNotificationCenter } from "@/components/site/RoleNotificationCenter";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -224,13 +225,10 @@ export function Navbar() {
                   </span>
                 )}
 
-                {/* Bell */}
+                {/* Bell — opens role-aware notification center */}
                 <div ref={bellRef} className="relative">
                   <button
-                    onClick={() => {
-                      setBellOpen((v) => !v);
-                      if (!bellOpen) setTimeout(() => notifications.markAllRead(), 800);
-                    }}
+                    onClick={() => setBellOpen((v) => !v)}
                     className="relative flex h-9 w-9 items-center justify-center rounded-full text-foreground transition-colors hover:bg-secondary"
                     aria-label="Notifications"
                   >
@@ -245,31 +243,12 @@ export function Navbar() {
                     )}
                   </button>
                   {bellOpen && (
-                    <div className="absolute right-0 top-12 w-80 origin-top-right rounded-xl border border-border bg-popover shadow-elegant animate-scale-in">
-                      <div className="border-b border-border px-4 py-3">
-                        <div className="text-sm font-semibold text-foreground">Notifications</div>
-                        <div className="text-xs text-muted-foreground">{notifs.length} updates · auto-marked read</div>
-                      </div>
-                      <div className="max-h-96 divide-y divide-border overflow-y-auto">
-                        {notifs.length === 0 && (
-                          <div className="p-6 text-center text-sm text-muted-foreground">All quiet. Go ship something.</div>
-                        )}
-                        {notifs.map((n) => {
-                          const Icon = ICONS[n.icon] ?? Sparkles;
-                          return (
-                            <div key={n.id} className="flex gap-3 px-4 py-3 transition-colors hover:bg-secondary/50">
-                              <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-brand text-brand-foreground">
-                                <Icon className="h-3.5 w-3.5" />
-                              </div>
-                              <div className="min-w-0 flex-1">
-                                <div className="text-sm text-foreground">{n.text}</div>
-                                <div className="mt-0.5 text-xs text-muted-foreground">{timeAgo(n.at)} ago</div>
-                              </div>
-                              {!n.read && <span className="mt-1 h-2 w-2 shrink-0 rounded-full" style={{ background: roleTheme.glow }} />}
-                            </div>
-                          );
-                        })}
-                      </div>
+                    <div className="absolute right-0 top-12 origin-top-right animate-scale-in">
+                      <RoleNotificationCenter
+                        role={session.role}
+                        variant="compact"
+                        onItemClick={() => setBellOpen(false)}
+                      />
                     </div>
                   )}
                 </div>

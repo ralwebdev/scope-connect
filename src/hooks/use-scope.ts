@@ -50,11 +50,11 @@ export function useLevelProgress(): number {
 export function useStreak(): number {
   return useStore(() => streak.count());
 }
-export function useUnreadNotifications(): number {
-  return useStore(() => notifications.unread());
+export function useUnreadNotifications(role?: string): number {
+  return useStore(() => notifications.unread(role));
 }
-export function useNotifications() {
-  return useStore(() => notifications.all());
+export function useNotifications(role?: string) {
+  return useStore(() => (role ? notifications.forRole(role) : notifications.all()));
 }
 export function useProfileStrength(): number {
   return useStore(() => profileStrength(auth.getUser()));
