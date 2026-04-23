@@ -300,6 +300,11 @@ function DashboardPage() {
             <Button asChild size="sm" variant="outline" className="mt-4"><Link to="/campus">Open Campus Hub</Link></Button>
           </Card>
         </div>
+
+        <div className="mt-8 grid gap-4 sm:grid-cols-2">
+          <AdSlot slotId="dashboard_recommended" variant="card" label="Recommended for Builders" />
+          <AdSlot slotId="dashboard_featured" variant="card" label="Featured Partner" />
+        </div>
       </section>
     </AppShell>
   );
