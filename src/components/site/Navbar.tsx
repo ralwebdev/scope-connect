@@ -28,6 +28,7 @@ import { useTheme } from "@/hooks/use-theme";
 import { landingRouteForRole } from "@/lib/rbac";
 import { themeForRole } from "@/lib/role-theme";
 import { RoleKpiBar } from "@/components/site/RoleKpiBar";
+import { RoleNotificationCenter } from "@/components/site/RoleNotificationCenter";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
