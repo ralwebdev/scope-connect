@@ -10,6 +10,7 @@ import {
   upcomingEvents,
   interestTags,
 } from "./mock-data";
+import { seedsForRole, type NotificationSeed } from "./notifications-seed";
 
 /* ----------------------------- Types ----------------------------- */
 
@@ -354,10 +355,6 @@ export const streak = {
 // a student will never see CRM lead reminders. Cross-role leakage is
 // structurally impossible because the active list is filtered through the
 // `roles` field on every read, AND we re-seed when the active role changes.
-
-// Static import — notifications-seed has no runtime dep on this module so
-// there is no cycle. Bundlers handle this safely.
-import { seedsForRole, type NotificationSeed } from "./notifications-seed";
 
 function loadSeedsForRole(role: string): NotificationSeed[] {
   return seedsForRole(role as Parameters<typeof seedsForRole>[0]);
