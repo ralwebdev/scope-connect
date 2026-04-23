@@ -160,8 +160,8 @@ export function landingRouteForRole(role: RoleId): string {
     case "scope_super_admin": return "/scope-super-admin";
     case "scope_admin": return "/scope-admin";
     case "institutional_admin": return "/institution-admin";
-    case "faculty_coordinator": return "/institution-admin/analytics";
-    case "campus_leader": return "/campus";
+    case "faculty_coordinator": return "/faculty";
+    case "campus_leader": return "/campus-leader";
     case "regional_admin":
     case "campus_admin":
     case "content_admin":
