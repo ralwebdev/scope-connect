@@ -46,7 +46,7 @@ export function ViewerNavbar() {
   return <NavbarShell />;
 }
 
-const REGISTRY: Record<RoleId, () => JSX.Element> = {
+const REGISTRY: Record<RoleId, () => React.ReactElement> = {
   student: StudentNavbar,
   viewer: ViewerNavbar,
   campus_leader: CampusNavbar,
