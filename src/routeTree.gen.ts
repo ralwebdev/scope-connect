@@ -29,11 +29,13 @@ import { Route as LeaderboardsRouteImport } from './routes/leaderboards'
 import { Route as InstitutionAdminRouteImport } from './routes/institution-admin'
 import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as FeedRouteImport } from './routes/feed'
+import { Route as FacultyRouteImport } from './routes/faculty'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CommunityGuidelinesRouteImport } from './routes/community-guidelines'
 import { Route as ChallengesRouteImport } from './routes/challenges'
+import { Route as CampusLeaderRouteImport } from './routes/campus-leader'
 import { Route as CampusRouteImport } from './routes/campus'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AnnouncementsRouteImport } from './routes/announcements'
@@ -151,6 +153,11 @@ const FeedRoute = FeedRouteImport.update({
   path: '/feed',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FacultyRoute = FacultyRouteImport.update({
+  id: '/faculty',
+  path: '/faculty',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EventsRoute = EventsRouteImport.update({
   id: '/events',
   path: '/events',
@@ -174,6 +181,11 @@ const CommunityGuidelinesRoute = CommunityGuidelinesRouteImport.update({
 const ChallengesRoute = ChallengesRouteImport.update({
   id: '/challenges',
   path: '/challenges',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CampusLeaderRoute = CampusLeaderRouteImport.update({
+  id: '/campus-leader',
+  path: '/campus-leader',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CampusRoute = CampusRouteImport.update({
@@ -268,11 +280,13 @@ export interface FileRoutesByFullPath {
   '/announcements': typeof AnnouncementsRoute
   '/auth': typeof AuthRoute
   '/campus': typeof CampusRoute
+  '/campus-leader': typeof CampusLeaderRoute
   '/challenges': typeof ChallengesRoute
   '/community-guidelines': typeof CommunityGuidelinesRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/events': typeof EventsRoute
+  '/faculty': typeof FacultyRoute
   '/feed': typeof FeedRoute
   '/feedback': typeof FeedbackRoute
   '/institution-admin': typeof InstitutionAdminRouteWithChildren
@@ -311,11 +325,13 @@ export interface FileRoutesByTo {
   '/announcements': typeof AnnouncementsRoute
   '/auth': typeof AuthRoute
   '/campus': typeof CampusRoute
+  '/campus-leader': typeof CampusLeaderRoute
   '/challenges': typeof ChallengesRoute
   '/community-guidelines': typeof CommunityGuidelinesRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/events': typeof EventsRoute
+  '/faculty': typeof FacultyRoute
   '/feed': typeof FeedRoute
   '/feedback': typeof FeedbackRoute
   '/institution-admin': typeof InstitutionAdminRouteWithChildren
@@ -355,11 +371,13 @@ export interface FileRoutesById {
   '/announcements': typeof AnnouncementsRoute
   '/auth': typeof AuthRoute
   '/campus': typeof CampusRoute
+  '/campus-leader': typeof CampusLeaderRoute
   '/challenges': typeof ChallengesRoute
   '/community-guidelines': typeof CommunityGuidelinesRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/events': typeof EventsRoute
+  '/faculty': typeof FacultyRoute
   '/feed': typeof FeedRoute
   '/feedback': typeof FeedbackRoute
   '/institution-admin': typeof InstitutionAdminRouteWithChildren
@@ -400,11 +418,13 @@ export interface FileRouteTypes {
     | '/announcements'
     | '/auth'
     | '/campus'
+    | '/campus-leader'
     | '/challenges'
     | '/community-guidelines'
     | '/contact'
     | '/dashboard'
     | '/events'
+    | '/faculty'
     | '/feed'
     | '/feedback'
     | '/institution-admin'
@@ -443,11 +463,13 @@ export interface FileRouteTypes {
     | '/announcements'
     | '/auth'
     | '/campus'
+    | '/campus-leader'
     | '/challenges'
     | '/community-guidelines'
     | '/contact'
     | '/dashboard'
     | '/events'
+    | '/faculty'
     | '/feed'
     | '/feedback'
     | '/institution-admin'
@@ -486,11 +508,13 @@ export interface FileRouteTypes {
     | '/announcements'
     | '/auth'
     | '/campus'
+    | '/campus-leader'
     | '/challenges'
     | '/community-guidelines'
     | '/contact'
     | '/dashboard'
     | '/events'
+    | '/faculty'
     | '/feed'
     | '/feedback'
     | '/institution-admin'
@@ -530,11 +554,13 @@ export interface RootRouteChildren {
   AnnouncementsRoute: typeof AnnouncementsRoute
   AuthRoute: typeof AuthRoute
   CampusRoute: typeof CampusRoute
+  CampusLeaderRoute: typeof CampusLeaderRoute
   ChallengesRoute: typeof ChallengesRoute
   CommunityGuidelinesRoute: typeof CommunityGuidelinesRoute
   ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRoute
   EventsRoute: typeof EventsRoute
+  FacultyRoute: typeof FacultyRoute
   FeedRoute: typeof FeedRoute
   FeedbackRoute: typeof FeedbackRoute
   InstitutionAdminRoute: typeof InstitutionAdminRouteWithChildren
@@ -702,6 +728,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FeedRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/faculty': {
+      id: '/faculty'
+      path: '/faculty'
+      fullPath: '/faculty'
+      preLoaderRoute: typeof FacultyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/events': {
       id: '/events'
       path: '/events'
@@ -735,6 +768,13 @@ declare module '@tanstack/react-router' {
       path: '/challenges'
       fullPath: '/challenges'
       preLoaderRoute: typeof ChallengesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/campus-leader': {
+      id: '/campus-leader'
+      path: '/campus-leader'
+      fullPath: '/campus-leader'
+      preLoaderRoute: typeof CampusLeaderRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/campus': {
@@ -899,11 +939,13 @@ const rootRouteChildren: RootRouteChildren = {
   AnnouncementsRoute: AnnouncementsRoute,
   AuthRoute: AuthRoute,
   CampusRoute: CampusRoute,
+  CampusLeaderRoute: CampusLeaderRoute,
   ChallengesRoute: ChallengesRoute,
   CommunityGuidelinesRoute: CommunityGuidelinesRoute,
   ContactRoute: ContactRoute,
   DashboardRoute: DashboardRoute,
   EventsRoute: EventsRoute,
+  FacultyRoute: FacultyRoute,
   FeedRoute: FeedRoute,
   FeedbackRoute: FeedbackRoute,
   InstitutionAdminRoute: InstitutionAdminRouteWithChildren,
