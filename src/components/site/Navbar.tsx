@@ -123,16 +123,24 @@ export function Navbar() {
 
   return (
     <>
-      {/* Spacer keeps page content below the floating capsule. */}
-      <div aria-hidden className="h-20 w-full" />
+      {/* Spacer keeps page content below the floating capsule (desktop only;
+          on mobile the bottom dock handles nav and we hide this header). */}
+      <div aria-hidden className="hidden h-20 w-full md:block" />
 
       <header
         className={cn(
-          "fixed left-1/2 z-50 -translate-x-1/2 transition-[top,width,padding] duration-300 ease-out",
-          collapsed ? "top-2" : "top-3 animate-nav-float",
+          "fixed z-[9999] hidden transition-[top,width,padding] duration-300 ease-out md:block",
+          collapsed ? "top-2" : "top-4 animate-nav-float",
         )}
         style={{
-          width: collapsed ? "min(720px, calc(100vw - 24px))" : "min(1180px, calc(100vw - 24px))",
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: collapsed
+            ? "min(720px, calc(100vw - 32px))"
+            : "min(1100px, calc(100vw - 32px))",
+          maxWidth: "1100px",
+          minWidth: "320px",
+          boxSizing: "border-box",
         }}
       >
         <div
