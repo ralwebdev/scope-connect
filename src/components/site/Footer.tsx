@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Sparkles, Mail, ShieldCheck } from "lucide-react";
+import { Sparkles, Mail, ShieldCheck, MessageSquarePlus } from "lucide-react";
 import { useBrand, useFeature } from "@/hooks/use-platform";
 
 export function Footer() {
