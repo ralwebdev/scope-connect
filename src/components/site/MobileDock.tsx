@@ -102,17 +102,20 @@ export function MobileDock() {
       ];
 
   // Role-aware quick actions
-  const quickActions: QuickAction[] = session.isAuthenticated
+  const rawQuick: QuickAction[] = session.isAuthenticated
     ? [
-        { key: "qa-projects", label: "New Project", to: "/projects", icon: Briefcase, permission: "manage_projects" },
-        { key: "qa-events", label: "Browse Events", to: "/events", icon: Sparkles, permission: "view_events" },
-        { key: "qa-leaders", label: "Leaderboards", to: "/leaderboards", icon: Trophy, permission: "view_leaderboards" },
-        { key: "qa-campus", label: "My Campus", to: "/campus", icon: Users, permission: "view_campus" },
+        { key: "qa-projects", label: "Projects", to: "/projects", icon: Briefcase, permission: "view_projects" },
+        { key: "qa-events", label: "Events", to: "/events", icon: Sparkles, permission: "view_events" },
+        { key: "qa-leaders", label: "Leaderboards", to: "/leaderboards", icon: Trophy },
+        { key: "qa-campus", label: "Campus", to: "/campus", icon: Users },
         { key: "qa-portfolio", label: "Portfolio", to: "/portfolio", icon: UserIcon, permission: "view_portfolio" },
-        { key: "qa-feedback", label: "Feedback", to: "/feedback", icon: Megaphone, permission: "submit_feedback" },
+        { key: "qa-feedback", label: "Feedback", to: "/feedback", icon: Megaphone },
         { key: "qa-settings", label: "Settings", to: "/settings", icon: SettingsIcon },
-      ].filter((a) => !a.permission || session.canAccess(a.permission))
+      ]
     : [];
+  const quickActions: QuickAction[] = rawQuick.filter(
+    (a) => !a.permission || session.canAccess(a.permission),
+  );
 
   return (
     <>
