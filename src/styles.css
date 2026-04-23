@@ -292,7 +292,9 @@
       transition-duration: 0.001ms !important;
       scroll-behavior: auto !important;
     }
-    .animate-shimmer, .animate-flame-pulse, .animate-pulse-glow { animation: none !important; }
+    .animate-shimmer, .animate-flame-pulse, .animate-pulse-glow,
+    .animate-nav-float, .animate-nav-glow, .animate-nav-burst,
+    .nav-shimmer::before { animation: none !important; }
     .hover-lift:hover { transform: none; }
   }
 
