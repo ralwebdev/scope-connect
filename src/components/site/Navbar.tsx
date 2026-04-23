@@ -7,6 +7,7 @@ import { useIsLoggedIn, useUser, useUnreadNotifications, useNotifications, useXP
 import { auth, notifications, meta } from "@/lib/scope-store";
 import { useBrand, useFeature } from "@/hooks/use-platform";
 import { FormsLauncher } from "@/components/site/FormsLauncher";
+import { ThemeToggle } from "@/components/site/ThemeToggle";
 import { toast } from "sonner";
 
 type NavLink = { to: "/feed" | "/projects" | "/events" | "/leaderboards" | "/dashboard" | "/portfolio" | "/campus"; label: string; flag?: "feed" | "projects" | "events" | "leaderboards" | "portfolio" | "campus" };
@@ -120,6 +121,7 @@ export function Navbar() {
         </nav>
 
         <div className="hidden items-center gap-2 lg:flex">
+          <ThemeToggle />
           {isAuthed && user ? (
             <>
               <FormsLauncher />
@@ -219,6 +221,9 @@ export function Navbar() {
           )}
         </div>
 
+        <div className="flex items-center gap-1 lg:hidden">
+          <ThemeToggle />
+        </div>
         <button
           aria-label="Toggle menu"
           className="rounded-lg p-2 text-foreground lg:hidden"
