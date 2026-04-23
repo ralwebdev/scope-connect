@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useIsLoggedIn } from "@/hooks/use-scope";
+import { useUserSession } from "@/hooks/use-session";
 import { streak, notifications } from "@/lib/scope-store";
 
 /** Wrap any page that requires auth — redirects guests to /auth.
  *  Defers all auth-driven rendering until after client mount to avoid SSR/CSR mismatch. */
 export function AuthGate({ children }: { children: React.ReactNode }) {
   const isAuthed = useIsLoggedIn();
+  const session = useUserSession();
   const navigate = useNavigate();
   const [mounted, setMounted] = useState(false);
 
@@ -20,9 +22,11 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
       navigate({ to: "/auth" });
     } else {
       streak.tick();
-      notifications.ensureSeeded();
+      // Seed role-aware notifications. Re-seeds automatically if the active
+      // role has changed since last pass (e.g. a role override flip in admin).
+      notifications.ensureSeeded(session.role);
     }
-  }, [isAuthed, navigate, mounted]);
+  }, [isAuthed, navigate, mounted, session.role]);
 
   if (!mounted || !isAuthed) {
     // Lightweight shell so route transitions don't flash blank — feels instant.
