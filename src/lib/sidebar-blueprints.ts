@@ -10,7 +10,7 @@ import {
   Building2, Users, BarChart3, Brain, Shield, Settings, Megaphone,
   Sparkles, IndianRupee, ShieldCheck, Wrench, Target, MapPin, Handshake,
   GraduationCap, ClipboardList, TrendingUp, LifeBuoy, Briefcase, FileText,
-  Network, Lock,
+  Network, Lock, Trophy,
 } from "lucide-react";
 import type { PermissionKey, RoleId } from "@/lib/rbac";
 
