@@ -57,7 +57,7 @@ export function FeedbackWidget() {
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed bottom-4 right-4 z-40 flex items-center gap-1.5 rounded-full bg-gradient-brand px-4 py-2.5 text-sm font-semibold text-brand-foreground shadow-brand transition-transform hover:scale-105 sm:bottom-6 sm:right-6"
+          className="fixed bottom-6 right-6 z-40 hidden items-center gap-1.5 rounded-full bg-gradient-brand px-4 py-2.5 text-sm font-semibold text-brand-foreground shadow-brand transition-transform hover:scale-105 md:flex"
           aria-label="Send quick feedback"
         >
           <MessageSquarePlus className="h-4 w-4" /> Feedback
