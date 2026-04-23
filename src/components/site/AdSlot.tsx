@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ExternalLink } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -65,7 +65,10 @@ interface AdSlotProps {
 }
 
 export function AdSlot({ slotId, variant, label, className }: AdSlotProps) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
   const creative = useMemo(() => pick(slotId, label), [slotId, label]);
+  if (!mounted) return <div aria-hidden className={cn("min-h-[64px]", className)} />;
 
   if (variant === "slim") {
     return (
