@@ -37,7 +37,7 @@ function Chip({ kpi }: { kpi: Kpi }) {
       className="flex items-center gap-1.5 rounded-full px-2 py-1"
       title={kpi.hint ?? `${kpi.label}: ${kpi.value}`}
     >
-      <Icon className="h-3.5 w-3.5 shrink-0" style={{ color: "var(--nav-glow)" }} />
+      <span style={{ color: "var(--nav-glow)" }} className="flex items-center"><Icon className="h-3.5 w-3.5 shrink-0" /></span>
       <div className="flex items-baseline gap-1 leading-none">
         <span className="text-xs font-semibold tabular-nums text-foreground">{kpi.value}</span>
         <span className="hidden text-[10px] uppercase tracking-wide text-muted-foreground lg:inline">
