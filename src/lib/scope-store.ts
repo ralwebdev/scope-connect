@@ -134,6 +134,9 @@ const KEYS = {
   notifDedupRegistry: "scope_notif_dedup_v1",
   // Tracks the highest level a level-up alert has been issued for.
   highestLevelSeen: "scope_highest_level_seen",
+  // Tracks which role the notification list was last seeded for, so that
+  // when the active role changes we can re-seed without leaking alerts.
+  notifSeededRole: "scope_notif_seeded_role",
   // Schema version — bump to invalidate incompatible persisted state.
   schemaVersion: "scope_schema_version",
 } as const;
