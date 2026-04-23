@@ -227,16 +227,16 @@ function CampusLeaderDashboard() {
         </div>
         <ul className="divide-y divide-border">
           {board.map((m, i) => (
-            <li key={m.name} className="flex items-center gap-4 p-4">
+            <li key={m.id} className="flex items-center gap-4 p-4">
               <div className="w-6 text-sm font-bold text-muted-foreground">#{i + 1}</div>
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-brand text-sm font-bold text-brand-foreground">
                 {m.name.charAt(0)}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="truncate text-sm font-semibold">{m.name}</div>
-                <div className="text-xs text-muted-foreground">{m.campus}</div>
+                <div className="text-xs text-muted-foreground">{m.sub}</div>
               </div>
-              <Badge variant="outline">{m.points.toLocaleString()} pts</Badge>
+              <Badge variant="outline">{m.value.toLocaleString()} pts</Badge>
             </li>
           ))}
         </ul>
