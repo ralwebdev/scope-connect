@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { AppShell } from "@/components/site/AppShell";
+import { AdSlot } from "@/components/site/AdSlot";
 import { AuthGate } from "@/components/site/AuthGate";
 import { CountUp } from "@/components/site/Effects";
 import { useUser, useXP, useLevel, useLevelProgress, useStreak, useProfileStrength, useStoreValue } from "@/hooks/use-scope";
