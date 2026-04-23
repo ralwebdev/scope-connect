@@ -92,6 +92,15 @@ export type Notification = {
    *  notification (or registry entry) has the same key. Used for one-time
    *  events (welcome bonus, level-up, first portfolio, etc). */
   dedupKey?: string;
+  /** Role-aware metadata. Optional so legacy notifications still render. */
+  category?: "action" | "milestone" | "system" | "info";
+  priority?: "critical" | "high" | "normal" | "low";
+  /** Restrict visibility to these role IDs. Empty/undefined = visible to all. */
+  roles?: string[];
+  /** Optional deep-link route. */
+  href?: string;
+  /** User-pinned (kept at top regardless of priority). */
+  pinned?: boolean;
 };
 
 /* --------------------------- LS helpers --------------------------- */
