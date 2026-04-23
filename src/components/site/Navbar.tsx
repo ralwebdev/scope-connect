@@ -1,33 +1,28 @@
-import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { useState, useEffect, useRef } from "react";
-import { Menu, X, Sparkles, Bell, Trophy, Heart, Users, Zap, LogOut, User as UserIcon, Settings as SettingsIcon, Flame } from "lucide-react";
+// Lightweight identity-only Navbar.
+// Per RBAC architecture: Navbar contains NO navigation menu — the Sidebar
+// (RbacSidebar) is the sole navigation surface. Navbar exposes only:
+//   - Logo (role-aware redirect after hydration)
+//   - Notifications bell
+//   - Theme toggle
+//   - Profile dropdown (or auth CTAs when logged out)
+//
+// SSR/CSR safety: until session hydration completes, we render the
+// logged-out shell. This guarantees identical server + first-client markup
+// (eliminates React #418 hydration mismatches) before the role resolves.
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
+import {
+  Bell, LogOut, Settings as SettingsIcon, Sparkles, Trophy, User as UserIcon,
+  Heart, Users, Zap,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { useIsLoggedIn, useUser, useUnreadNotifications, useNotifications, useXP, useStreak } from "@/hooks/use-scope";
-import { auth, notifications, meta } from "@/lib/scope-store";
-import { useBrand, useFeature } from "@/hooks/use-platform";
-import { FormsLauncher } from "@/components/site/FormsLauncher";
 import { ThemeToggle } from "@/components/site/ThemeToggle";
+import { useUserSession } from "@/hooks/use-session";
+import { useUnreadNotifications, useNotifications } from "@/hooks/use-scope";
+import { auth, notifications, meta } from "@/lib/scope-store";
+import { useBrand } from "@/hooks/use-platform";
+import { landingRouteForRole } from "@/lib/rbac";
 import { toast } from "sonner";
-
-type NavLink = { to: "/feed" | "/projects" | "/events" | "/leaderboards" | "/dashboard" | "/portfolio" | "/campus"; label: string; flag?: "feed" | "projects" | "events" | "leaderboards" | "portfolio" | "campus" };
-
-const PUBLIC_LINKS: readonly NavLink[] = [
-  { to: "/feed", label: "Feed", flag: "feed" },
-  { to: "/projects", label: "Projects", flag: "projects" },
-  { to: "/events", label: "Events", flag: "events" },
-  { to: "/leaderboards", label: "Leaderboards", flag: "leaderboards" },
-] as const;
-
-const AUTHED_LINKS: readonly NavLink[] = [
-  { to: "/dashboard", label: "Dashboard" },
-  { to: "/projects", label: "Projects", flag: "projects" },
-  { to: "/portfolio", label: "Portfolio", flag: "portfolio" },
-  { to: "/feed", label: "Feed", flag: "feed" },
-  { to: "/events", label: "Events", flag: "events" },
-  { to: "/campus", label: "Campus", flag: "campus" },
-  { to: "/leaderboards", label: "Leaderboards", flag: "leaderboards" },
-] as const;
 
 const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   trophy: Trophy, spark: Sparkles, zap: Zap, users: Users, heart: Heart,
@@ -44,35 +39,16 @@ function timeAgo(at: number) {
 }
 
 export function Navbar() {
-  const [open, setOpen] = useState(false);
-  const [bellOpen, setBellOpen] = useState(false);
-  const [userOpen, setUserOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-  const location = useLocation();
   const navigate = useNavigate();
-  const isAuthedRaw = useIsLoggedIn();
-  const user = useUser();
+  const session = useUserSession();
+  const brand = useBrand();
   const unread = useUnreadNotifications();
   const notifs = useNotifications();
-  const xp = useXP();
-  const streak = useStreak();
+
+  const [bellOpen, setBellOpen] = useState(false);
+  const [userOpen, setUserOpen] = useState(false);
   const bellRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => { setMounted(true); }, []);
-
-  const brand = useBrand();
-  const feedOn = useFeature("feed");
-  const projectsOn = useFeature("projects");
-  const eventsOn = useFeature("events");
-  const leaderboardsOn = useFeature("leaderboards");
-  const portfolioOn = useFeature("portfolio");
-  const campusOn = useFeature("campus");
-  const flagMap: Record<string, boolean> = { feed: feedOn, projects: projectsOn, events: eventsOn, leaderboards: leaderboardsOn, portfolio: portfolioOn, campus: campusOn };
-
-  // Treat as logged-out until client mount — keeps SSR/CSR markup identical.
-  const isAuthed = mounted && isAuthedRaw;
-  const links = (isAuthed ? AUTHED_LINKS : PUBLIC_LINKS).filter((l) => !l.flag || flagMap[l.flag]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -86,14 +62,25 @@ export function Navbar() {
   const handleLogout = () => {
     auth.logout();
     toast.success("Signed out (secure reset). See you soon, Builder.");
-    // Replace history so back-nav cannot return to a protected page.
     navigate({ to: "/auth", replace: true });
   };
+
+  const handleLogoClick = (e: React.MouseEvent) => {
+    if (!session.ready) return; // honor default <Link to="/"> during hydration
+    if (!session.isAuthenticated) return;
+    const target = landingRouteForRole(session.role);
+    if (target !== "/") {
+      e.preventDefault();
+      navigate({ to: target });
+    }
+  };
+
+  const showAuthedUI = session.ready && session.isAuthenticated && session.user;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
-        <Link to="/" className="flex items-center gap-2 font-bold text-foreground">
+        <Link to="/" onClick={handleLogoClick} className="flex items-center gap-2 font-bold text-foreground">
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-brand shadow-brand">
             <Sparkles className="h-4 w-4 text-brand-foreground" />
           </span>
@@ -102,40 +89,21 @@ export function Navbar() {
           </span>
         </Link>
 
-        <nav className="hidden flex-1 items-center justify-center gap-1 lg:flex">
-          {links.map((link) => {
-            const active = location.pathname === link.to;
-            return (
-              <Link
-                key={link.to}
-                to={link.to}
-                className={cn(
-                  "rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                  active ? "bg-secondary text-foreground" : "text-muted-foreground hover:bg-secondary hover:text-foreground",
-                )}
-              >
-                {link.label}
-              </Link>
-            );
-          })}
-        </nav>
+        {/* Spacer — no nav menu lives here, sidebar owns navigation. */}
+        <div className="flex-1" />
 
-        <div className="hidden items-center gap-2 lg:flex">
+        <div className="flex items-center gap-2">
           <ThemeToggle />
-          {isAuthed && user ? (
-            <>
-              <FormsLauncher />
-              <div className="hidden items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-foreground xl:flex">
-                <Zap className="h-3 w-3 text-brand" /> {xp.toLocaleString()} XP
-              </div>
-              <div className="hidden items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-foreground xl:flex">
-                <Flame className={cn("h-3 w-3 text-brand", streak >= 3 && "animate-flame-pulse")} /> {streak}d
-              </div>
 
+          {showAuthedUI ? (
+            <>
               {/* Bell */}
               <div ref={bellRef} className="relative">
                 <button
-                  onClick={() => { setBellOpen((v) => !v); if (!bellOpen) setTimeout(() => notifications.markAllRead(), 800); }}
+                  onClick={() => {
+                    setBellOpen((v) => !v);
+                    if (!bellOpen) setTimeout(() => notifications.markAllRead(), 800);
+                  }}
                   className="relative rounded-lg p-2 text-foreground transition-colors hover:bg-secondary"
                   aria-label="Notifications"
                 >
@@ -153,7 +121,9 @@ export function Navbar() {
                       <div className="text-xs text-muted-foreground">{notifs.length} updates · auto-marked read</div>
                     </div>
                     <div className="max-h-96 divide-y divide-border overflow-y-auto">
-                      {notifs.length === 0 && <div className="p-6 text-center text-sm text-muted-foreground">All quiet. Go ship something.</div>}
+                      {notifs.length === 0 && (
+                        <div className="p-6 text-center text-sm text-muted-foreground">All quiet. Go ship something.</div>
+                      )}
                       {notifs.map((n) => {
                         const Icon = ICONS[n.icon] ?? Sparkles;
                         return (
@@ -174,27 +144,28 @@ export function Navbar() {
                 )}
               </div>
 
-              {/* User menu */}
+              {/* Profile dropdown */}
               <div ref={userRef} className="relative">
-                <button onClick={() => setUserOpen((v) => !v)} className="flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold text-brand-foreground shadow-brand transition-transform hover:scale-105" style={{ background: user.avatarColor }}>
-                  {user.name.charAt(0).toUpperCase()}
+                <button
+                  onClick={() => setUserOpen((v) => !v)}
+                  className="flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold text-brand-foreground shadow-brand transition-transform hover:scale-105"
+                  style={{ background: session.user!.avatarColor }}
+                  aria-label="Profile menu"
+                >
+                  {session.user!.name.charAt(0).toUpperCase()}
                 </button>
                 {userOpen && (
                   <div className="absolute right-0 top-12 w-64 origin-top-right rounded-xl border border-border bg-popover shadow-elegant animate-scale-in">
                     <div className="border-b border-border px-4 py-3">
-                      <div className="text-sm font-semibold text-foreground">{user.name}</div>
-                      <div className="text-xs text-muted-foreground">{user.email}</div>
-                      <div className="mt-2 flex gap-3 text-xs">
-                        <span className="text-foreground"><b>{xp.toLocaleString()}</b> <span className="text-muted-foreground">XP</span></span>
-                        <span className="text-foreground"><b>{streak}d</b> <span className="text-muted-foreground">streak</span></span>
+                      <div className="text-sm font-semibold text-foreground">{session.user!.name}</div>
+                      <div className="text-xs text-muted-foreground">{session.user!.email}</div>
+                      <div className="mt-1 text-[10px] font-semibold uppercase tracking-wider text-brand">
+                        {session.role.replace(/_/g, " ")}
                       </div>
                     </div>
                     <div className="py-1">
                       <Link to="/profile" onClick={() => setUserOpen(false)} className="flex items-center gap-3 px-4 py-2 text-sm text-foreground hover:bg-secondary">
                         <UserIcon className="h-4 w-4" /> Profile
-                      </Link>
-                      <Link to="/dashboard" onClick={() => setUserOpen(false)} className="flex items-center gap-3 px-4 py-2 text-sm text-foreground hover:bg-secondary">
-                        <Trophy className="h-4 w-4" /> Dashboard
                       </Link>
                       <Link to="/settings" onClick={() => setUserOpen(false)} className="flex items-center gap-3 px-4 py-2 text-sm text-foreground hover:bg-secondary">
                         <SettingsIcon className="h-4 w-4" /> Settings
@@ -220,51 +191,7 @@ export function Navbar() {
             </>
           )}
         </div>
-
-        <div className="flex items-center gap-1 lg:hidden">
-          <ThemeToggle />
-        </div>
-        <button
-          aria-label="Toggle menu"
-          className="rounded-lg p-2 text-foreground lg:hidden"
-          onClick={() => setOpen((v) => !v)}
-        >
-          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
       </div>
-
-      {open && (
-        <div className="border-t border-border/40 bg-background lg:hidden">
-          <div className="space-y-1 px-4 py-3">
-            {links.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                onClick={() => setOpen(false)}
-                className="block rounded-lg px-3 py-2 text-sm font-medium text-foreground hover:bg-secondary"
-              >
-                {link.label}
-              </Link>
-            ))}
-            {isAuthed && user ? (
-              <>
-                <Link to="/profile" onClick={() => setOpen(false)} className="block rounded-lg px-3 py-2 text-sm font-medium text-foreground hover:bg-secondary">Profile</Link>
-                <Link to="/settings" onClick={() => setOpen(false)} className="block rounded-lg px-3 py-2 text-sm font-medium text-foreground hover:bg-secondary">Settings</Link>
-                <button onClick={() => { setOpen(false); handleLogout(); }} className="block w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-foreground hover:bg-secondary">Sign out</button>
-              </>
-            ) : (
-              <div className="flex gap-2 pt-2">
-                <Button asChild variant="outline" size="sm" className="flex-1">
-                  <Link to="/auth" onClick={() => setOpen(false)}>Log in</Link>
-                </Button>
-                <Button asChild size="sm" className="flex-1 bg-gradient-brand text-brand-foreground">
-                  <Link to="/auth" onClick={() => setOpen(false)}>Join</Link>
-                </Button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </header>
   );
 }
