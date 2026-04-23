@@ -175,6 +175,7 @@
     color: var(--color-foreground);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    transition: background-color 250ms ease, color 250ms ease;
   }
 }
 

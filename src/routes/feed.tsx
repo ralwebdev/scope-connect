@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { AppShell } from "@/components/site/AppShell";
+import { AdSlot } from "@/components/site/AdSlot";
 import { useStoreValue, useUser, useIsLoggedIn } from "@/hooks/use-scope";
 import { feed } from "@/lib/scope-store";
 import { FeatureGate } from "@/components/site/FeatureGate";
@@ -172,6 +173,7 @@ function FeedPage() {
               )}
             </Card>
           ))}
+          <AdSlot slotId="feed_inline" variant="card" label="Sponsored" className="mt-2" />
         </div>
       </section>
     </AppShell>

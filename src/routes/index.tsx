@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AppShell } from "@/components/site/AppShell";
+import { AdSlot } from "@/components/site/AdSlot";
 import { analytics } from "@/lib/analytics";
 import { useIsLoggedIn } from "@/hooks/use-scope";
 import {
@@ -101,15 +102,28 @@ function LandingPage() {
     <AppShell>
       <Hero />
       <Partners />
+      <section className="px-4 pt-8 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <AdSlot slotId="home_hero_below" variant="banner" label="Featured Partner" />
+        </div>
+      </section>
       <WhatIsScope />
       <WhyJoin />
       <LiveMetricsSection />
+      <section className="px-4 py-10 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <AdSlot slotId="home_mid_metrics" variant="two-grid" label="Sponsored" />
+        </div>
+      </section>
       <TopChaptersSection />
       <TopBuildersSection />
       <ProjectsShowcase />
       <EventsSection />
       <Testimonials />
       <ExitCapture />
+      <section className="px-4 pb-6 sm:px-6 lg:px-8">
+        <AdSlot slotId="home_footer_strip" variant="slim" label="Platform Update" />
+      </section>
       <FinalCTA />
       {!isLoggedIn && <StickyMobileCTA />}
     </AppShell>

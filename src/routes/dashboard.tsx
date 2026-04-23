@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { AppShell } from "@/components/site/AppShell";
+import { AdSlot } from "@/components/site/AdSlot";
 import { AuthGate } from "@/components/site/AuthGate";
 import { CountUp } from "@/components/site/Effects";
 import { useUser, useXP, useLevel, useLevelProgress, useStreak, useProfileStrength, useStoreValue } from "@/hooks/use-scope";
@@ -298,6 +299,11 @@ function DashboardPage() {
             <p className="mt-1 text-sm text-muted-foreground">Plug into your campus tribe. Lead, ship, win together.</p>
             <Button asChild size="sm" variant="outline" className="mt-4"><Link to="/campus">Open Campus Hub</Link></Button>
           </Card>
+        </div>
+
+        <div className="mt-8 grid gap-4 sm:grid-cols-2">
+          <AdSlot slotId="dashboard_recommended" variant="card" label="Recommended for Builders" />
+          <AdSlot slotId="dashboard_featured" variant="card" label="Featured Partner" />
         </div>
       </section>
     </AppShell>
