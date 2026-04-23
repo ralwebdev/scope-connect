@@ -28,6 +28,7 @@ import { useBrand } from "@/hooks/use-platform";
 import { useTheme } from "@/hooks/use-theme";
 import { landingRouteForRole } from "@/lib/rbac";
 import { themeForRole } from "@/lib/role-theme";
+import { RoleKpiBar } from "@/components/site/RoleKpiBar";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -196,8 +197,8 @@ export function Navbar() {
             </Link>
           </div>
 
-          {/* ============ CENTER BRAIN — Progress ============ */}
-          {showAuthedUI && !collapsed && <ProgressBrain />}
+          {/* ============ CENTER BRAIN — Role-aware KPIs ============ */}
+          {showAuthedUI && !collapsed && <RoleKpiBar role={session.role} />}
 
           {/* Spacer — pushes Right Brain to the edge regardless of center contents. */}
           <div className="flex-1" />
