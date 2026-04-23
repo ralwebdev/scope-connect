@@ -10,7 +10,7 @@ import {
   Building2, Users, BarChart3, Brain, Shield, Settings, Megaphone,
   Sparkles, IndianRupee, ShieldCheck, Wrench, Target, MapPin, Handshake,
   GraduationCap, ClipboardList, TrendingUp, LifeBuoy, Briefcase, FileText,
-  Network, Lock,
+  Network, Lock, Trophy,
 } from "lucide-react";
 import type { PermissionKey, RoleId } from "@/lib/rbac";
 
@@ -261,7 +261,7 @@ const FACULTY_BLUEPRINT: SidebarBlueprint = {
   ],
 };
 
-// ---------- STUDENT / VIEWER — minimal builder workspace ----------
+// ---------- STUDENT / VIEWER — builder workspace (growth psychology) ----------
 const STUDENT_BLUEPRINT: SidebarBlueprint = {
   layout: "builder_workspace",
   groups: [
@@ -271,8 +271,10 @@ const STUDENT_BLUEPRINT: SidebarBlueprint = {
       items: [
         { to: "/dashboard", label: "Dashboard", permission: "view_dashboard", icon: LayoutDashboard },
         { to: "/projects", label: "Projects", permission: "view_projects", icon: FolderKanban },
+        { to: "/challenges", label: "Open Challenges", permission: "view_projects", icon: Target },
         { to: "/feed", label: "Feed", permission: "view_feed", icon: Newspaper },
         { to: "/events", label: "Events", permission: "view_events", icon: Calendar },
+        { to: "/leaderboards", label: "Leaderboards", permission: "view_dashboard", icon: Trophy },
       ],
     },
     {
@@ -281,6 +283,7 @@ const STUDENT_BLUEPRINT: SidebarBlueprint = {
       items: [
         { to: "/portfolio", label: "Portfolio", permission: "view_portfolio", icon: Award },
         { to: "/profile", label: "Profile", permission: "manage_profile", icon: User },
+        { to: "/settings", label: "Settings", permission: "view_dashboard", icon: Settings },
       ],
     },
   ],
