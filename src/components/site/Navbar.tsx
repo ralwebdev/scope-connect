@@ -15,13 +15,12 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import {
   Bell, LogOut, Settings as SettingsIcon, Sparkles, Trophy, User as UserIcon,
-  Heart, Users, Zap, Flame, Menu, Sun, Moon, Monitor,
+  Heart, Users, Zap, Menu, Sun, Moon, Monitor,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUserSession } from "@/hooks/use-session";
 import {
-  useUnreadNotifications, useNotifications, useXP, useLevel, useLevelProgress,
-  useStreak, useProfileStrength,
+  useUnreadNotifications, useNotifications,
 } from "@/hooks/use-scope";
 import { auth, notifications, meta } from "@/lib/scope-store";
 import { useBrand } from "@/hooks/use-platform";
@@ -337,79 +336,9 @@ export function Navbar() {
   );
 }
 
-/* -------- Center Brain — live progress engine -------- */
-function ProgressBrain() {
-  const xpTotal = useXP();
-  const level = useLevel();
-  const levelProgress = useLevelProgress();
-  const streak = useStreak();
-  const strength = useProfileStrength();
-
-  // Burst when profile hits 100% or level changes.
-  const [burst, setBurst] = useState(false);
-  const lastLevelRef = useRef(level.name);
-  useEffect(() => {
-    if (lastLevelRef.current !== level.name) {
-      lastLevelRef.current = level.name;
-      setBurst(true);
-      const t = setTimeout(() => setBurst(false), 1400);
-      return () => clearTimeout(t);
-    }
-  }, [level.name]);
-  useEffect(() => {
-    if (strength === 100) {
-      setBurst(true);
-      const t = setTimeout(() => setBurst(false), 1400);
-      return () => clearTimeout(t);
-    }
-  }, [strength]);
-
-  return (
-    <div className="hidden items-center gap-3 rounded-full border border-border/40 bg-secondary/40 px-3 py-1 md:flex">
-      {/* Profile completion ring */}
-      <div
-        className={cn("relative flex h-8 w-8 items-center justify-center rounded-full", burst && "animate-nav-burst")}
-        title={`Profile ${strength}% complete`}
-      >
-        <svg viewBox="0 0 36 36" className="absolute inset-0 h-full w-full -rotate-90">
-          <circle cx="18" cy="18" r="15" fill="none" stroke="currentColor" strokeOpacity="0.15" strokeWidth="3" />
-          <circle
-            cx="18" cy="18" r="15" fill="none"
-            stroke="var(--nav-glow, currentColor)" strokeWidth="3" strokeLinecap="round"
-            strokeDasharray={`${(strength / 100) * 94.2} 94.2`}
-            style={{ transition: "stroke-dasharray 600ms ease-out" }}
-          />
-        </svg>
-        <span className="text-[9px] font-bold tabular-nums text-foreground">{strength}</span>
-      </div>
-
-      {/* Level chip */}
-      <div className="flex items-center gap-1.5">
-        <Trophy className="h-3.5 w-3.5" style={{ color: "var(--nav-glow)" }} />
-        <span className="text-xs font-semibold text-foreground">{level.name}</span>
-        <div className="hidden h-1.5 w-16 overflow-hidden rounded-full bg-secondary lg:block">
-          <div
-            className="h-full transition-[width] duration-500"
-            style={{ width: `${levelProgress}%`, background: "var(--nav-glow)" }}
-          />
-        </div>
-      </div>
-
-      {/* XP counter */}
-      <div className="hidden items-center gap-1 text-xs font-semibold text-foreground lg:flex">
-        <Zap className="h-3 w-3" style={{ color: "var(--nav-glow)" }} />
-        <span className="tabular-nums">{xpTotal.toLocaleString()}</span>
-        <span className="text-muted-foreground">XP</span>
-      </div>
-
-      {/* Streak */}
-      <div className="flex items-center gap-1 text-xs font-semibold text-foreground">
-        <Flame className={cn("h-3 w-3", streak >= 3 && "animate-flame-pulse")} style={{ color: "var(--nav-glow)" }} />
-        <span className="tabular-nums">{streak}d</span>
-      </div>
-    </div>
-  );
-}
+/* ProgressBrain has been replaced by <RoleKpiBar/>. Student gamification
+   only renders for student/viewer roles inside RoleKpiBar — admin roles
+   never see XP/Level/Streak widgets, eliminating role leakage by design. */
 
 /* -------- Right Brain — theme quick toggle (3-state) -------- */
 function ThemeQuickToggle() {
