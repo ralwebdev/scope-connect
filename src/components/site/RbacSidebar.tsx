@@ -7,22 +7,22 @@ import type { ReactNode } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-import { useRole } from "@/hooks/use-rbac";
-import { useIsLoggedIn } from "@/hooks/use-scope";
+import { useUserSession } from "@/hooks/use-session";
 import { rbac, ROLE_LABELS } from "@/lib/rbac";
 import { blueprintForRole, FALLBACK_BLUEPRINT, type SidebarGroup } from "@/lib/sidebar-blueprints";
 
 export function RbacSidebar({ children, title }: { children: ReactNode; title?: string }) {
-  const role = useRole();
-  const isAuthed = useIsLoggedIn();
+  const session = useUserSession();
   const location = useLocation();
 
-  // Anti-bug guard: never render a role-scoped sidebar for an unauthenticated
-  // user. Prevents stale menu rendering between sessions.
-  if (!isAuthed) {
+  // Render-gate: don't draw any role-scoped nav until session has hydrated.
+  // Combined with Navbar gating, this guarantees zero role leakage on first
+  // paint, on refresh, and immediately after sign-out.
+  if (!session.ready || !session.isAuthenticated) {
     return <div className="min-h-[calc(100vh-4rem)] w-full">{children}</div>;
   }
 
+  const role = session.role;
   const blueprint = blueprintForRole(role);
 
   // Permission filter (layer 2) + dedupe by `to` within each group.
