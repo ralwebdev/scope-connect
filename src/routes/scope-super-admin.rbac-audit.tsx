@@ -144,33 +144,41 @@ function RbacAuditPage() {
                   <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search route, action, permission…" className="ml-auto h-8 max-w-xs text-xs" />
                 </div>
                 <div className="mt-3 max-h-[60vh] overflow-auto">
-                  <table className="w-full text-xs">
+                  <table className="w-full min-w-[900px] text-xs table-fixed">
+                    <colgroup>
+                      <col className="w-[140px]" />
+                      <col className="w-[200px]" />
+                      <col />
+                      <col className="w-[160px]" />
+                      <col className="w-[110px]" />
+                      <col className="w-[160px]" />
+                    </colgroup>
                     <thead className="sticky top-0 bg-card text-[10px] uppercase text-muted-foreground">
                       <tr className="border-b border-border">
-                        <th className="py-2 pr-2 text-left">Role</th>
-                        <th className="py-2 pr-2 text-left">Route</th>
-                        <th className="py-2 pr-2 text-left">Action</th>
-                        <th className="py-2 pr-2 text-left">Permission</th>
-                        <th className="py-2 pr-2 text-left">Status</th>
-                        <th className="py-2 pr-2 text-left">Flag</th>
+                        <th className="py-2 pr-3 text-left">Role</th>
+                        <th className="py-2 pr-3 text-left">Route</th>
+                        <th className="py-2 pr-3 text-left">Action</th>
+                        <th className="py-2 pr-3 text-left">Permission</th>
+                        <th className="py-2 pr-3 text-left">Status</th>
+                        <th className="py-2 pr-3 text-left">Flag</th>
                       </tr>
                     </thead>
                     <tbody>
                       {filtered.slice(0, 600).map((r, i) => (
                         <tr key={i} className={cn(
-                          "border-b border-border/40",
+                          "border-b border-border/40 align-top",
                           r.flag === "missing_permission" && "bg-destructive/10",
                           r.flag === "conflicting_permission" && "bg-yellow-500/10",
                           r.flag === "overprivileged_role" && "bg-orange-500/10",
                         )}>
-                          <td className="py-1.5 pr-2 font-semibold">{ROLE_LABELS[r.role]}</td>
-                          <td className="py-1.5 pr-2 font-mono text-muted-foreground">{r.path}</td>
-                          <td className="py-1.5 pr-2">{r.action}</td>
-                          <td className="py-1.5 pr-2 font-mono text-[10px] text-muted-foreground">{r.permission ?? "—"}</td>
-                          <td className="py-1.5 pr-2">
+                          <td className="py-1.5 pr-3 font-semibold truncate">{ROLE_LABELS[r.role]}</td>
+                          <td className="py-1.5 pr-3 font-mono text-muted-foreground truncate" title={r.path}>{r.path}</td>
+                          <td className="py-1.5 pr-3 break-words">{r.action}</td>
+                          <td className="py-1.5 pr-3 font-mono text-[10px] text-muted-foreground truncate" title={r.permission ?? "—"}>{r.permission ?? "—"}</td>
+                          <td className="py-1.5 pr-3 whitespace-nowrap">
                             <Badge variant={r.status === "granted" ? "default" : r.status === "denied" ? "destructive" : "outline"} className="text-[10px]">{r.status}</Badge>
                           </td>
-                          <td className="py-1.5 pr-2">
+                          <td className="py-1.5 pr-3 whitespace-nowrap">
                             <Badge variant="outline" className="text-[10px] capitalize">{r.flag.replace(/_/g, " ")}</Badge>
                           </td>
                         </tr>
