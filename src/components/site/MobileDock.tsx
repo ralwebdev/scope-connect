@@ -199,7 +199,7 @@ export function MobileDock() {
           {dockItems.map((item) => {
             const Icon = item.icon;
             const isActive = item.to ? currentPath === item.to : false;
-            const isPrimary = item.action === "primary";
+            const isPrimary = item.key === "primary";
 
             if (isPrimary) {
               return (
