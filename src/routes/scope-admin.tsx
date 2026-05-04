@@ -15,7 +15,8 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useStoreValue } from "@/hooks/use-scope";
 import { useRole } from "@/hooks/use-rbac";
-import { crm, PIPELINE_STAGES, type Institution, type PipelineStage } from "@/lib/crm-store";
+import { crm, PIPELINE_STAGES, stageAccess, type Institution, type PipelineStage } from "@/lib/crm-store";
+import { useUser } from "@/hooks/use-scope";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/scope-admin")({
