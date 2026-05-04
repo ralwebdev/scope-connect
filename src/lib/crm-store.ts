@@ -72,6 +72,39 @@ export type AdminProfile = {
   target: number;
 };
 
+// ─── Lifecycle additions (additive — does not change PipelineStage flow) ───
+export type InstitutionCredential = {
+  institutionId: string;
+  email: string;
+  tempPassword: string;
+  generatedAt: number;
+  generatedBy: string;       // actor email
+  generatedByRole: string;   // RoleId
+  passwordResetAt?: number;  // first-login reset timestamp
+  termsAcceptedAt?: number;
+  profileCompletedAt?: number;
+};
+
+export type AuditEntry = {
+  id: string;
+  at: number;
+  actorEmail: string;
+  actorRole: string;
+  action:
+    | "credential_generated"
+    | "credential_revoked"
+    | "first_login_password_reset"
+    | "terms_accepted"
+    | "profile_completed"
+    | "student_approved"
+    | "student_rejected"
+    | "faculty_invited"
+    | "campus_leader_invited";
+  targetType: "institution" | "member" | "student";
+  targetId: string;
+  meta?: Record<string, string | number | boolean>;
+};
+
 const KEY = "sc_crm_v1";
 
 type CrmData = {
@@ -79,6 +112,8 @@ type CrmData = {
   visits: Visit[];
   launches: Record<string, LaunchChecklist>;
   admins: AdminProfile[];
+  credentials?: Record<string, InstitutionCredential>;
+  audit?: AuditEntry[];
 };
 
 function notify() {
