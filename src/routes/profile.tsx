@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Save, Globe, Github, Twitter } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Save, Globe, Github, Twitter, Linkedin, FileText, Instagram, Plus, X, Sparkles } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,10 +8,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AppShell } from "@/components/site/AppShell";
 import { AuthGate } from "@/components/site/AuthGate";
 import { useUser, useProfileStrength, useXP, useLevel, useStreak } from "@/hooks/use-scope";
 import { auth, seedInterests } from "@/lib/scope-store";
+import { DOMAIN_LABELS, DOMAIN_KEYS, SPECIALIZATIONS, DOMAIN_PORTFOLIO_FIELDS, humanize, type DomainKey } from "@/lib/portfolio-domains";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/profile")({
@@ -44,14 +46,48 @@ function ProfilePage() {
   const [availability, setAvailability] = useState<typeof AVAILABILITY[number]>("Open to collab");
   const [skillDraft, setSkillDraft] = useState("");
 
+  // Dynamic portfolio extension state
+  const [linkedinUrl, setLinkedinUrl] = useState("");
+  const [portfolioWebsite, setPortfolioWebsite] = useState("");
+  const [resumeUrl, setResumeUrl] = useState("");
+  const [portfolioPdfUrl, setPortfolioPdfUrl] = useState("");
+  const [instagramUrl, setInstagramUrl] = useState("");
+  const [primaryDomain, setPrimaryDomain] = useState<DomainKey | "">("");
+  const [specialization, setSpecialization] = useState("");
+  const [portfolioLinks, setPortfolioLinks] = useState<Record<string, string>>({});
+  const [customKey, setCustomKey] = useState("");
+  const [customUrl, setCustomUrl] = useState("");
+
   useEffect(() => {
     if (!user) return;
     setBio(user.bio); setSkills(user.skills); setInterests(user.interests); setCampus(user.campus);
     setWebsite(user.links.website ?? ""); setGithub(user.links.github ?? ""); setTwitter(user.links.twitter ?? "");
     setAvailability(user.availability);
+    setLinkedinUrl(user.linkedinUrl ?? "");
+    setPortfolioWebsite(user.portfolioWebsite ?? "");
+    setResumeUrl(user.resumeUrl ?? "");
+    setPortfolioPdfUrl(user.portfolioPdfUrl ?? "");
+    setInstagramUrl(user.instagramUrl ?? "");
+    setPrimaryDomain((user.primaryDomain as DomainKey) ?? "");
+    setSpecialization(user.specialization ?? "");
+    setPortfolioLinks(user.portfolioLinks ?? {});
   }, [user]);
 
+  const domainFields = useMemo(
+    () => (primaryDomain ? DOMAIN_PORTFOLIO_FIELDS[primaryDomain] : []),
+    [primaryDomain],
+  );
+  const specializations = useMemo(
+    () => (primaryDomain ? SPECIALIZATIONS[primaryDomain] : []),
+    [primaryDomain],
+  );
+
   if (!user) return null;
+
+  const isValidUrl = (v: string) => {
+    if (!v) return true;
+    try { new URL(v.startsWith("http") ? v : `https://${v}`); return true; } catch { return false; }
+  };
 
   const addSkill = (s: string) => {
     const v = s.trim(); if (!v) return;
@@ -61,8 +97,43 @@ function ProfilePage() {
   const removeSkill = (s: string) => setSkills(skills.filter((x) => x !== s));
   const toggleInterest = (t: string) => setInterests((prev) => prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]);
 
+  const setPortfolioLink = (key: string, val: string) => {
+    setPortfolioLinks((prev) => {
+      const next = { ...prev };
+      if (!val.trim()) delete next[key]; else next[key] = val.trim();
+      return next;
+    });
+  };
+
+  const addCustomLink = () => {
+    const k = customKey.trim().toLowerCase().replace(/\s+/g, "_");
+    const v = customUrl.trim();
+    if (!k || !v) return toast.error("Add both a label and URL");
+    if (!isValidUrl(v)) return toast.error("Enter a valid URL");
+    if (portfolioLinks[k]) return toast.error("That label already exists");
+    setPortfolioLinks({ ...portfolioLinks, [k]: v });
+    setCustomKey(""); setCustomUrl("");
+  };
+
   const save = () => {
-    auth.updateProfile({ bio, skills, interests, campus, links: { website, github, twitter }, availability });
+    // Validate all URL-ish fields
+    const urlChecks: Array<[string, string]> = [
+      ["Website", website], ["LinkedIn", linkedinUrl], ["Portfolio", portfolioWebsite],
+      ["Resume", resumeUrl], ["Portfolio PDF", portfolioPdfUrl], ["Instagram", instagramUrl],
+      ...Object.entries(portfolioLinks).map(([k, v]) => [humanize(k), v] as [string, string]),
+    ];
+    for (const [name, val] of urlChecks) {
+      if (val && !isValidUrl(val)) return toast.error(`${name} URL is invalid`);
+    }
+    auth.updateProfile({
+      bio, skills, interests, campus,
+      links: { website, github, twitter },
+      availability,
+      linkedinUrl, portfolioWebsite, resumeUrl, portfolioPdfUrl, instagramUrl,
+      primaryDomain: primaryDomain || undefined,
+      specialization: specialization || undefined,
+      portfolioLinks,
+    });
     toast.success("Profile saved. Your profile attracts collaborators.");
   };
 
@@ -145,6 +216,102 @@ function ProfilePage() {
               <div>
                 <Label htmlFor="tw"><Twitter className="mr-1 inline h-3 w-3" /> Twitter</Label>
                 <Input id="tw" value={twitter} onChange={(e) => setTwitter(e.target.value)} placeholder="@handle" className="mt-1.5" />
+              </div>
+            </div>
+
+            {/* ---- Showcase Your Work (dynamic portfolio) ---- */}
+            <div className="rounded-xl border border-border/60 bg-muted/20 p-4">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-brand" />
+                <h4 className="text-sm font-semibold text-foreground">Showcase Your Work</h4>
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">Add links that prove what you can build, design, or create.</p>
+
+              {/* Universal fields */}
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <div>
+                  <Label htmlFor="li"><Linkedin className="mr-1 inline h-3 w-3" /> LinkedIn <span className="text-[10px] text-brand">recommended</span></Label>
+                  <Input id="li" value={linkedinUrl} onChange={(e) => setLinkedinUrl(e.target.value)} placeholder="https://linkedin.com/in/…" className="mt-1.5" />
+                </div>
+                <div>
+                  <Label htmlFor="pw"><Globe className="mr-1 inline h-3 w-3" /> Portfolio Website</Label>
+                  <Input id="pw" value={portfolioWebsite} onChange={(e) => setPortfolioWebsite(e.target.value)} placeholder="https://" className="mt-1.5" />
+                </div>
+                <div>
+                  <Label htmlFor="rs"><FileText className="mr-1 inline h-3 w-3" /> Resume URL</Label>
+                  <Input id="rs" value={resumeUrl} onChange={(e) => setResumeUrl(e.target.value)} placeholder="https://drive.google.com/…" className="mt-1.5" />
+                </div>
+                <div>
+                  <Label htmlFor="pdf"><FileText className="mr-1 inline h-3 w-3" /> Portfolio PDF</Label>
+                  <Input id="pdf" value={portfolioPdfUrl} onChange={(e) => setPortfolioPdfUrl(e.target.value)} placeholder="https://" className="mt-1.5" />
+                </div>
+                <div className="sm:col-span-2">
+                  <Label htmlFor="ig"><Instagram className="mr-1 inline h-3 w-3" /> Instagram (optional)</Label>
+                  <Input id="ig" value={instagramUrl} onChange={(e) => setInstagramUrl(e.target.value)} placeholder="https://instagram.com/…" className="mt-1.5" />
+                </div>
+              </div>
+
+              {/* Domain + specialization */}
+              <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                <div>
+                  <Label>Primary Domain</Label>
+                  <Select value={primaryDomain} onValueChange={(v) => { setPrimaryDomain(v as DomainKey); setSpecialization(""); }}>
+                    <SelectTrigger className="mt-1.5"><SelectValue placeholder="Select your domain" /></SelectTrigger>
+                    <SelectContent>
+                      {DOMAIN_KEYS.map((k) => <SelectItem key={k} value={k}>{DOMAIN_LABELS[k]}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Specialization</Label>
+                  <Select value={specialization} onValueChange={setSpecialization} disabled={!primaryDomain}>
+                    <SelectTrigger className="mt-1.5"><SelectValue placeholder={primaryDomain ? "Select specialization" : "Pick a domain first"} /></SelectTrigger>
+                    <SelectContent>
+                      {specializations.map((s) => <SelectItem key={s} value={s}>{humanize(s)}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Domain-specific portfolio fields */}
+              {primaryDomain && domainFields.length > 0 && (
+                <div className="mt-5">
+                  <Label className="text-xs uppercase tracking-wide text-muted-foreground">{DOMAIN_LABELS[primaryDomain]} links</Label>
+                  <div className="mt-2 grid gap-3 sm:grid-cols-2">
+                    {domainFields.map((f) => (
+                      <div key={f}>
+                        <Label htmlFor={`pf-${f}`} className="text-xs">{humanize(f)}</Label>
+                        <Input id={`pf-${f}`} value={portfolioLinks[f] ?? ""} onChange={(e) => setPortfolioLink(f, e.target.value)} placeholder="https://" className="mt-1.5" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Custom links */}
+              <div className="mt-5">
+                <Label className="text-xs uppercase tracking-wide text-muted-foreground">Custom links</Label>
+                {Object.keys(portfolioLinks).filter((k) => !domainFields.includes(k)).length === 0 && !primaryDomain && (
+                  <p className="mt-1 text-xs text-muted-foreground">No portfolio links added yet. Add your work to stand out.</p>
+                )}
+                <div className="mt-2 space-y-2">
+                  {Object.entries(portfolioLinks)
+                    .filter(([k]) => !domainFields.includes(k))
+                    .map(([k, v]) => (
+                      <div key={k} className="flex items-center gap-2">
+                        <Badge variant="secondary" className="shrink-0">{humanize(k)}</Badge>
+                        <Input value={v} onChange={(e) => setPortfolioLink(k, e.target.value)} className="flex-1" />
+                        <Button type="button" variant="ghost" size="icon" onClick={() => setPortfolioLink(k, "")}>
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                </div>
+                <div className="mt-2 flex flex-col gap-2 sm:flex-row">
+                  <Input value={customKey} onChange={(e) => setCustomKey(e.target.value)} placeholder="Label (e.g. Notion)" className="sm:max-w-[180px]" />
+                  <Input value={customUrl} onChange={(e) => setCustomUrl(e.target.value)} placeholder="https://" className="flex-1" />
+                  <Button type="button" variant="outline" onClick={addCustomLink}><Plus className="mr-1 h-4 w-4" /> Add</Button>
+                </div>
               </div>
             </div>
 

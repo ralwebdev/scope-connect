@@ -26,6 +26,15 @@ export type ScopeUser = {
   availability: "Open to collab" | "Building solo" | "Hiring teammates" | "Looking for internship";
   avatarColor: string;
   joinedAt: number;
+  // --- Dynamic portfolio extension (optional, backward compatible) ---
+  linkedinUrl?: string;
+  portfolioWebsite?: string;
+  resumeUrl?: string;
+  portfolioPdfUrl?: string;
+  instagramUrl?: string;
+  primaryDomain?: string;
+  specialization?: string;
+  portfolioLinks?: Record<string, string>;
 };
 
 export type FeedPost = {
@@ -672,7 +681,10 @@ export function profileStrength(u: ScopeUser | null): number {
   if (u.bio.length > 20) score += 15;
   if (u.skills.length >= 3) score += 15;
   if (u.interests.length >= 3) score += 10;
-  if (u.links.website || u.links.github) score += 15;
+  if (u.links.website || u.links.github) score += 10;
+  if (u.linkedinUrl) score += 5;
+  if (u.primaryDomain) score += 5;
+  if (u.portfolioLinks && Object.keys(u.portfolioLinks).length > 0) score += 5;
   if (u.availability) score += 10;
   if (projects.all().some((p) => p.authorId === u.id)) score += 15;
   return Math.min(100, score);
