@@ -366,8 +366,8 @@ function AdminControl({ admins }: { admins: AdminProfile[] }) {
               <th className="py-2 text-right">Meetings</th>
               <th className="py-2 text-right">Closures</th>
               <th className="py-2 text-right">Conv</th>
-              <th className="py-2 text-right">Target</th>
-              <th className="py-2 text-left">Status</th>
+              <th className="py-2 text-center px-3">Target</th>
+              <th className="py-2 text-center px-3">Status</th>
               <th className="py-2 text-right">Actions</th>
             </tr>
           </thead>
