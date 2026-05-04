@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Save, Globe, Github, Twitter } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Save, Globe, Github, Twitter, Linkedin, FileText, Instagram, Plus, X, Sparkles } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,10 +8,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AppShell } from "@/components/site/AppShell";
 import { AuthGate } from "@/components/site/AuthGate";
 import { useUser, useProfileStrength, useXP, useLevel, useStreak } from "@/hooks/use-scope";
 import { auth, seedInterests } from "@/lib/scope-store";
+import { DOMAIN_LABELS, DOMAIN_KEYS, SPECIALIZATIONS, DOMAIN_PORTFOLIO_FIELDS, humanize, type DomainKey } from "@/lib/portfolio-domains";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/profile")({
