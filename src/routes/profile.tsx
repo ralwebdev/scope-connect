@@ -46,14 +46,48 @@ function ProfilePage() {
   const [availability, setAvailability] = useState<typeof AVAILABILITY[number]>("Open to collab");
   const [skillDraft, setSkillDraft] = useState("");
 
+  // Dynamic portfolio extension state
+  const [linkedinUrl, setLinkedinUrl] = useState("");
+  const [portfolioWebsite, setPortfolioWebsite] = useState("");
+  const [resumeUrl, setResumeUrl] = useState("");
+  const [portfolioPdfUrl, setPortfolioPdfUrl] = useState("");
+  const [instagramUrl, setInstagramUrl] = useState("");
+  const [primaryDomain, setPrimaryDomain] = useState<DomainKey | "">("");
+  const [specialization, setSpecialization] = useState("");
+  const [portfolioLinks, setPortfolioLinks] = useState<Record<string, string>>({});
+  const [customKey, setCustomKey] = useState("");
+  const [customUrl, setCustomUrl] = useState("");
+
   useEffect(() => {
     if (!user) return;
     setBio(user.bio); setSkills(user.skills); setInterests(user.interests); setCampus(user.campus);
     setWebsite(user.links.website ?? ""); setGithub(user.links.github ?? ""); setTwitter(user.links.twitter ?? "");
     setAvailability(user.availability);
+    setLinkedinUrl(user.linkedinUrl ?? "");
+    setPortfolioWebsite(user.portfolioWebsite ?? "");
+    setResumeUrl(user.resumeUrl ?? "");
+    setPortfolioPdfUrl(user.portfolioPdfUrl ?? "");
+    setInstagramUrl(user.instagramUrl ?? "");
+    setPrimaryDomain((user.primaryDomain as DomainKey) ?? "");
+    setSpecialization(user.specialization ?? "");
+    setPortfolioLinks(user.portfolioLinks ?? {});
   }, [user]);
 
+  const domainFields = useMemo(
+    () => (primaryDomain ? DOMAIN_PORTFOLIO_FIELDS[primaryDomain] : []),
+    [primaryDomain],
+  );
+  const specializations = useMemo(
+    () => (primaryDomain ? SPECIALIZATIONS[primaryDomain] : []),
+    [primaryDomain],
+  );
+
   if (!user) return null;
+
+  const isValidUrl = (v: string) => {
+    if (!v) return true;
+    try { new URL(v.startsWith("http") ? v : `https://${v}`); return true; } catch { return false; }
+  };
 
   const addSkill = (s: string) => {
     const v = s.trim(); if (!v) return;
@@ -63,8 +97,43 @@ function ProfilePage() {
   const removeSkill = (s: string) => setSkills(skills.filter((x) => x !== s));
   const toggleInterest = (t: string) => setInterests((prev) => prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]);
 
+  const setPortfolioLink = (key: string, val: string) => {
+    setPortfolioLinks((prev) => {
+      const next = { ...prev };
+      if (!val.trim()) delete next[key]; else next[key] = val.trim();
+      return next;
+    });
+  };
+
+  const addCustomLink = () => {
+    const k = customKey.trim().toLowerCase().replace(/\s+/g, "_");
+    const v = customUrl.trim();
+    if (!k || !v) return toast.error("Add both a label and URL");
+    if (!isValidUrl(v)) return toast.error("Enter a valid URL");
+    if (portfolioLinks[k]) return toast.error("That label already exists");
+    setPortfolioLinks({ ...portfolioLinks, [k]: v });
+    setCustomKey(""); setCustomUrl("");
+  };
+
   const save = () => {
-    auth.updateProfile({ bio, skills, interests, campus, links: { website, github, twitter }, availability });
+    // Validate all URL-ish fields
+    const urlChecks: Array<[string, string]> = [
+      ["Website", website], ["LinkedIn", linkedinUrl], ["Portfolio", portfolioWebsite],
+      ["Resume", resumeUrl], ["Portfolio PDF", portfolioPdfUrl], ["Instagram", instagramUrl],
+      ...Object.entries(portfolioLinks).map(([k, v]) => [humanize(k), v] as [string, string]),
+    ];
+    for (const [name, val] of urlChecks) {
+      if (val && !isValidUrl(val)) return toast.error(`${name} URL is invalid`);
+    }
+    auth.updateProfile({
+      bio, skills, interests, campus,
+      links: { website, github, twitter },
+      availability,
+      linkedinUrl, portfolioWebsite, resumeUrl, portfolioPdfUrl, instagramUrl,
+      primaryDomain: primaryDomain || undefined,
+      specialization: specialization || undefined,
+      portfolioLinks,
+    });
     toast.success("Profile saved. Your profile attracts collaborators.");
   };
 
