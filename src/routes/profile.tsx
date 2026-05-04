@@ -315,6 +315,7 @@ function ProfilePage() {
               </div>
             </div>
 
+            <div>
               <Label>Availability</Label>
               <div className="mt-2 flex flex-wrap gap-2">
                 {AVAILABILITY.map((a) => (
