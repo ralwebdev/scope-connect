@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Building2, Calendar, FileText, Rocket, Trophy, MapPin, Phone, Mail, Plus, ChevronRight, CheckCircle2, Circle, Download, Send, Star, ArrowRight, Target, Activity } from "lucide-react";
+import { Building2, Calendar, FileText, Rocket, Trophy, MapPin, Phone, Mail, Plus, ChevronRight, CheckCircle2, Circle, Download, Send, Star, ArrowRight, Target, Activity, KeyRound, Copy, Lock } from "lucide-react";
 import { AppShell } from "@/components/site/AppShell";
 import { RbacSidebar } from "@/components/site/RbacSidebar";
 import { AccessDenied } from "@/components/site/AccessDenied";
@@ -15,7 +15,8 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useStoreValue } from "@/hooks/use-scope";
 import { useRole } from "@/hooks/use-rbac";
-import { crm, PIPELINE_STAGES, type Institution, type PipelineStage } from "@/lib/crm-store";
+import { crm, PIPELINE_STAGES, stageAccess, type Institution, type PipelineStage } from "@/lib/crm-store";
+import { useUser } from "@/hooks/use-scope";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/scope-admin")({
@@ -348,38 +349,121 @@ function ProposalCenter({ institutions }: { institutions: Institution[] }) {
 function LaunchTracker({ institutions }: { institutions: Institution[] }) {
   return (
     <div className="grid gap-4 md:grid-cols-2">
-      {institutions.map(i => {
-        const ck = crm.launch(i.id);
-        const steps: { key: keyof Omit<typeof ck, "institutionId">; label: string }[] = [
-          { key: "facultyAssigned", label: "Faculty Coordinator Assigned" },
-          { key: "leaderShortlisted", label: "Campus Leader Shortlisted" },
-          { key: "launchScheduled", label: "Launch Event Scheduled" },
-          { key: "registrationsStarted", label: "Student Registrations Started" },
-          { key: "pageLive", label: "Chapter Page Live" },
-          { key: "challengeActivated", label: "First Challenge Activated" },
-        ];
-        const done = steps.filter(s => ck[s.key]).length;
-        return (
-          <Card key={i.id} className="p-5">
-            <div className="flex items-start justify-between">
-              <div>
-                <div className="text-sm font-bold">{i.name}</div>
-                <div className="text-xs text-muted-foreground">{i.city}</div>
-              </div>
-              <Badge variant="outline">{done}/{steps.length}</Badge>
-            </div>
-            <div className="mt-3 space-y-1.5">
-              {steps.map(s => (
-                <button key={s.key} onClick={() => crm.toggleLaunchStep(i.id, s.key)} className="flex w-full items-center gap-2 rounded-md p-1.5 text-left text-sm transition-colors hover:bg-secondary">
-                  {ck[s.key] ? <CheckCircle2 className="h-4 w-4 text-emerald-500" /> : <Circle className="h-4 w-4 text-muted-foreground" />}
-                  <span className={ck[s.key] ? "text-foreground" : "text-muted-foreground"}>{s.label}</span>
-                </button>
-              ))}
-            </div>
-          </Card>
-        );
-      })}
+      {institutions.map(i => <LaunchCard key={i.id} inst={i} />)}
       {institutions.length === 0 && <Card className="p-8 text-center text-sm text-muted-foreground md:col-span-2">No active launches yet. Sign your first MoU!</Card>}
+    </div>
+  );
+}
+
+function LaunchCard({ inst: i }: { inst: Institution }) {
+  const role = useRole();
+  const user = useUser();
+  const canIssue = role === "scope_admin" || role === "scope_super_admin" || role === "super_admin";
+  const ck = crm.launch(i.id);
+  const access = stageAccess(i.stage);
+  const cred = useStoreValue(() => crm.credential(i.id));
+  const steps: { key: keyof Omit<typeof ck, "institutionId">; label: string }[] = [
+    { key: "facultyAssigned", label: "Faculty Coordinator Assigned" },
+    { key: "leaderShortlisted", label: "Campus Leader Shortlisted" },
+    { key: "launchScheduled", label: "Launch Event Scheduled" },
+    { key: "registrationsStarted", label: "Student Registrations Started" },
+    { key: "pageLive", label: "Chapter Page Live" },
+    { key: "challengeActivated", label: "First Challenge Activated" },
+  ];
+  const done = steps.filter(s => ck[s.key]).length;
+  return (
+    <Card className="p-5">
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0">
+          <div className="truncate text-sm font-bold">{i.name}</div>
+          <div className="text-xs text-muted-foreground">{i.city} · {i.stage}</div>
+        </div>
+        <Badge variant="outline" className="shrink-0">{done}/{steps.length}</Badge>
+      </div>
+      <p className="mt-2 text-[11px] text-muted-foreground">{access.description}</p>
+      <div className="mt-3 space-y-1.5">
+        {steps.map(s => (
+          <button key={s.key} onClick={() => crm.toggleLaunchStep(i.id, s.key)} className="flex w-full items-center gap-2 rounded-md p-1.5 text-left text-sm transition-colors hover:bg-secondary">
+            {ck[s.key] ? <CheckCircle2 className="h-4 w-4 text-emerald-500" /> : <Circle className="h-4 w-4 text-muted-foreground" />}
+            <span className={ck[s.key] ? "text-foreground" : "text-muted-foreground"}>{s.label}</span>
+          </button>
+        ))}
+      </div>
+
+      {access.credentialGeneration && (
+        <div className="mt-4 rounded-lg border border-dashed border-border bg-muted/30 p-3">
+          <div className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+            <KeyRound className="h-3.5 w-3.5" /> Institutional Admin Credentials
+          </div>
+          {cred ? (
+            <div className="space-y-1.5 text-xs">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-muted-foreground">Email</span>
+                <code className="truncate rounded bg-background px-1.5 py-0.5 font-mono">{cred.email}</code>
+              </div>
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-muted-foreground">Temp password</span>
+                <code className="truncate rounded bg-background px-1.5 py-0.5 font-mono">{cred.tempPassword}</code>
+              </div>
+              <div className="flex flex-wrap gap-1 pt-1">
+                <Badge variant={cred.passwordResetAt ? "default" : "outline"} className="text-[10px]">{cred.passwordResetAt ? "✓ Password reset" : "Password pending"}</Badge>
+                <Badge variant={cred.termsAcceptedAt ? "default" : "outline"} className="text-[10px]">{cred.termsAcceptedAt ? "✓ Terms accepted" : "Terms pending"}</Badge>
+                <Badge variant={cred.profileCompletedAt ? "default" : "outline"} className="text-[10px]">{cred.profileCompletedAt ? "✓ Profile complete" : "Profile pending"}</Badge>
+              </div>
+              <Button size="sm" variant="outline" className="mt-2 h-7 w-full text-[11px]"
+                onClick={() => {
+                  navigator.clipboard?.writeText(`Email: ${cred.email}\nTemp password: ${cred.tempPassword}\nLogin: ${typeof window !== "undefined" ? window.location.origin : ""}/auth`);
+                  toast.success("Credentials copied — share via secure channel");
+                }}>
+                <Copy className="mr-1 h-3 w-3" /> Copy for secure handover
+              </Button>
+            </div>
+          ) : canIssue ? (
+            <CredentialIssueForm institutionId={i.id} defaultEmail={i.email} actorEmail={user?.email ?? "unknown"} actorRole={role} />
+          ) : (
+            <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground"><Lock className="h-3 w-3" /> Only Scope Admin can issue credentials.</div>
+          )}
+        </div>
+      )}
+
+      {i.stage === "MoU Signed" && (
+        <div className="mt-4 flex items-center gap-1.5 rounded-md border border-border/50 bg-muted/20 p-2 text-[11px] text-muted-foreground">
+          <Lock className="h-3 w-3" /> Login locked. Move to "Launch Pending" to issue credentials.
+        </div>
+      )}
+      {i.stage === "Dormant" && (
+        <div className="mt-4 flex items-center gap-1.5 rounded-md border border-amber-500/30 bg-amber-500/10 p-2 text-[11px] text-amber-700 dark:text-amber-300">
+          <Lock className="h-3 w-3" /> Restricted. New approvals & activity disabled.
+        </div>
+      )}
+    </Card>
+  );
+}
+
+function CredentialIssueForm({
+  institutionId, defaultEmail, actorEmail, actorRole,
+}: { institutionId: string; defaultEmail: string; actorEmail: string; actorRole: string }) {
+  const [email, setEmail] = useState(defaultEmail);
+  const onIssue = () => {
+    try {
+      crm.generateCredential({ institutionId, email, actorEmail, actorRole });
+      toast.success("Credentials generated — copy and hand over securely");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed to generate");
+    }
+  };
+  return (
+    <div className="space-y-2">
+      <Input
+        value={email} onChange={(e) => setEmail(e.target.value)}
+        placeholder="institutional admin email" className="h-7 text-xs"
+      />
+      <Button size="sm" className="h-7 w-full text-[11px]" onClick={onIssue}>
+        <KeyRound className="mr-1 h-3 w-3" /> Generate one-time credentials
+      </Button>
+      <p className="text-[10px] leading-tight text-muted-foreground">
+        Only one initial admin can be created. They'll be forced to reset password & accept terms on first login.
+      </p>
     </div>
   );
 }

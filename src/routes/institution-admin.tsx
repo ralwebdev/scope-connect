@@ -17,7 +17,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useUser } from "@/hooks/use-scope";
 import { useRole } from "@/hooks/use-rbac";
 import { useStoreValue } from "@/hooks/use-scope";
-import { crm } from "@/lib/crm-store";
+import { crm, stageAccess } from "@/lib/crm-store";
 import { rbac, type PermissionKey } from "@/lib/rbac";
 import { toast } from "sonner";
 
@@ -103,6 +103,8 @@ function InstitutionRouteSwitcher({ institutionId, institutionName }: { institut
         <TabLink to="/institution-admin/communications" label="Communications" active={tab === "communications"} />
       </nav>
 
+      <FirstLoginBanner institutionId={institutionId} />
+
       <div className="mt-6">
         {tab === "hub" && <HubView institutionId={institutionId} institutionName={institutionName} />}
         {tab === "members" && <MembersView institutionId={institutionId} />}
@@ -110,6 +112,49 @@ function InstitutionRouteSwitcher({ institutionId, institutionName }: { institut
         {tab === "communications" && <CommunicationsView institutionName={institutionName} />}
       </div>
     </section>
+  );
+}
+
+function FirstLoginBanner({ institutionId }: { institutionId: string }) {
+  const cred = useStoreValue(() => crm.credential(institutionId));
+  const user = useUser();
+  if (!cred) return null;
+  const steps = [
+    { key: "passwordResetAt" as const, label: "Reset temporary password", done: !!cred.passwordResetAt },
+    { key: "termsAcceptedAt" as const, label: "Accept terms of service", done: !!cred.termsAcceptedAt },
+    { key: "profileCompletedAt" as const, label: "Complete institution profile", done: !!cred.profileCompletedAt },
+  ];
+  const remaining = steps.filter(s => !s.done);
+  if (remaining.length === 0) return null;
+  return (
+    <Card className="mt-4 border-brand/40 bg-brand/5 p-4">
+      <div className="flex items-start gap-3">
+        <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-brand" />
+        <div className="flex-1">
+          <h3 className="text-sm font-bold">Complete onboarding ({steps.length - remaining.length}/{steps.length})</h3>
+          <p className="mt-0.5 text-xs text-muted-foreground">Required before full platform access is unlocked.</p>
+          <div className="mt-3 space-y-1.5">
+            {steps.map(s => (
+              <div key={s.key} className="flex items-center justify-between gap-2 rounded-md bg-background/60 p-2">
+                <div className="flex items-center gap-2 text-xs">
+                  {s.done ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> : <XCircle className="h-3.5 w-3.5 text-muted-foreground" />}
+                  <span className={s.done ? "text-muted-foreground line-through" : ""}>{s.label}</span>
+                </div>
+                {!s.done && (
+                  <Button size="sm" variant="outline" className="h-6 text-[11px]"
+                    onClick={() => {
+                      crm.markFirstLoginStep(institutionId, s.key, user?.email ?? cred.email);
+                      toast.success(`${s.label} — done`);
+                    }}>
+                    Mark done
+                  </Button>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </Card>
   );
 }
 
@@ -315,11 +360,28 @@ function seedMembers(): Member[] {
 
 function MembersView({ institutionId }: { institutionId: string }) {
   const members = useStoreValue(() => readMembers(institutionId));
+  const inst = useStoreValue(() => crm.institutions().find(i => i.id === institutionId));
+  const access = inst ? stageAccess(inst.stage) : null;
+  const restricted = access?.restricted ?? false;
+  const user = useUser();
+  const role = useRole();
   const [filter, setFilter] = useState<"all" | "pending" | "active" | "deactivated">("all");
   const list = filter === "all" ? members : members.filter(m => m.status === filter);
   const update = (id: string, patch: Partial<Member>) => {
+    if (restricted && patch.status === "active") {
+      toast.error("Institution is dormant — new approvals are disabled.");
+      return;
+    }
+    const target = readMembers(institutionId).find(m => m.id === id);
     const next = readMembers(institutionId).map(m => m.id === id ? { ...m, ...patch } : m);
     writeMembers(institutionId, next);
+    if (target && patch.status === "active" && target.status === "pending") {
+      crm.logAudit({
+        actorEmail: user?.email ?? "unknown", actorRole: role,
+        action: "student_approved", targetType: "member", targetId: id,
+        meta: { institutionId, name: target.name, role: target.role },
+      });
+    }
     toast.success("Updated");
   };
   return (
@@ -332,6 +394,16 @@ function MembersView({ institutionId }: { institutionId: string }) {
           ))}
         </div>
       </div>
+      {restricted && (
+        <div className="mt-3 rounded-md border border-amber-500/30 bg-amber-500/10 p-2.5 text-xs text-amber-700 dark:text-amber-300">
+          ⚠ Institution is <strong>Dormant</strong>. New student approvals are disabled until reactivated.
+        </div>
+      )}
+      {inst && !access?.fullModuleAccess && !restricted && inst.stage !== "Live Chapter" && (
+        <div className="mt-3 rounded-md border border-border bg-muted/30 p-2.5 text-xs text-muted-foreground">
+          Pre-launch stage ({inst.stage}). Student verification will activate once chapter goes live.
+        </div>
+      )}
       <div className="mt-4 overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="text-xs uppercase text-muted-foreground">
@@ -361,13 +433,13 @@ function MembersView({ institutionId }: { institutionId: string }) {
                 <td className="py-3 text-right">
                   <div className="flex justify-end gap-1.5">
                     {m.status === "pending" && (
-                      <Button size="sm" onClick={() => update(m.id, { status: "active" })}><CheckCircle2 className="mr-1 h-3 w-3" /> Approve</Button>
+                      <Button size="sm" disabled={restricted} onClick={() => update(m.id, { status: "active" })}><CheckCircle2 className="mr-1 h-3 w-3" /> Approve</Button>
                     )}
                     {m.status === "active" && (
                       <Button size="sm" variant="outline" onClick={() => update(m.id, { status: "deactivated" })}>Deactivate</Button>
                     )}
                     {m.status === "deactivated" && (
-                      <Button size="sm" variant="outline" onClick={() => update(m.id, { status: "active" })}>Reactivate</Button>
+                      <Button size="sm" variant="outline" disabled={restricted} onClick={() => update(m.id, { status: "active" })}>Reactivate</Button>
                     )}
                   </div>
                 </td>
