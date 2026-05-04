@@ -103,6 +103,8 @@ function InstitutionRouteSwitcher({ institutionId, institutionName }: { institut
         <TabLink to="/institution-admin/communications" label="Communications" active={tab === "communications"} />
       </nav>
 
+      <FirstLoginBanner institutionId={institutionId} />
+
       <div className="mt-6">
         {tab === "hub" && <HubView institutionId={institutionId} institutionName={institutionName} />}
         {tab === "members" && <MembersView institutionId={institutionId} />}
@@ -110,6 +112,49 @@ function InstitutionRouteSwitcher({ institutionId, institutionName }: { institut
         {tab === "communications" && <CommunicationsView institutionName={institutionName} />}
       </div>
     </section>
+  );
+}
+
+function FirstLoginBanner({ institutionId }: { institutionId: string }) {
+  const cred = useStoreValue(() => crm.credential(institutionId));
+  const user = useUser();
+  if (!cred) return null;
+  const steps = [
+    { key: "passwordResetAt" as const, label: "Reset temporary password", done: !!cred.passwordResetAt },
+    { key: "termsAcceptedAt" as const, label: "Accept terms of service", done: !!cred.termsAcceptedAt },
+    { key: "profileCompletedAt" as const, label: "Complete institution profile", done: !!cred.profileCompletedAt },
+  ];
+  const remaining = steps.filter(s => !s.done);
+  if (remaining.length === 0) return null;
+  return (
+    <Card className="mt-4 border-brand/40 bg-brand/5 p-4">
+      <div className="flex items-start gap-3">
+        <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-brand" />
+        <div className="flex-1">
+          <h3 className="text-sm font-bold">Complete onboarding ({steps.length - remaining.length}/{steps.length})</h3>
+          <p className="mt-0.5 text-xs text-muted-foreground">Required before full platform access is unlocked.</p>
+          <div className="mt-3 space-y-1.5">
+            {steps.map(s => (
+              <div key={s.key} className="flex items-center justify-between gap-2 rounded-md bg-background/60 p-2">
+                <div className="flex items-center gap-2 text-xs">
+                  {s.done ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> : <XCircle className="h-3.5 w-3.5 text-muted-foreground" />}
+                  <span className={s.done ? "text-muted-foreground line-through" : ""}>{s.label}</span>
+                </div>
+                {!s.done && (
+                  <Button size="sm" variant="outline" className="h-6 text-[11px]"
+                    onClick={() => {
+                      crm.markFirstLoginStep(institutionId, s.key, user?.email ?? cred.email);
+                      toast.success(`${s.label} — done`);
+                    }}>
+                    Mark done
+                  </Button>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </Card>
   );
 }
 
