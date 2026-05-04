@@ -26,6 +26,15 @@ export type ScopeUser = {
   availability: "Open to collab" | "Building solo" | "Hiring teammates" | "Looking for internship";
   avatarColor: string;
   joinedAt: number;
+  // --- Dynamic portfolio extension (optional, backward compatible) ---
+  linkedinUrl?: string;
+  portfolioWebsite?: string;
+  resumeUrl?: string;
+  portfolioPdfUrl?: string;
+  instagramUrl?: string;
+  primaryDomain?: string;
+  specialization?: string;
+  portfolioLinks?: Record<string, string>;
 };
 
 export type FeedPost = {
