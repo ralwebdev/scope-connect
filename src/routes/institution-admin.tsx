@@ -349,6 +349,16 @@ function MembersView({ institutionId }: { institutionId: string }) {
           ))}
         </div>
       </div>
+      {restricted && (
+        <div className="mt-3 rounded-md border border-amber-500/30 bg-amber-500/10 p-2.5 text-xs text-amber-700 dark:text-amber-300">
+          ⚠ Institution is <strong>Dormant</strong>. New student approvals are disabled until reactivated.
+        </div>
+      )}
+      {inst && !access?.fullModuleAccess && !restricted && inst.stage !== "Live Chapter" && (
+        <div className="mt-3 rounded-md border border-border bg-muted/30 p-2.5 text-xs text-muted-foreground">
+          Pre-launch stage ({inst.stage}). Student verification will activate once chapter goes live.
+        </div>
+      )}
       <div className="mt-4 overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="text-xs uppercase text-muted-foreground">
