@@ -22,6 +22,7 @@ import { useBrand } from "@/hooks/use-platform";
 import { useTheme } from "@/hooks/use-theme";
 import { landingRouteForRole } from "@/lib/rbac";
 import { themeForRole } from "@/lib/role-theme";
+import { navConfigForRole } from "@/lib/role-nav";
 import { RoleNotificationCenter } from "@/components/site/RoleNotificationCenter";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
