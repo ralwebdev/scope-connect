@@ -580,15 +580,58 @@ function Moderation() {
     { label: "Blacklist spam domain", icon: XCircle, color: "text-destructive" },
   ];
   return (
+    <div className="space-y-4">
+      <Card className="p-5">
+        <h3 className="text-sm font-bold">Trust & moderation</h3>
+        <div className="mt-4 grid gap-2 sm:grid-cols-2">
+          {actions.map(a => (
+            <button key={a.label} onClick={() => toast.success(`${a.label} — queued`)} className="flex items-center gap-3 rounded-lg border border-border p-3 text-left text-sm transition-colors hover:bg-secondary">
+              <a.icon className={`h-4 w-4 ${a.color}`} />
+              <span className="flex-1">{a.label}</span>
+              <ArrowUpRight className="h-3 w-3 text-muted-foreground" />
+            </button>
+          ))}
+        </div>
+      </Card>
+      <LifecycleAuditLog />
+    </div>
+  );
+}
+
+function LifecycleAuditLog() {
+  const audit = useStoreValue(() => crm.audit());
+  const labels: Record<string, string> = {
+    credential_generated: "🔑 Credentials generated",
+    credential_revoked: "🚫 Credentials revoked",
+    first_login_password_reset: "🔒 First-login password reset",
+    terms_accepted: "📜 Terms accepted",
+    profile_completed: "✅ Profile completed",
+    student_approved: "👤 Student approved",
+    student_rejected: "❌ Student rejected",
+    faculty_invited: "👨‍🏫 Faculty invited",
+    campus_leader_invited: "🎓 Campus leader invited",
+  };
+  return (
     <Card className="p-5">
-      <h3 className="text-sm font-bold">Trust & moderation</h3>
-      <div className="mt-4 grid gap-2 sm:grid-cols-2">
-        {actions.map(a => (
-          <button key={a.label} onClick={() => toast.success(`${a.label} — queued`)} className="flex items-center gap-3 rounded-lg border border-border p-3 text-left text-sm transition-colors hover:bg-secondary">
-            <a.icon className={`h-4 w-4 ${a.color}`} />
-            <span className="flex-1">{a.label}</span>
-            <ArrowUpRight className="h-3 w-3 text-muted-foreground" />
-          </button>
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-bold">Lifecycle audit trail</h3>
+        <Badge variant="outline">{audit.length} events</Badge>
+      </div>
+      <p className="mt-1 text-xs text-muted-foreground">Credential generation, first-login flow, and student verification — every action with actor + timestamp.</p>
+      <div className="mt-4 max-h-96 space-y-1.5 overflow-y-auto">
+        {audit.length === 0 && <p className="py-6 text-center text-xs text-muted-foreground">No audit events yet. Actions across the institution lifecycle will appear here.</p>}
+        {audit.slice(0, 100).map(e => (
+          <div key={e.id} className="flex items-start gap-3 rounded-md border border-border/50 bg-muted/20 p-2.5 text-xs">
+            <div className="flex-1 min-w-0">
+              <div className="font-semibold">{labels[e.action] ?? e.action}</div>
+              <div className="text-muted-foreground truncate">
+                by <code className="rounded bg-background px-1 font-mono text-[10px]">{e.actorEmail}</code> ({e.actorRole}) · target {e.targetType}:{e.targetId}
+                {e.meta?.institution ? ` · ${e.meta.institution}` : ""}
+                {e.meta?.name ? ` · ${e.meta.name}` : ""}
+              </div>
+            </div>
+            <div className="shrink-0 text-[10px] text-muted-foreground">{new Date(e.at).toLocaleString()}</div>
+          </div>
         ))}
       </div>
     </Card>
