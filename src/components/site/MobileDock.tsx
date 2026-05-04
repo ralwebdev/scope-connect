@@ -17,23 +17,7 @@ import { navConfigForRole, type NavItem } from "@/lib/role-nav";
 import { auth } from "@/lib/scope-store";
 import { cn } from "@/lib/utils";
 
-type DockItem = {
-  key: string;
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-  to?: string;
-  permission?: PermissionKey;
-  action?: "search" | "primary" | "notifications";
-  badge?: number;
-};
-
-type QuickAction = {
-  key: string;
-  label: string;
-  to: string;
-  icon: React.ComponentType<{ className?: string }>;
-  permission?: PermissionKey;
-};
+type DockItem = NavItem & { badge?: number };
 
 export function MobileDock() {
   const session = useUserSession();
@@ -70,7 +54,6 @@ export function MobileDock() {
     };
   }, []);
 
-  // Swipe gestures on the dock itself (swipe up expands, swipe down collapses)
   const onTouchStart = (e: React.TouchEvent) => {
     touchStartY.current = e.touches[0].clientY;
   };
@@ -84,40 +67,31 @@ export function MobileDock() {
 
   if (!session.ready) return null;
   const roleTheme = themeForRole(session.role);
+  const nav = navConfigForRole(session.role);
 
-  // Build dock items based on auth + role
-  const homeRoute = session.isAuthenticated ? landingRouteForRole(session.role) : "/";
+  // Role-specific primary nav (max 4) + center "+" trigger that opens
+  // the quick-actions panel (= secondary nav). Unauth viewers see their
+  // 5-item primary nav directly with no "+".
+  const primarySlice = nav.primary.slice(0, 4);
   const dockItems: DockItem[] = session.isAuthenticated
     ? [
-        { key: "home", label: "Home", icon: Home, to: homeRoute },
-        { key: "search", label: "Discover", icon: Compass, to: "/feed" },
-        { key: "primary", label: "Create", icon: Plus, action: "primary" },
-        { key: "bell", label: "Inbox", icon: Bell, to: "/notifications", badge: unread },
-        { key: "me", label: "Me", icon: UserIcon, to: "/profile" },
+        ...primarySlice.slice(0, 2),
+        { key: "primary", label: "More", icon: Plus, to: "", action: "logout" /* sentinel; handled below */ } as unknown as DockItem,
+        ...primarySlice.slice(2, 4),
       ]
-    : [
-        { key: "home", label: "Home", icon: Home, to: "/" },
-        { key: "explore", label: "Explore", icon: Compass, to: "/feed" },
-        { key: "events", label: "Events", icon: Sparkles, to: "/events" },
-        { key: "about", label: "About", icon: Trophy, to: "/about" },
-        { key: "join", label: "Join", icon: LogIn, to: "/auth" },
-      ];
+    : nav.primary.slice(0, 5);
 
-  // Role-aware quick actions
-  const rawQuick: QuickAction[] = session.isAuthenticated
-    ? [
-        { key: "qa-projects", label: "Projects", to: "/projects", icon: Briefcase, permission: "view_projects" },
-        { key: "qa-events", label: "Events", to: "/events", icon: Sparkles, permission: "view_events" },
-        { key: "qa-leaders", label: "Leaderboards", to: "/leaderboards", icon: Trophy },
-        { key: "qa-campus", label: "Campus", to: "/campus", icon: Users },
-        { key: "qa-portfolio", label: "Portfolio", to: "/portfolio", icon: UserIcon, permission: "view_portfolio" },
-        { key: "qa-feedback", label: "Feedback", to: "/feedback", icon: Megaphone },
-        { key: "qa-settings", label: "Settings", to: "/settings", icon: SettingsIcon },
-      ]
+  // Mark the center button as the quick-actions trigger using key === "primary".
+  // Inject inbox badge if notifications appear in primary nav.
+  for (const item of dockItems) {
+    if (item.key === "notifications" || item.to === "/notifications") {
+      item.badge = unread;
+    }
+  }
+
+  const quickActions: NavItem[] = session.isAuthenticated
+    ? nav.secondary.filter((a) => a.action !== "logout")
     : [];
-  const quickActions: QuickAction[] = rawQuick.filter(
-    (a) => !a.permission || session.canAccess(a.permission),
-  );
 
   return (
     <>
