@@ -22,6 +22,7 @@ import { useBrand } from "@/hooks/use-platform";
 import { useTheme } from "@/hooks/use-theme";
 import { landingRouteForRole } from "@/lib/rbac";
 import { themeForRole } from "@/lib/role-theme";
+import { navConfigForRole } from "@/lib/role-nav";
 import { RoleNotificationCenter } from "@/components/site/RoleNotificationCenter";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -177,6 +178,28 @@ export function NavbarShell({ centerSlot, roleLabel }: NavbarShellProps) {
 
           {/* CENTER BRAIN — role-injected KPI rail */}
           {showAuthedUI && !collapsed && centerSlot}
+
+          {/* PRIMARY NAV — role-aware quick links (desktop only). Hidden on
+              collapse and on smaller widths so the capsule stays compact. */}
+          {showAuthedUI && !collapsed && (
+            <nav className="hidden items-center gap-0.5 xl:flex" aria-label="Primary">
+              {navConfigForRole(session.role).primary.slice(0, 5).map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.key}
+                    to={item.to}
+                    className="group flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-medium text-foreground/75 transition-colors hover:bg-secondary hover:text-foreground"
+                    activeProps={{ className: "bg-secondary text-foreground" }}
+                    activeOptions={{ exact: false }}
+                  >
+                    <Icon className="h-3.5 w-3.5" />
+                    <span className="hidden 2xl:inline">{item.label}</span>
+                  </Link>
+                );
+              })}
+            </nav>
+          )}
 
           <div className="flex-1" />
 
