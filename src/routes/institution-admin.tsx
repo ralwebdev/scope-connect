@@ -17,7 +17,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useUser } from "@/hooks/use-scope";
 import { useRole } from "@/hooks/use-rbac";
 import { useStoreValue } from "@/hooks/use-scope";
-import { crm } from "@/lib/crm-store";
+import { crm, stageAccess } from "@/lib/crm-store";
 import { rbac, type PermissionKey } from "@/lib/rbac";
 import { toast } from "sonner";
 
