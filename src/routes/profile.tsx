@@ -219,7 +219,102 @@ function ProfilePage() {
               </div>
             </div>
 
-            <div>
+            {/* ---- Showcase Your Work (dynamic portfolio) ---- */}
+            <div className="rounded-xl border border-border/60 bg-muted/20 p-4">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-brand" />
+                <h4 className="text-sm font-semibold text-foreground">Showcase Your Work</h4>
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">Add links that prove what you can build, design, or create.</p>
+
+              {/* Universal fields */}
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <div>
+                  <Label htmlFor="li"><Linkedin className="mr-1 inline h-3 w-3" /> LinkedIn <span className="text-[10px] text-brand">recommended</span></Label>
+                  <Input id="li" value={linkedinUrl} onChange={(e) => setLinkedinUrl(e.target.value)} placeholder="https://linkedin.com/in/…" className="mt-1.5" />
+                </div>
+                <div>
+                  <Label htmlFor="pw"><Globe className="mr-1 inline h-3 w-3" /> Portfolio Website</Label>
+                  <Input id="pw" value={portfolioWebsite} onChange={(e) => setPortfolioWebsite(e.target.value)} placeholder="https://" className="mt-1.5" />
+                </div>
+                <div>
+                  <Label htmlFor="rs"><FileText className="mr-1 inline h-3 w-3" /> Resume URL</Label>
+                  <Input id="rs" value={resumeUrl} onChange={(e) => setResumeUrl(e.target.value)} placeholder="https://drive.google.com/…" className="mt-1.5" />
+                </div>
+                <div>
+                  <Label htmlFor="pdf"><FileText className="mr-1 inline h-3 w-3" /> Portfolio PDF</Label>
+                  <Input id="pdf" value={portfolioPdfUrl} onChange={(e) => setPortfolioPdfUrl(e.target.value)} placeholder="https://" className="mt-1.5" />
+                </div>
+                <div className="sm:col-span-2">
+                  <Label htmlFor="ig"><Instagram className="mr-1 inline h-3 w-3" /> Instagram (optional)</Label>
+                  <Input id="ig" value={instagramUrl} onChange={(e) => setInstagramUrl(e.target.value)} placeholder="https://instagram.com/…" className="mt-1.5" />
+                </div>
+              </div>
+
+              {/* Domain + specialization */}
+              <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                <div>
+                  <Label>Primary Domain</Label>
+                  <Select value={primaryDomain} onValueChange={(v) => { setPrimaryDomain(v as DomainKey); setSpecialization(""); }}>
+                    <SelectTrigger className="mt-1.5"><SelectValue placeholder="Select your domain" /></SelectTrigger>
+                    <SelectContent>
+                      {DOMAIN_KEYS.map((k) => <SelectItem key={k} value={k}>{DOMAIN_LABELS[k]}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Specialization</Label>
+                  <Select value={specialization} onValueChange={setSpecialization} disabled={!primaryDomain}>
+                    <SelectTrigger className="mt-1.5"><SelectValue placeholder={primaryDomain ? "Select specialization" : "Pick a domain first"} /></SelectTrigger>
+                    <SelectContent>
+                      {specializations.map((s) => <SelectItem key={s} value={s}>{humanize(s)}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Domain-specific portfolio fields */}
+              {primaryDomain && domainFields.length > 0 && (
+                <div className="mt-5">
+                  <Label className="text-xs uppercase tracking-wide text-muted-foreground">{DOMAIN_LABELS[primaryDomain]} links</Label>
+                  <div className="mt-2 grid gap-3 sm:grid-cols-2">
+                    {domainFields.map((f) => (
+                      <div key={f}>
+                        <Label htmlFor={`pf-${f}`} className="text-xs">{humanize(f)}</Label>
+                        <Input id={`pf-${f}`} value={portfolioLinks[f] ?? ""} onChange={(e) => setPortfolioLink(f, e.target.value)} placeholder="https://" className="mt-1.5" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Custom links */}
+              <div className="mt-5">
+                <Label className="text-xs uppercase tracking-wide text-muted-foreground">Custom links</Label>
+                {Object.keys(portfolioLinks).filter((k) => !domainFields.includes(k)).length === 0 && !primaryDomain && (
+                  <p className="mt-1 text-xs text-muted-foreground">No portfolio links added yet. Add your work to stand out.</p>
+                )}
+                <div className="mt-2 space-y-2">
+                  {Object.entries(portfolioLinks)
+                    .filter(([k]) => !domainFields.includes(k))
+                    .map(([k, v]) => (
+                      <div key={k} className="flex items-center gap-2">
+                        <Badge variant="secondary" className="shrink-0">{humanize(k)}</Badge>
+                        <Input value={v} onChange={(e) => setPortfolioLink(k, e.target.value)} className="flex-1" />
+                        <Button type="button" variant="ghost" size="icon" onClick={() => setPortfolioLink(k, "")}>
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                </div>
+                <div className="mt-2 flex flex-col gap-2 sm:flex-row">
+                  <Input value={customKey} onChange={(e) => setCustomKey(e.target.value)} placeholder="Label (e.g. Notion)" className="sm:max-w-[180px]" />
+                  <Input value={customUrl} onChange={(e) => setCustomUrl(e.target.value)} placeholder="https://" className="flex-1" />
+                  <Button type="button" variant="outline" onClick={addCustomLink}><Plus className="mr-1 h-4 w-4" /> Add</Button>
+                </div>
+              </div>
+            </div>
+
               <Label>Availability</Label>
               <div className="mt-2 flex flex-wrap gap-2">
                 {AVAILABILITY.map((a) => (
