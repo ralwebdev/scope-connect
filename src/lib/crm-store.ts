@@ -242,4 +242,112 @@ export const crm = {
     write(d);
   },
   reset() { if (typeof window !== "undefined") { localStorage.removeItem(KEY); notify(); } },
+
+  // ─── Credentials ──────────────────────────────────────────
+  credential(institutionId: string): InstitutionCredential | null {
+    return read().credentials?.[institutionId] ?? null;
+  },
+  generateCredential(args: {
+    institutionId: string;
+    email: string;
+    actorEmail: string;
+    actorRole: string;
+  }): InstitutionCredential {
+    const d = read();
+    const inst = d.institutions.find(i => i.id === args.institutionId);
+    if (!inst) throw new Error("Institution not found");
+    if (inst.stage !== "Launch Pending") {
+      throw new Error("Credentials can only be generated at Launch Pending stage.");
+    }
+    if (!["scope_admin", "scope_super_admin", "super_admin"].includes(args.actorRole)) {
+      throw new Error("Only Scope Admin or Super Admin can generate credentials.");
+    }
+    d.credentials = d.credentials ?? {};
+    if (d.credentials[args.institutionId]) {
+      throw new Error("An institutional admin credential already exists. Only one initial admin is allowed.");
+    }
+    const tempPassword = `Scope@${Math.random().toString(36).slice(2, 8)}${Math.floor(Math.random() * 90 + 10)}`;
+    const cred: InstitutionCredential = {
+      institutionId: args.institutionId,
+      email: args.email.toLowerCase(),
+      tempPassword,
+      generatedAt: Date.now(),
+      generatedBy: args.actorEmail,
+      generatedByRole: args.actorRole,
+    };
+    d.credentials[args.institutionId] = cred;
+    d.audit = d.audit ?? [];
+    d.audit.unshift({
+      id: `au_${Date.now()}`, at: Date.now(),
+      actorEmail: args.actorEmail, actorRole: args.actorRole,
+      action: "credential_generated", targetType: "institution", targetId: args.institutionId,
+      meta: { email: cred.email, institution: inst.name },
+    });
+    write(d);
+    return cred;
+  },
+  markFirstLoginStep(
+    institutionId: string,
+    step: "passwordResetAt" | "termsAcceptedAt" | "profileCompletedAt",
+    actorEmail: string,
+  ) {
+    const d = read();
+    if (!d.credentials?.[institutionId]) return;
+    d.credentials[institutionId][step] = Date.now();
+    d.audit = d.audit ?? [];
+    const map = {
+      passwordResetAt: "first_login_password_reset",
+      termsAcceptedAt: "terms_accepted",
+      profileCompletedAt: "profile_completed",
+    } as const;
+    d.audit.unshift({
+      id: `au_${Date.now()}`, at: Date.now(),
+      actorEmail, actorRole: "institutional_admin",
+      action: map[step], targetType: "institution", targetId: institutionId,
+    });
+    write(d);
+  },
+
+  // ─── Audit ────────────────────────────────────────────────
+  audit(): AuditEntry[] { return read().audit ?? []; },
+  logAudit(entry: Omit<AuditEntry, "id" | "at">) {
+    const d = read();
+    d.audit = d.audit ?? [];
+    d.audit.unshift({ ...entry, id: `au_${Date.now()}_${Math.random().toString(36).slice(2,6)}`, at: Date.now() });
+    if (d.audit.length > 500) d.audit = d.audit.slice(0, 500);
+    write(d);
+  },
 };
+
+/**
+ * Stage → system flag mapping. Layered on top of the existing PipelineStage
+ * flow without modifying it. Used by guards to gate credential generation,
+ * login access, full module access, and dormant restrictions.
+ */
+export type StageAccess = {
+  loginAccess: "none" | "institutional_admin_only" | "full";
+  credentialGeneration: boolean;
+  fullModuleAccess: boolean;
+  restricted: boolean;
+  description: string;
+};
+
+export function stageAccess(stage: PipelineStage): StageAccess {
+  switch (stage) {
+    case "MoU Signed":
+      return { loginAccess: "none", credentialGeneration: false, fullModuleAccess: false, restricted: false,
+        description: "Contractually onboarded. Platform access locked until launch." };
+    case "Launch Pending":
+      return { loginAccess: "institutional_admin_only", credentialGeneration: true, fullModuleAccess: false, restricted: false,
+        description: "Activation stage. Generate institutional admin credentials." };
+    case "Live Chapter":
+      return { loginAccess: "full", credentialGeneration: false, fullModuleAccess: true, restricted: false,
+        description: "Fully operational. All modules enabled." };
+    case "Dormant":
+      return { loginAccess: "full", credentialGeneration: false, fullModuleAccess: false, restricted: true,
+        description: "Inactive. Read-only access; new approvals disabled." };
+    default:
+      return { loginAccess: "none", credentialGeneration: false, fullModuleAccess: false, restricted: false,
+        description: "Pre-MoU stage. No platform provisioning." };
+  }
+}
