@@ -366,8 +366,8 @@ function AdminControl({ admins }: { admins: AdminProfile[] }) {
               <th className="py-2 text-right">Meetings</th>
               <th className="py-2 text-right">Closures</th>
               <th className="py-2 text-right">Conv</th>
-              <th className="py-2 text-right">Target</th>
-              <th className="py-2 text-left">Status</th>
+              <th className="py-2 text-center px-3">Target</th>
+              <th className="py-2 text-center px-3">Status</th>
               <th className="py-2 text-right">Actions</th>
             </tr>
           </thead>
@@ -385,8 +385,8 @@ function AdminControl({ admins }: { admins: AdminProfile[] }) {
                   <td className="py-3 text-right">{a.meetings}</td>
                   <td className="py-3 text-right font-bold">{a.closures}</td>
                   <td className="py-3 text-right">{conv}%</td>
-                  <td className="py-3 text-right">{a.target}</td>
-                  <td className="py-3"><Badge variant={a.status === "active" ? "default" : "destructive"}>{a.status}</Badge></td>
+                  <td className="py-3 text-center px-3 whitespace-nowrap">{a.target}</td>
+                  <td className="py-3 text-center px-3 whitespace-nowrap"><Badge variant={a.status === "active" ? "default" : "destructive"}>{a.status}</Badge></td>
                   <td className="py-3 text-right">
                     <Button size="sm" variant="outline" onClick={() => { crm.setAdminStatus(a.id, a.status === "active" ? "suspended" : "active"); toast.success("Updated"); }}>
                       {a.status === "active" ? "Suspend" : "Activate"}
