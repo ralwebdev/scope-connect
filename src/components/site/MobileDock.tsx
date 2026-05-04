@@ -264,15 +264,7 @@ export function MobileDock() {
               >
                 {inner}
               </Link>
-            ) : (
-              <button
-                key={item.key}
-                className="flex w-full items-center justify-center py-1"
-                aria-label={item.label}
-              >
-                {inner}
-              </button>
-            );
+            ) : null;
           })}
         </div>
       </nav>
