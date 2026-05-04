@@ -315,11 +315,28 @@ function seedMembers(): Member[] {
 
 function MembersView({ institutionId }: { institutionId: string }) {
   const members = useStoreValue(() => readMembers(institutionId));
+  const inst = useStoreValue(() => crm.institutions().find(i => i.id === institutionId));
+  const access = inst ? stageAccess(inst.stage) : null;
+  const restricted = access?.restricted ?? false;
+  const user = useUser();
+  const role = useRole();
   const [filter, setFilter] = useState<"all" | "pending" | "active" | "deactivated">("all");
   const list = filter === "all" ? members : members.filter(m => m.status === filter);
   const update = (id: string, patch: Partial<Member>) => {
+    if (restricted && patch.status === "active") {
+      toast.error("Institution is dormant — new approvals are disabled.");
+      return;
+    }
+    const target = readMembers(institutionId).find(m => m.id === id);
     const next = readMembers(institutionId).map(m => m.id === id ? { ...m, ...patch } : m);
     writeMembers(institutionId, next);
+    if (target && patch.status === "active" && target.status === "pending") {
+      crm.logAudit({
+        actorEmail: user?.email ?? "unknown", actorRole: role,
+        action: "student_approved", targetType: "member", targetId: id,
+        meta: { institutionId, name: target.name, role: target.role },
+      });
+    }
     toast.success("Updated");
   };
   return (
