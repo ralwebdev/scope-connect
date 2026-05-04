@@ -388,13 +388,13 @@ function MembersView({ institutionId }: { institutionId: string }) {
                 <td className="py-3 text-right">
                   <div className="flex justify-end gap-1.5">
                     {m.status === "pending" && (
-                      <Button size="sm" onClick={() => update(m.id, { status: "active" })}><CheckCircle2 className="mr-1 h-3 w-3" /> Approve</Button>
+                      <Button size="sm" disabled={restricted} onClick={() => update(m.id, { status: "active" })}><CheckCircle2 className="mr-1 h-3 w-3" /> Approve</Button>
                     )}
                     {m.status === "active" && (
                       <Button size="sm" variant="outline" onClick={() => update(m.id, { status: "deactivated" })}>Deactivate</Button>
                     )}
                     {m.status === "deactivated" && (
-                      <Button size="sm" variant="outline" onClick={() => update(m.id, { status: "active" })}>Reactivate</Button>
+                      <Button size="sm" variant="outline" disabled={restricted} onClick={() => update(m.id, { status: "active" })}>Reactivate</Button>
                     )}
                   </div>
                 </td>
