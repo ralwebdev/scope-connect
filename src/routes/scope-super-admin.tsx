@@ -581,6 +581,15 @@ function Moderation() {
   ];
   return (
     <div className="space-y-4">
+      <Card className="flex items-center justify-between gap-3 p-5">
+        <div>
+          <h3 className="text-sm font-bold">Governance queue</h3>
+          <p className="mt-1 text-xs text-muted-foreground">Challenges, projects, and opportunities awaiting review and publish.</p>
+        </div>
+        <Button asChild size="sm" className="bg-gradient-brand text-brand-foreground">
+          <Link to="/governance/moderation"><ShieldCheck className="mr-2 h-4 w-4" /> Open moderation queue</Link>
+        </Button>
+      </Card>
       <Card className="p-5">
         <h3 className="text-sm font-bold">Trust & moderation</h3>
         <div className="mt-4 grid gap-2 sm:grid-cols-2">
