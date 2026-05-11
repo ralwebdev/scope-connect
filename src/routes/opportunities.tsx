@@ -8,6 +8,8 @@ import { AuthGate } from "@/components/site/AuthGate";
 import { useStoreValue } from "@/hooks/use-scope";
 import { opportunities } from "@/lib/scope-store";
 import { toast } from "sonner";
+import { CreateContentButton } from "@/components/governance/CreateContentButton";
+import { PublishedStrip } from "@/components/governance/PublishedStrip";
 
 export const Route = createFileRoute("/opportunities")({
   head: () => ({
@@ -27,12 +29,17 @@ function OpportunitiesPage() {
   return (
     <AppShell>
       <section className="border-b border-border/40 bg-gradient-hero py-12 text-primary-foreground">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <Badge className="bg-cyan/15 text-cyan hover:bg-cyan/20"><Sparkles className="mr-1 h-3 w-3" /> Curated for you</Badge>
-          <h1 className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">Opportunities</h1>
-          <p className="mt-2 max-w-xl text-primary-foreground/70">Co-founders, collaborators, internships — matched to your interests.</p>
+        <div className="mx-auto flex max-w-7xl flex-wrap items-end justify-between gap-4 px-4 sm:px-6 lg:px-8">
+          <div>
+            <Badge className="bg-cyan/15 text-cyan hover:bg-cyan/20"><Sparkles className="mr-1 h-3 w-3" /> Curated for you</Badge>
+            <h1 className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">Opportunities</h1>
+            <p className="mt-2 max-w-xl text-primary-foreground/70">Co-founders, collaborators, internships — matched to your interests.</p>
+          </div>
+          <CreateContentButton entity="opportunity" label="Post Opportunity" className="bg-gradient-brand text-brand-foreground" />
         </div>
       </section>
+
+      <PublishedStrip entity="opportunity" title="Verified opportunities" />
 
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
