@@ -24,6 +24,8 @@ import {
 } from "@/lib/scope-store";
 import { analytics } from "@/lib/analytics";
 import { toast } from "sonner";
+import { CreateContentButton } from "@/components/governance/CreateContentButton";
+import { PublishedStrip } from "@/components/governance/PublishedStrip";
 
 export const Route = createFileRoute("/projects")({
   head: () => ({
@@ -99,6 +101,7 @@ function ProjectsPage() {
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
+              <CreateContentButton entity="project" label="Create Project" className="bg-primary-foreground/10 text-primary-foreground hover:bg-primary-foreground/15" />
               <Button onClick={() => setIdeaOpen(true)} size="lg" variant="outline" className="border-primary-foreground/20 bg-primary-foreground/5 text-primary-foreground hover:bg-primary-foreground/10">
                 <Lightbulb className="mr-2 h-4 w-4" /> Suggest an Idea
               </Button>
