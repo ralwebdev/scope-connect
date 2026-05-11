@@ -294,10 +294,10 @@ function DashboardPage() {
             <Button asChild size="sm" variant="outline" className="mt-4"><Link to="/projects">Suggest an Idea</Link></Button>
           </Card>
           <Card className="p-6 hover-lift">
-            <Zap className="h-5 w-5 text-brand" />
-            <h3 className="mt-3 font-semibold text-foreground">Join a chapter</h3>
-            <p className="mt-1 text-sm text-muted-foreground">Plug into your campus tribe. Lead, ship, win together.</p>
-            <Button asChild size="sm" variant="outline" className="mt-4"><Link to="/campus">Open Campus Hub</Link></Button>
+            <Calendar className="h-5 w-5 text-brand" />
+            <h3 className="mt-3 font-semibold text-foreground">Daily reporting</h3>
+            <p className="mt-1 text-sm text-muted-foreground">Submit today's update. No gap days. Streaks and trust score depend on it.</p>
+            <Button asChild size="sm" className="mt-4 bg-gradient-brand text-brand-foreground"><Link to="/reporting">Open reporting portal</Link></Button>
           </Card>
         </div>
 
