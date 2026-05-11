@@ -120,6 +120,7 @@ function ProjectsPage() {
           </div>
         </div>
       </section>
+      <PublishedStrip entity="project" title="Verified projects" />
 
       {/* APPLIED STRIP */}
       {userApps.length > 0 && (
