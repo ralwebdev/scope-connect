@@ -10,6 +10,8 @@ import { useStoreValue, useXP, useStreak } from "@/hooks/use-scope";
 import { xp, notifications, projects, feed, events as eventStore } from "@/lib/scope-store";
 import { topChapters } from "@/lib/mock-data";
 import { toast } from "sonner";
+import { CreateContentButton } from "@/components/governance/CreateContentButton";
+import { PublishedStrip } from "@/components/governance/PublishedStrip";
 
 export const Route = createFileRoute("/challenges")({
   head: () => ({
@@ -102,7 +104,7 @@ function ChallengesPage() {
           <Badge className="bg-cyan/15 text-cyan hover:bg-cyan/20"><Swords className="mr-1 h-3 w-3" /> Weekly Battles</Badge>
           <h1 className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">Challenges & Chapter Wars</h1>
           <p className="mt-2 max-w-xl text-primary-foreground/70">Stack XP, climb ranks, and put your chapter on the map. Resets every Monday.</p>
-          <div className="mt-6 flex flex-wrap gap-3">
+          <div className="mt-6 flex flex-wrap items-center gap-3">
             <Card className="border-white/10 bg-white/5 px-4 py-2 text-primary-foreground backdrop-blur">
               <div className="text-xs uppercase tracking-wide text-primary-foreground/60">Your XP</div>
               <div className="text-xl font-bold">{userXP.toLocaleString()}</div>
@@ -111,9 +113,12 @@ function ChallengesPage() {
               <div className="text-xs uppercase tracking-wide text-primary-foreground/60">Streak</div>
               <div className="text-xl font-bold">{streak} 🔥</div>
             </Card>
+            <CreateContentButton entity="challenge" label="Create Challenge" className="ml-auto bg-gradient-brand text-brand-foreground" />
           </div>
         </div>
       </section>
+
+      <PublishedStrip entity="challenge" title="Verified challenges" />
 
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
