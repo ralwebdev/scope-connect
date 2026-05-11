@@ -30,7 +30,7 @@ export const Route = createFileRoute("/governance/moderation")({
 function Page() {
   const role = useRole();
   if (!canModerate(role)) {
-    return <AppShell><AccessDenied requiredPermission="manage_moderation" /></AppShell>;
+    return <AppShell><AccessDenied role={role} required="manage_moderation" /></AppShell>;
   }
   return <AppShell><Queue /></AppShell>;
 }
