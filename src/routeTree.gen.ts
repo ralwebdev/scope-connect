@@ -17,6 +17,7 @@ import { Route as SupportRouteImport } from './routes/support'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ScopeSuperAdminRouteImport } from './routes/scope-super-admin'
 import { Route as ScopeAdminRouteImport } from './routes/scope-admin'
+import { Route as ReportingRouteImport } from './routes/reporting'
 import { Route as ReferRouteImport } from './routes/refer'
 import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as ProfileRouteImport } from './routes/profile'
@@ -92,6 +93,11 @@ const ScopeSuperAdminRoute = ScopeSuperAdminRouteImport.update({
 const ScopeAdminRoute = ScopeAdminRouteImport.update({
   id: '/scope-admin',
   path: '/scope-admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportingRoute = ReportingRouteImport.update({
+  id: '/reporting',
+  path: '/reporting',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ReferRoute = ReferRouteImport.update({
@@ -305,6 +311,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof ProfileRoute
   '/projects': typeof ProjectsRoute
   '/refer': typeof ReferRoute
+  '/reporting': typeof ReportingRoute
   '/scope-admin': typeof ScopeAdminRoute
   '/scope-super-admin': typeof ScopeSuperAdminRouteWithChildren
   '/settings': typeof SettingsRoute
@@ -351,6 +358,7 @@ export interface FileRoutesByTo {
   '/profile': typeof ProfileRoute
   '/projects': typeof ProjectsRoute
   '/refer': typeof ReferRoute
+  '/reporting': typeof ReportingRoute
   '/scope-admin': typeof ScopeAdminRoute
   '/scope-super-admin': typeof ScopeSuperAdminRouteWithChildren
   '/settings': typeof SettingsRoute
@@ -398,6 +406,7 @@ export interface FileRoutesById {
   '/profile': typeof ProfileRoute
   '/projects': typeof ProjectsRoute
   '/refer': typeof ReferRoute
+  '/reporting': typeof ReportingRoute
   '/scope-admin': typeof ScopeAdminRoute
   '/scope-super-admin': typeof ScopeSuperAdminRouteWithChildren
   '/settings': typeof SettingsRoute
@@ -446,6 +455,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/projects'
     | '/refer'
+    | '/reporting'
     | '/scope-admin'
     | '/scope-super-admin'
     | '/settings'
@@ -492,6 +502,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/projects'
     | '/refer'
+    | '/reporting'
     | '/scope-admin'
     | '/scope-super-admin'
     | '/settings'
@@ -538,6 +549,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/projects'
     | '/refer'
+    | '/reporting'
     | '/scope-admin'
     | '/scope-super-admin'
     | '/settings'
@@ -585,6 +597,7 @@ export interface RootRouteChildren {
   ProfileRoute: typeof ProfileRoute
   ProjectsRoute: typeof ProjectsRoute
   ReferRoute: typeof ReferRoute
+  ReportingRoute: typeof ReportingRoute
   ScopeAdminRoute: typeof ScopeAdminRoute
   ScopeSuperAdminRoute: typeof ScopeSuperAdminRouteWithChildren
   SettingsRoute: typeof SettingsRoute
@@ -655,6 +668,13 @@ declare module '@tanstack/react-router' {
       path: '/scope-admin'
       fullPath: '/scope-admin'
       preLoaderRoute: typeof ScopeAdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reporting': {
+      id: '/reporting'
+      path: '/reporting'
+      fullPath: '/reporting'
+      preLoaderRoute: typeof ReportingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/refer': {
@@ -978,6 +998,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileRoute: ProfileRoute,
   ProjectsRoute: ProjectsRoute,
   ReferRoute: ReferRoute,
+  ReportingRoute: ReportingRoute,
   ScopeAdminRoute: ScopeAdminRoute,
   ScopeSuperAdminRoute: ScopeSuperAdminRouteWithChildren,
   SettingsRoute: SettingsRoute,
