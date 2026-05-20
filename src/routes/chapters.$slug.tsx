@@ -5,6 +5,8 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FAQSection, type FAQItem } from "@/components/site/FAQSection";
+import { AnswerBlock } from "@/components/seo/AnswerBlock";
+import { AEO } from "@/lib/aeo-content";
 import { chapterDiscovery } from "@/lib/discoverability";
 
 const CHAPTER_FAQS = (name: string) => [
