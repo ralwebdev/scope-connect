@@ -28,11 +28,14 @@ import { Route as OpportunitiesRouteImport } from './routes/opportunities'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LeaderboardsRouteImport } from './routes/leaderboards'
 import { Route as InstitutionAdminRouteImport } from './routes/institution-admin'
+import { Route as InnovationLabRouteImport } from './routes/innovation-lab'
 import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as FeedRouteImport } from './routes/feed'
+import { Route as FaqsRouteImport } from './routes/faqs'
 import { Route as FacultyRouteImport } from './routes/faculty'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as CookiePolicyRouteImport } from './routes/cookie-policy'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CommunityGuidelinesRouteImport } from './routes/community-guidelines'
 import { Route as ChallengesRouteImport } from './routes/challenges'
@@ -150,6 +153,11 @@ const InstitutionAdminRoute = InstitutionAdminRouteImport.update({
   path: '/institution-admin',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InnovationLabRoute = InnovationLabRouteImport.update({
+  id: '/innovation-lab',
+  path: '/innovation-lab',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FeedbackRoute = FeedbackRouteImport.update({
   id: '/feedback',
   path: '/feedback',
@@ -158,6 +166,11 @@ const FeedbackRoute = FeedbackRouteImport.update({
 const FeedRoute = FeedRouteImport.update({
   id: '/feed',
   path: '/feed',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqsRoute = FaqsRouteImport.update({
+  id: '/faqs',
+  path: '/faqs',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FacultyRoute = FacultyRouteImport.update({
@@ -173,6 +186,11 @@ const EventsRoute = EventsRouteImport.update({
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CookiePolicyRoute = CookiePolicyRouteImport.update({
+  id: '/cookie-policy',
+  path: '/cookie-policy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -296,11 +314,14 @@ export interface FileRoutesByFullPath {
   '/challenges': typeof ChallengesRoute
   '/community-guidelines': typeof CommunityGuidelinesRoute
   '/contact': typeof ContactRoute
+  '/cookie-policy': typeof CookiePolicyRoute
   '/dashboard': typeof DashboardRoute
   '/events': typeof EventsRoute
   '/faculty': typeof FacultyRoute
+  '/faqs': typeof FaqsRoute
   '/feed': typeof FeedRoute
   '/feedback': typeof FeedbackRoute
+  '/innovation-lab': typeof InnovationLabRoute
   '/institution-admin': typeof InstitutionAdminRouteWithChildren
   '/leaderboards': typeof LeaderboardsRoute
   '/notifications': typeof NotificationsRoute
@@ -343,11 +364,14 @@ export interface FileRoutesByTo {
   '/challenges': typeof ChallengesRoute
   '/community-guidelines': typeof CommunityGuidelinesRoute
   '/contact': typeof ContactRoute
+  '/cookie-policy': typeof CookiePolicyRoute
   '/dashboard': typeof DashboardRoute
   '/events': typeof EventsRoute
   '/faculty': typeof FacultyRoute
+  '/faqs': typeof FaqsRoute
   '/feed': typeof FeedRoute
   '/feedback': typeof FeedbackRoute
+  '/innovation-lab': typeof InnovationLabRoute
   '/institution-admin': typeof InstitutionAdminRouteWithChildren
   '/leaderboards': typeof LeaderboardsRoute
   '/notifications': typeof NotificationsRoute
@@ -391,11 +415,14 @@ export interface FileRoutesById {
   '/challenges': typeof ChallengesRoute
   '/community-guidelines': typeof CommunityGuidelinesRoute
   '/contact': typeof ContactRoute
+  '/cookie-policy': typeof CookiePolicyRoute
   '/dashboard': typeof DashboardRoute
   '/events': typeof EventsRoute
   '/faculty': typeof FacultyRoute
+  '/faqs': typeof FaqsRoute
   '/feed': typeof FeedRoute
   '/feedback': typeof FeedbackRoute
+  '/innovation-lab': typeof InnovationLabRoute
   '/institution-admin': typeof InstitutionAdminRouteWithChildren
   '/leaderboards': typeof LeaderboardsRoute
   '/notifications': typeof NotificationsRoute
@@ -440,11 +467,14 @@ export interface FileRouteTypes {
     | '/challenges'
     | '/community-guidelines'
     | '/contact'
+    | '/cookie-policy'
     | '/dashboard'
     | '/events'
     | '/faculty'
+    | '/faqs'
     | '/feed'
     | '/feedback'
+    | '/innovation-lab'
     | '/institution-admin'
     | '/leaderboards'
     | '/notifications'
@@ -487,11 +517,14 @@ export interface FileRouteTypes {
     | '/challenges'
     | '/community-guidelines'
     | '/contact'
+    | '/cookie-policy'
     | '/dashboard'
     | '/events'
     | '/faculty'
+    | '/faqs'
     | '/feed'
     | '/feedback'
+    | '/innovation-lab'
     | '/institution-admin'
     | '/leaderboards'
     | '/notifications'
@@ -534,11 +567,14 @@ export interface FileRouteTypes {
     | '/challenges'
     | '/community-guidelines'
     | '/contact'
+    | '/cookie-policy'
     | '/dashboard'
     | '/events'
     | '/faculty'
+    | '/faqs'
     | '/feed'
     | '/feedback'
+    | '/innovation-lab'
     | '/institution-admin'
     | '/leaderboards'
     | '/notifications'
@@ -582,11 +618,14 @@ export interface RootRouteChildren {
   ChallengesRoute: typeof ChallengesRoute
   CommunityGuidelinesRoute: typeof CommunityGuidelinesRoute
   ContactRoute: typeof ContactRoute
+  CookiePolicyRoute: typeof CookiePolicyRoute
   DashboardRoute: typeof DashboardRoute
   EventsRoute: typeof EventsRoute
   FacultyRoute: typeof FacultyRoute
+  FaqsRoute: typeof FaqsRoute
   FeedRoute: typeof FeedRoute
   FeedbackRoute: typeof FeedbackRoute
+  InnovationLabRoute: typeof InnovationLabRoute
   InstitutionAdminRoute: typeof InstitutionAdminRouteWithChildren
   LeaderboardsRoute: typeof LeaderboardsRoute
   NotificationsRoute: typeof NotificationsRoute
@@ -747,6 +786,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InstitutionAdminRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/innovation-lab': {
+      id: '/innovation-lab'
+      path: '/innovation-lab'
+      fullPath: '/innovation-lab'
+      preLoaderRoute: typeof InnovationLabRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/feedback': {
       id: '/feedback'
       path: '/feedback'
@@ -759,6 +805,13 @@ declare module '@tanstack/react-router' {
       path: '/feed'
       fullPath: '/feed'
       preLoaderRoute: typeof FeedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faqs': {
+      id: '/faqs'
+      path: '/faqs'
+      fullPath: '/faqs'
+      preLoaderRoute: typeof FaqsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/faculty': {
@@ -780,6 +833,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cookie-policy': {
+      id: '/cookie-policy'
+      path: '/cookie-policy'
+      fullPath: '/cookie-policy'
+      preLoaderRoute: typeof CookiePolicyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -983,11 +1043,14 @@ const rootRouteChildren: RootRouteChildren = {
   ChallengesRoute: ChallengesRoute,
   CommunityGuidelinesRoute: CommunityGuidelinesRoute,
   ContactRoute: ContactRoute,
+  CookiePolicyRoute: CookiePolicyRoute,
   DashboardRoute: DashboardRoute,
   EventsRoute: EventsRoute,
   FacultyRoute: FacultyRoute,
+  FaqsRoute: FaqsRoute,
   FeedRoute: FeedRoute,
   FeedbackRoute: FeedbackRoute,
+  InnovationLabRoute: InnovationLabRoute,
   InstitutionAdminRoute: InstitutionAdminRouteWithChildren,
   LeaderboardsRoute: LeaderboardsRoute,
   NotificationsRoute: NotificationsRoute,
