@@ -7,22 +7,81 @@ import { Button } from "@/components/ui/button";
 import { FAQSection, type FAQItem } from "@/components/site/FAQSection";
 import { chapterDiscovery } from "@/lib/discoverability";
 
+const CHAPTER_FAQS = (name: string) => [
+  { q: `How do I join the ${name} chapter?`, a: "Sign in to Scope Connect and select your institution during onboarding. Your chapter coordinator will verify and onboard you." },
+  { q: "What does this chapter do?", a: "Chapters run verified projects, weekly challenges and recruit for opportunities — all governed by Scope's trust-first moderation." },
+  { q: "Can I launch a sub-team here?", a: "Yes. Active builders can propose sub-teams via the chapter coordinator after a verified track record on Scope." },
+];
+
 export const Route = createFileRoute("/chapters/$slug")({
   head: ({ params }) => {
     const record = chapterDiscovery.bySlug(params.slug);
     const name = record?.name ?? params.slug;
     const title = `${name} Chapter — Scope Connect`;
     const description = `${name}'s Scope chapter — active projects, challenges and opportunities run by verified student builders.`;
+    const url = `/chapters/${params.slug}`;
+
+    const scripts = record
+      ? [
+          {
+            type: "application/ld+json",
+            children: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "EducationalOrganization",
+              name: record.name,
+              description,
+              url,
+              ...(record.city ? { address: { "@type": "PostalAddress", addressLocality: record.city } } : {}),
+            }),
+          },
+          {
+            type: "application/ld+json",
+            children: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: `${record.name} — Scope Connect Chapter`,
+              parentOrganization: { "@type": "Organization", name: "Scope Connect" },
+              url,
+            }),
+          },
+          {
+            type: "application/ld+json",
+            children: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "BreadcrumbList",
+              itemListElement: [
+                { "@type": "ListItem", position: 1, name: "Home", item: "/" },
+                { "@type": "ListItem", position: 2, name: "Chapters", item: "/innovation-lab" },
+                { "@type": "ListItem", position: 3, name: record.name, item: url },
+              ],
+            }),
+          },
+          {
+            type: "application/ld+json",
+            children: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: CHAPTER_FAQS(record.name).map((f) => ({
+                "@type": "Question",
+                name: f.q,
+                acceptedAnswer: { "@type": "Answer", text: f.a },
+              })),
+            }),
+          },
+        ]
+      : [];
+
     return {
       meta: [
         { title },
         { name: "description", content: description },
         { property: "og:title", content: title },
         { property: "og:description", content: description },
-        { property: "og:url", content: `/chapters/${params.slug}` },
+        { property: "og:url", content: url },
         ...(record ? [] : [{ name: "robots", content: "noindex,follow" }]),
       ],
-      links: [{ rel: "canonical", href: `/chapters/${params.slug}` }],
+      links: [{ rel: "canonical", href: url }],
+      scripts,
     };
   },
   loader: ({ params }) => {
