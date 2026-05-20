@@ -24,9 +24,14 @@ interface CategoryPageProps {
 
 export function CategoryPage({ kind, domainLabel, items, relatedDomains, internalLinks, faqs, intro }: CategoryPageProps) {
   const empty = items.length < MIN_RECORDS;
+  const aeo = AEO[kind];
+  const answer: AnswerBlockType = {
+    ...aeo.answer,
+    heading: `What are ${domainLabel} ${kind}?`,
+  };
   return (
     <AppShell>
-      <section className="border-b border-border/40 bg-gradient-hero py-12 text-primary-foreground">
+      <header className="border-b border-border/40 bg-gradient-hero py-12 text-primary-foreground">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <Badge className="bg-cyan/15 text-cyan hover:bg-cyan/20">
             <Sparkles className="mr-1 h-3 w-3" /> {kind === "projects" ? "Project domain" : kind === "challenges" ? "Challenge track" : "Opportunity track"}
@@ -34,7 +39,10 @@ export function CategoryPage({ kind, domainLabel, items, relatedDomains, interna
           <h1 className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">{domainLabel} {kind}</h1>
           <p className="mt-3 max-w-2xl text-primary-foreground/75">{intro}</p>
         </div>
-      </section>
+      </header>
+
+      <AnswerBlock block={answer} citations={aeo.citations} />
+
 
       <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
         {empty ? (
