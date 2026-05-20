@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AppShell } from "@/components/site/AppShell";
 import { FAQSection, type FAQItem } from "@/components/site/FAQSection";
+import { AnswerBlock } from "@/components/seo/AnswerBlock";
+import { AEO, type AnswerBlock as AnswerBlockType } from "@/lib/aeo-content";
 import { MIN_RECORDS } from "@/lib/discoverability";
 
 type Item = { id?: string; title: string; description?: string; cover?: string; campus?: string; category?: string };
