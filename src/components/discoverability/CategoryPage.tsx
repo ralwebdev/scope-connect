@@ -88,7 +88,7 @@ export function CategoryPage({ kind, domainLabel, items, relatedDomains, interna
         </section>
       )}
 
-      <FAQSection title={`About ${domainLabel} ${kind}`} items={faqs} />
+      <FAQSection title={`About ${domainLabel} ${kind}`} items={[...faqs, ...aeo.faqs]} />
 
       <section className="border-t border-border/40 py-10">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
