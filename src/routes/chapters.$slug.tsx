@@ -106,11 +106,7 @@ export const Route = createFileRoute("/chapters/$slug")({
 
 function ChapterPage() {
   const { record, activity } = Route.useLoaderData();
-  const faqs: FAQItem[] = [
-    { q: `How do I join the ${record.name} chapter?`, a: "Sign in to Scope Connect and select your institution during onboarding. Your chapter coordinator will verify and onboard you." },
-    { q: "What does this chapter do?", a: "Chapters run verified projects, weekly challenges and recruit for opportunities — all governed by Scope's trust-first moderation." },
-    { q: "Can I launch a sub-team here?", a: "Yes. Active builders can propose sub-teams via the chapter coordinator after a verified track record on Scope." },
-  ];
+  const faqs: FAQItem[] = CHAPTER_FAQS(record.name);
   return (
     <AppShell>
       <section className="border-b border-border/40 bg-gradient-hero py-12 text-primary-foreground">
