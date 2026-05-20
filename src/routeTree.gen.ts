@@ -58,6 +58,7 @@ import { Route as InstitutionAdminCommunicationsRouteImport } from './routes/ins
 import { Route as InstitutionAdminAnalyticsRouteImport } from './routes/institution-admin.analytics'
 import { Route as GovernanceModerationRouteImport } from './routes/governance.moderation'
 import { Route as FormsFormSlugRouteImport } from './routes/forms.$formSlug'
+import { Route as DevSeoQaRouteImport } from './routes/dev.seo-qa'
 import { Route as DevBuildDiagnosticsRouteImport } from './routes/dev.build-diagnostics'
 import { Route as ChaptersSlugRouteImport } from './routes/chapters.$slug'
 import { Route as ChallengesDomainRouteImport } from './routes/challenges.$domain'
@@ -312,6 +313,11 @@ const FormsFormSlugRoute = FormsFormSlugRouteImport.update({
   path: '/forms/$formSlug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DevSeoQaRoute = DevSeoQaRouteImport.update({
+  id: '/dev/seo-qa',
+  path: '/dev/seo-qa',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DevBuildDiagnosticsRoute = DevBuildDiagnosticsRouteImport.update({
   id: '/dev/build-diagnostics',
   path: '/dev/build-diagnostics',
@@ -383,6 +389,7 @@ export interface FileRoutesByFullPath {
   '/challenges/$domain': typeof ChallengesDomainRoute
   '/chapters/$slug': typeof ChaptersSlugRoute
   '/dev/build-diagnostics': typeof DevBuildDiagnosticsRoute
+  '/dev/seo-qa': typeof DevSeoQaRoute
   '/forms/$formSlug': typeof FormsFormSlugRoute
   '/governance/moderation': typeof GovernanceModerationRoute
   '/institution-admin/analytics': typeof InstitutionAdminAnalyticsRoute
@@ -439,6 +446,7 @@ export interface FileRoutesByTo {
   '/challenges/$domain': typeof ChallengesDomainRoute
   '/chapters/$slug': typeof ChaptersSlugRoute
   '/dev/build-diagnostics': typeof DevBuildDiagnosticsRoute
+  '/dev/seo-qa': typeof DevSeoQaRoute
   '/forms/$formSlug': typeof FormsFormSlugRoute
   '/governance/moderation': typeof GovernanceModerationRoute
   '/institution-admin/analytics': typeof InstitutionAdminAnalyticsRoute
@@ -496,6 +504,7 @@ export interface FileRoutesById {
   '/challenges/$domain': typeof ChallengesDomainRoute
   '/chapters/$slug': typeof ChaptersSlugRoute
   '/dev/build-diagnostics': typeof DevBuildDiagnosticsRoute
+  '/dev/seo-qa': typeof DevSeoQaRoute
   '/forms/$formSlug': typeof FormsFormSlugRoute
   '/governance/moderation': typeof GovernanceModerationRoute
   '/institution-admin/analytics': typeof InstitutionAdminAnalyticsRoute
@@ -554,6 +563,7 @@ export interface FileRouteTypes {
     | '/challenges/$domain'
     | '/chapters/$slug'
     | '/dev/build-diagnostics'
+    | '/dev/seo-qa'
     | '/forms/$formSlug'
     | '/governance/moderation'
     | '/institution-admin/analytics'
@@ -610,6 +620,7 @@ export interface FileRouteTypes {
     | '/challenges/$domain'
     | '/chapters/$slug'
     | '/dev/build-diagnostics'
+    | '/dev/seo-qa'
     | '/forms/$formSlug'
     | '/governance/moderation'
     | '/institution-admin/analytics'
@@ -666,6 +677,7 @@ export interface FileRouteTypes {
     | '/challenges/$domain'
     | '/chapters/$slug'
     | '/dev/build-diagnostics'
+    | '/dev/seo-qa'
     | '/forms/$formSlug'
     | '/governance/moderation'
     | '/institution-admin/analytics'
@@ -721,6 +733,7 @@ export interface RootRouteChildren {
   WaitlistRoute: typeof WaitlistRoute
   ChaptersSlugRoute: typeof ChaptersSlugRoute
   DevBuildDiagnosticsRoute: typeof DevBuildDiagnosticsRoute
+  DevSeoQaRoute: typeof DevSeoQaRoute
   FormsFormSlugRoute: typeof FormsFormSlugRoute
   GovernanceModerationRoute: typeof GovernanceModerationRoute
   UHandleRoute: typeof UHandleRoute
@@ -1071,6 +1084,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FormsFormSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dev/seo-qa': {
+      id: '/dev/seo-qa'
+      path: '/dev/seo-qa'
+      fullPath: '/dev/seo-qa'
+      preLoaderRoute: typeof DevSeoQaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dev/build-diagnostics': {
       id: '/dev/build-diagnostics'
       path: '/dev/build-diagnostics'
@@ -1227,6 +1247,7 @@ const rootRouteChildren: RootRouteChildren = {
   WaitlistRoute: WaitlistRoute,
   ChaptersSlugRoute: ChaptersSlugRoute,
   DevBuildDiagnosticsRoute: DevBuildDiagnosticsRoute,
+  DevSeoQaRoute: DevSeoQaRoute,
   FormsFormSlugRoute: FormsFormSlugRoute,
   GovernanceModerationRoute: GovernanceModerationRoute,
   UHandleRoute: UHandleRoute,
