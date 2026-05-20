@@ -15,7 +15,7 @@ export function Footer() {
   return (
     <footer className="border-t border-border/40 bg-primary text-primary-foreground">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid gap-10 md:grid-cols-5">
+        <div className="grid gap-10 md:grid-cols-6">
           <div className="md:col-span-2">
             <Link to="/" className="flex items-center gap-2 font-bold">
               <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-brand">
@@ -63,6 +63,17 @@ export function Footer() {
               <li><Link to={brand.supportUrl as "/support"} className="hover:text-primary-foreground">Support</Link></li>
               <li><Link to="/updates" className="hover:text-primary-foreground">Platform updates</Link></li>
               <li><Link to="/feedback" className="hover:text-primary-foreground">Feedback</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="text-sm font-semibold">Trust & Policies</h4>
+            <ul className="mt-3 space-y-2 text-sm text-primary-foreground/70">
+              <li><Link to="/innovation-lab" className="hover:text-primary-foreground">Innovation Lab</Link></li>
+              <li><Link to="/faqs" className="hover:text-primary-foreground">FAQs</Link></li>
+              <li><Link to="/privacy" className="hover:text-primary-foreground">Privacy</Link></li>
+              <li><Link to="/terms" className="hover:text-primary-foreground">Terms</Link></li>
+              <li><Link to="/cookie-policy" className="hover:text-primary-foreground">Cookie Policy</Link></li>
             </ul>
           </div>
         </div>

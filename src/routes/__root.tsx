@@ -51,6 +51,29 @@ export const Route = createRootRoute({
         href: appCss,
       },
     ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "Scope Connect",
+          alternateName: "Scope Innovation Lab",
+          url: "/",
+          email: "hello@scope.in",
+          description: "India's curated campus innovation network for verified student builders.",
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "Scope Connect",
+          url: "/",
+        }),
+      },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
