@@ -14,6 +14,7 @@ import { Route as UpdatesRouteImport } from './routes/updates'
 import { Route as UnauthorizedRouteImport } from './routes/unauthorized'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SupportRouteImport } from './routes/support'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ScopeSuperAdminRouteImport } from './routes/scope-super-admin'
 import { Route as ScopeAdminRouteImport } from './routes/scope-admin'
@@ -81,6 +82,11 @@ const TermsRoute = TermsRouteImport.update({
 const SupportRoute = SupportRouteImport.update({
   id: '/support',
   path: '/support',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -336,6 +342,7 @@ export interface FileRoutesByFullPath {
   '/scope-admin': typeof ScopeAdminRoute
   '/scope-super-admin': typeof ScopeSuperAdminRouteWithChildren
   '/settings': typeof SettingsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/unauthorized': typeof UnauthorizedRoute
@@ -386,6 +393,7 @@ export interface FileRoutesByTo {
   '/scope-admin': typeof ScopeAdminRoute
   '/scope-super-admin': typeof ScopeSuperAdminRouteWithChildren
   '/settings': typeof SettingsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/unauthorized': typeof UnauthorizedRoute
@@ -437,6 +445,7 @@ export interface FileRoutesById {
   '/scope-admin': typeof ScopeAdminRoute
   '/scope-super-admin': typeof ScopeSuperAdminRouteWithChildren
   '/settings': typeof SettingsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/unauthorized': typeof UnauthorizedRoute
@@ -489,6 +498,7 @@ export interface FileRouteTypes {
     | '/scope-admin'
     | '/scope-super-admin'
     | '/settings'
+    | '/sitemap.xml'
     | '/support'
     | '/terms'
     | '/unauthorized'
@@ -539,6 +549,7 @@ export interface FileRouteTypes {
     | '/scope-admin'
     | '/scope-super-admin'
     | '/settings'
+    | '/sitemap.xml'
     | '/support'
     | '/terms'
     | '/unauthorized'
@@ -589,6 +600,7 @@ export interface FileRouteTypes {
     | '/scope-admin'
     | '/scope-super-admin'
     | '/settings'
+    | '/sitemap.xml'
     | '/support'
     | '/terms'
     | '/unauthorized'
@@ -640,6 +652,7 @@ export interface RootRouteChildren {
   ScopeAdminRoute: typeof ScopeAdminRoute
   ScopeSuperAdminRoute: typeof ScopeSuperAdminRouteWithChildren
   SettingsRoute: typeof SettingsRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SupportRoute: typeof SupportRoute
   TermsRoute: typeof TermsRoute
   UnauthorizedRoute: typeof UnauthorizedRoute
@@ -686,6 +699,13 @@ declare module '@tanstack/react-router' {
       path: '/support'
       fullPath: '/support'
       preLoaderRoute: typeof SupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -1065,6 +1085,7 @@ const rootRouteChildren: RootRouteChildren = {
   ScopeAdminRoute: ScopeAdminRoute,
   ScopeSuperAdminRoute: ScopeSuperAdminRouteWithChildren,
   SettingsRoute: SettingsRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   SupportRoute: SupportRoute,
   TermsRoute: TermsRoute,
   UnauthorizedRoute: UnauthorizedRoute,
@@ -1078,3 +1099,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
