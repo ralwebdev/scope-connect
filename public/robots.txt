@@ -1,2 +1,15 @@
 User-agent: *
 Allow: /
+
+# Private surfaces — prefer noindex via route head() over hard disallow,
+# but keep auth/admin/internal surfaces out of crawl budget.
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /internal
+Disallow: /auth
+Disallow: /api/private
+
+# Discoverability surfaces are intentionally allowed:
+#   /projects, /challenges, /opportunities, /chapters
+
+Sitemap: /sitemap.xml
