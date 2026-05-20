@@ -24,6 +24,7 @@ import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PortfolioRouteImport } from './routes/portfolio'
+import { Route as PartnershipsRouteImport } from './routes/partnerships'
 import { Route as OpsRouteImport } from './routes/ops'
 import { Route as OpportunitiesRouteImport } from './routes/opportunities'
 import { Route as NotificationsRouteImport } from './routes/notifications'
@@ -138,6 +139,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const PortfolioRoute = PortfolioRouteImport.update({
   id: '/portfolio',
   path: '/portfolio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PartnershipsRoute = PartnershipsRouteImport.update({
+  id: '/partnerships',
+  path: '/partnerships',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OpsRoute = OpsRouteImport.update({
@@ -370,6 +376,7 @@ export interface FileRoutesByFullPath {
   '/notifications': typeof NotificationsRoute
   '/opportunities': typeof OpportunitiesRouteWithChildren
   '/ops': typeof OpsRoute
+  '/partnerships': typeof PartnershipsRoute
   '/portfolio': typeof PortfolioRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
@@ -427,6 +434,7 @@ export interface FileRoutesByTo {
   '/notifications': typeof NotificationsRoute
   '/opportunities': typeof OpportunitiesRouteWithChildren
   '/ops': typeof OpsRoute
+  '/partnerships': typeof PartnershipsRoute
   '/portfolio': typeof PortfolioRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
@@ -485,6 +493,7 @@ export interface FileRoutesById {
   '/notifications': typeof NotificationsRoute
   '/opportunities': typeof OpportunitiesRouteWithChildren
   '/ops': typeof OpsRoute
+  '/partnerships': typeof PartnershipsRoute
   '/portfolio': typeof PortfolioRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
@@ -544,6 +553,7 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/opportunities'
     | '/ops'
+    | '/partnerships'
     | '/portfolio'
     | '/privacy'
     | '/profile'
@@ -601,6 +611,7 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/opportunities'
     | '/ops'
+    | '/partnerships'
     | '/portfolio'
     | '/privacy'
     | '/profile'
@@ -658,6 +669,7 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/opportunities'
     | '/ops'
+    | '/partnerships'
     | '/portfolio'
     | '/privacy'
     | '/profile'
@@ -716,6 +728,7 @@ export interface RootRouteChildren {
   NotificationsRoute: typeof NotificationsRoute
   OpportunitiesRoute: typeof OpportunitiesRouteWithChildren
   OpsRoute: typeof OpsRoute
+  PartnershipsRoute: typeof PartnershipsRoute
   PortfolioRoute: typeof PortfolioRoute
   PrivacyRoute: typeof PrivacyRoute
   ProfileRoute: typeof ProfileRoute
@@ -844,6 +857,13 @@ declare module '@tanstack/react-router' {
       path: '/portfolio'
       fullPath: '/portfolio'
       preLoaderRoute: typeof PortfolioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/partnerships': {
+      id: '/partnerships'
+      path: '/partnerships'
+      fullPath: '/partnerships'
+      preLoaderRoute: typeof PartnershipsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ops': {
@@ -1230,6 +1250,7 @@ const rootRouteChildren: RootRouteChildren = {
   NotificationsRoute: NotificationsRoute,
   OpportunitiesRoute: OpportunitiesRouteWithChildren,
   OpsRoute: OpsRoute,
+  PartnershipsRoute: PartnershipsRoute,
   PortfolioRoute: PortfolioRoute,
   PrivacyRoute: PrivacyRoute,
   ProfileRoute: ProfileRoute,

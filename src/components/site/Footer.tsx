@@ -59,7 +59,7 @@ export function Footer() {
             <ul className="mt-3 space-y-2 text-sm text-primary-foreground/70">
               <li><Link to="/about" className="hover:text-primary-foreground">About</Link></li>
               <li><Link to="/contact" className="hover:text-primary-foreground">Contact</Link></li>
-              <li><Link to="/contact" className="hover:text-primary-foreground">Partnerships</Link></li>
+              <li><Link to="/partnerships" className="hover:text-primary-foreground">Partnerships</Link></li>
               <li><Link to={brand.supportUrl as "/support"} className="hover:text-primary-foreground">Support</Link></li>
               <li><Link to="/updates" className="hover:text-primary-foreground">Platform updates</Link></li>
               <li><Link to="/feedback" className="hover:text-primary-foreground">Feedback</Link></li>
