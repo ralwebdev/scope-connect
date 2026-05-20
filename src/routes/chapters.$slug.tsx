@@ -75,9 +75,9 @@ function ChapterPage() {
         </div>
       </section>
 
-      <ChapterStrip title="Active projects" items={activity.projects.map((p) => ({ title: p.title, sub: p.category, cover: p.cover }))} emptyHref="/projects" emptyLabel="Browse all projects" />
-      <ChapterStrip title="Active challenges" items={activity.challenges.map((c) => ({ title: c.title, sub: c.category, cover: c.cover }))} emptyHref="/challenges" emptyLabel="Browse all challenges" />
-      <ChapterStrip title="Opportunities" items={activity.opportunities.map((o) => ({ title: o.title, sub: o.category }))} emptyHref="/opportunities" emptyLabel="Browse all opportunities" />
+      <ChapterStrip title="Active projects" items={activity.projects.map((p: { title: string; category?: string; cover?: string }) => ({ title: p.title, sub: p.category, cover: p.cover }))} emptyHref="/projects" emptyLabel="Browse all projects" />
+      <ChapterStrip title="Active challenges" items={activity.challenges.map((c: { title: string; category?: string; cover?: string }) => ({ title: c.title, sub: c.category, cover: c.cover }))} emptyHref="/challenges" emptyLabel="Browse all challenges" />
+      <ChapterStrip title="Opportunities" items={activity.opportunities.map((o: { title: string; category?: string }) => ({ title: o.title, sub: o.category }))} emptyHref="/opportunities" emptyLabel="Browse all opportunities" />
 
       <FAQSection title={`About ${record.name} on Scope`} items={faqs} />
 

@@ -50,12 +50,16 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UHandleRouteImport } from './routes/u.$handle'
 import { Route as ScopeSuperAdminRbacAuditRouteImport } from './routes/scope-super-admin.rbac-audit'
+import { Route as ProjectsDomainRouteImport } from './routes/projects.$domain'
+import { Route as OpportunitiesDomainRouteImport } from './routes/opportunities.$domain'
 import { Route as InstitutionAdminMembersRouteImport } from './routes/institution-admin.members'
 import { Route as InstitutionAdminCommunicationsRouteImport } from './routes/institution-admin.communications'
 import { Route as InstitutionAdminAnalyticsRouteImport } from './routes/institution-admin.analytics'
 import { Route as GovernanceModerationRouteImport } from './routes/governance.moderation'
 import { Route as FormsFormSlugRouteImport } from './routes/forms.$formSlug'
 import { Route as DevBuildDiagnosticsRouteImport } from './routes/dev.build-diagnostics'
+import { Route as ChaptersSlugRouteImport } from './routes/chapters.$slug'
+import { Route as ChallengesDomainRouteImport } from './routes/challenges.$domain'
 import { Route as AdminConfigRouteImport } from './routes/admin.config'
 import { Route as AdminCampusesNewRouteImport } from './routes/admin.campuses.new'
 
@@ -265,6 +269,16 @@ const ScopeSuperAdminRbacAuditRoute =
     path: '/rbac-audit',
     getParentRoute: () => ScopeSuperAdminRoute,
   } as any)
+const ProjectsDomainRoute = ProjectsDomainRouteImport.update({
+  id: '/$domain',
+  path: '/$domain',
+  getParentRoute: () => ProjectsRoute,
+} as any)
+const OpportunitiesDomainRoute = OpportunitiesDomainRouteImport.update({
+  id: '/$domain',
+  path: '/$domain',
+  getParentRoute: () => OpportunitiesRoute,
+} as any)
 const InstitutionAdminMembersRoute = InstitutionAdminMembersRouteImport.update({
   id: '/members',
   path: '/members',
@@ -297,6 +311,16 @@ const DevBuildDiagnosticsRoute = DevBuildDiagnosticsRouteImport.update({
   path: '/dev/build-diagnostics',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ChaptersSlugRoute = ChaptersSlugRouteImport.update({
+  id: '/chapters/$slug',
+  path: '/chapters/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChallengesDomainRoute = ChallengesDomainRouteImport.update({
+  id: '/$domain',
+  path: '/$domain',
+  getParentRoute: () => ChallengesRoute,
+} as any)
 const AdminConfigRoute = AdminConfigRouteImport.update({
   id: '/config',
   path: '/config',
@@ -317,7 +341,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/campus': typeof CampusRoute
   '/campus-leader': typeof CampusLeaderRoute
-  '/challenges': typeof ChallengesRoute
+  '/challenges': typeof ChallengesRouteWithChildren
   '/community-guidelines': typeof CommunityGuidelinesRoute
   '/contact': typeof ContactRoute
   '/cookie-policy': typeof CookiePolicyRoute
@@ -331,12 +355,12 @@ export interface FileRoutesByFullPath {
   '/institution-admin': typeof InstitutionAdminRouteWithChildren
   '/leaderboards': typeof LeaderboardsRoute
   '/notifications': typeof NotificationsRoute
-  '/opportunities': typeof OpportunitiesRoute
+  '/opportunities': typeof OpportunitiesRouteWithChildren
   '/ops': typeof OpsRoute
   '/portfolio': typeof PortfolioRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
-  '/projects': typeof ProjectsRoute
+  '/projects': typeof ProjectsRouteWithChildren
   '/refer': typeof ReferRoute
   '/reporting': typeof ReportingRoute
   '/scope-admin': typeof ScopeAdminRoute
@@ -349,12 +373,16 @@ export interface FileRoutesByFullPath {
   '/updates': typeof UpdatesRoute
   '/waitlist': typeof WaitlistRoute
   '/admin/config': typeof AdminConfigRoute
+  '/challenges/$domain': typeof ChallengesDomainRoute
+  '/chapters/$slug': typeof ChaptersSlugRoute
   '/dev/build-diagnostics': typeof DevBuildDiagnosticsRoute
   '/forms/$formSlug': typeof FormsFormSlugRoute
   '/governance/moderation': typeof GovernanceModerationRoute
   '/institution-admin/analytics': typeof InstitutionAdminAnalyticsRoute
   '/institution-admin/communications': typeof InstitutionAdminCommunicationsRoute
   '/institution-admin/members': typeof InstitutionAdminMembersRoute
+  '/opportunities/$domain': typeof OpportunitiesDomainRoute
+  '/projects/$domain': typeof ProjectsDomainRoute
   '/scope-super-admin/rbac-audit': typeof ScopeSuperAdminRbacAuditRoute
   '/u/$handle': typeof UHandleRoute
   '/admin/campuses/new': typeof AdminCampusesNewRoute
@@ -368,7 +396,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/campus': typeof CampusRoute
   '/campus-leader': typeof CampusLeaderRoute
-  '/challenges': typeof ChallengesRoute
+  '/challenges': typeof ChallengesRouteWithChildren
   '/community-guidelines': typeof CommunityGuidelinesRoute
   '/contact': typeof ContactRoute
   '/cookie-policy': typeof CookiePolicyRoute
@@ -382,12 +410,12 @@ export interface FileRoutesByTo {
   '/institution-admin': typeof InstitutionAdminRouteWithChildren
   '/leaderboards': typeof LeaderboardsRoute
   '/notifications': typeof NotificationsRoute
-  '/opportunities': typeof OpportunitiesRoute
+  '/opportunities': typeof OpportunitiesRouteWithChildren
   '/ops': typeof OpsRoute
   '/portfolio': typeof PortfolioRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
-  '/projects': typeof ProjectsRoute
+  '/projects': typeof ProjectsRouteWithChildren
   '/refer': typeof ReferRoute
   '/reporting': typeof ReportingRoute
   '/scope-admin': typeof ScopeAdminRoute
@@ -400,12 +428,16 @@ export interface FileRoutesByTo {
   '/updates': typeof UpdatesRoute
   '/waitlist': typeof WaitlistRoute
   '/admin/config': typeof AdminConfigRoute
+  '/challenges/$domain': typeof ChallengesDomainRoute
+  '/chapters/$slug': typeof ChaptersSlugRoute
   '/dev/build-diagnostics': typeof DevBuildDiagnosticsRoute
   '/forms/$formSlug': typeof FormsFormSlugRoute
   '/governance/moderation': typeof GovernanceModerationRoute
   '/institution-admin/analytics': typeof InstitutionAdminAnalyticsRoute
   '/institution-admin/communications': typeof InstitutionAdminCommunicationsRoute
   '/institution-admin/members': typeof InstitutionAdminMembersRoute
+  '/opportunities/$domain': typeof OpportunitiesDomainRoute
+  '/projects/$domain': typeof ProjectsDomainRoute
   '/scope-super-admin/rbac-audit': typeof ScopeSuperAdminRbacAuditRoute
   '/u/$handle': typeof UHandleRoute
   '/admin/campuses/new': typeof AdminCampusesNewRoute
@@ -420,7 +452,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/campus': typeof CampusRoute
   '/campus-leader': typeof CampusLeaderRoute
-  '/challenges': typeof ChallengesRoute
+  '/challenges': typeof ChallengesRouteWithChildren
   '/community-guidelines': typeof CommunityGuidelinesRoute
   '/contact': typeof ContactRoute
   '/cookie-policy': typeof CookiePolicyRoute
@@ -434,12 +466,12 @@ export interface FileRoutesById {
   '/institution-admin': typeof InstitutionAdminRouteWithChildren
   '/leaderboards': typeof LeaderboardsRoute
   '/notifications': typeof NotificationsRoute
-  '/opportunities': typeof OpportunitiesRoute
+  '/opportunities': typeof OpportunitiesRouteWithChildren
   '/ops': typeof OpsRoute
   '/portfolio': typeof PortfolioRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
-  '/projects': typeof ProjectsRoute
+  '/projects': typeof ProjectsRouteWithChildren
   '/refer': typeof ReferRoute
   '/reporting': typeof ReportingRoute
   '/scope-admin': typeof ScopeAdminRoute
@@ -452,12 +484,16 @@ export interface FileRoutesById {
   '/updates': typeof UpdatesRoute
   '/waitlist': typeof WaitlistRoute
   '/admin/config': typeof AdminConfigRoute
+  '/challenges/$domain': typeof ChallengesDomainRoute
+  '/chapters/$slug': typeof ChaptersSlugRoute
   '/dev/build-diagnostics': typeof DevBuildDiagnosticsRoute
   '/forms/$formSlug': typeof FormsFormSlugRoute
   '/governance/moderation': typeof GovernanceModerationRoute
   '/institution-admin/analytics': typeof InstitutionAdminAnalyticsRoute
   '/institution-admin/communications': typeof InstitutionAdminCommunicationsRoute
   '/institution-admin/members': typeof InstitutionAdminMembersRoute
+  '/opportunities/$domain': typeof OpportunitiesDomainRoute
+  '/projects/$domain': typeof ProjectsDomainRoute
   '/scope-super-admin/rbac-audit': typeof ScopeSuperAdminRbacAuditRoute
   '/u/$handle': typeof UHandleRoute
   '/admin/campuses/new': typeof AdminCampusesNewRoute
@@ -505,12 +541,16 @@ export interface FileRouteTypes {
     | '/updates'
     | '/waitlist'
     | '/admin/config'
+    | '/challenges/$domain'
+    | '/chapters/$slug'
     | '/dev/build-diagnostics'
     | '/forms/$formSlug'
     | '/governance/moderation'
     | '/institution-admin/analytics'
     | '/institution-admin/communications'
     | '/institution-admin/members'
+    | '/opportunities/$domain'
+    | '/projects/$domain'
     | '/scope-super-admin/rbac-audit'
     | '/u/$handle'
     | '/admin/campuses/new'
@@ -556,12 +596,16 @@ export interface FileRouteTypes {
     | '/updates'
     | '/waitlist'
     | '/admin/config'
+    | '/challenges/$domain'
+    | '/chapters/$slug'
     | '/dev/build-diagnostics'
     | '/forms/$formSlug'
     | '/governance/moderation'
     | '/institution-admin/analytics'
     | '/institution-admin/communications'
     | '/institution-admin/members'
+    | '/opportunities/$domain'
+    | '/projects/$domain'
     | '/scope-super-admin/rbac-audit'
     | '/u/$handle'
     | '/admin/campuses/new'
@@ -607,12 +651,16 @@ export interface FileRouteTypes {
     | '/updates'
     | '/waitlist'
     | '/admin/config'
+    | '/challenges/$domain'
+    | '/chapters/$slug'
     | '/dev/build-diagnostics'
     | '/forms/$formSlug'
     | '/governance/moderation'
     | '/institution-admin/analytics'
     | '/institution-admin/communications'
     | '/institution-admin/members'
+    | '/opportunities/$domain'
+    | '/projects/$domain'
     | '/scope-super-admin/rbac-audit'
     | '/u/$handle'
     | '/admin/campuses/new'
@@ -627,7 +675,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CampusRoute: typeof CampusRoute
   CampusLeaderRoute: typeof CampusLeaderRoute
-  ChallengesRoute: typeof ChallengesRoute
+  ChallengesRoute: typeof ChallengesRouteWithChildren
   CommunityGuidelinesRoute: typeof CommunityGuidelinesRoute
   ContactRoute: typeof ContactRoute
   CookiePolicyRoute: typeof CookiePolicyRoute
@@ -641,12 +689,12 @@ export interface RootRouteChildren {
   InstitutionAdminRoute: typeof InstitutionAdminRouteWithChildren
   LeaderboardsRoute: typeof LeaderboardsRoute
   NotificationsRoute: typeof NotificationsRoute
-  OpportunitiesRoute: typeof OpportunitiesRoute
+  OpportunitiesRoute: typeof OpportunitiesRouteWithChildren
   OpsRoute: typeof OpsRoute
   PortfolioRoute: typeof PortfolioRoute
   PrivacyRoute: typeof PrivacyRoute
   ProfileRoute: typeof ProfileRoute
-  ProjectsRoute: typeof ProjectsRoute
+  ProjectsRoute: typeof ProjectsRouteWithChildren
   ReferRoute: typeof ReferRoute
   ReportingRoute: typeof ReportingRoute
   ScopeAdminRoute: typeof ScopeAdminRoute
@@ -658,6 +706,7 @@ export interface RootRouteChildren {
   UnauthorizedRoute: typeof UnauthorizedRoute
   UpdatesRoute: typeof UpdatesRoute
   WaitlistRoute: typeof WaitlistRoute
+  ChaptersSlugRoute: typeof ChaptersSlugRoute
   DevBuildDiagnosticsRoute: typeof DevBuildDiagnosticsRoute
   FormsFormSlugRoute: typeof FormsFormSlugRoute
   GovernanceModerationRoute: typeof GovernanceModerationRoute
@@ -953,6 +1002,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ScopeSuperAdminRbacAuditRouteImport
       parentRoute: typeof ScopeSuperAdminRoute
     }
+    '/projects/$domain': {
+      id: '/projects/$domain'
+      path: '/$domain'
+      fullPath: '/projects/$domain'
+      preLoaderRoute: typeof ProjectsDomainRouteImport
+      parentRoute: typeof ProjectsRoute
+    }
+    '/opportunities/$domain': {
+      id: '/opportunities/$domain'
+      path: '/$domain'
+      fullPath: '/opportunities/$domain'
+      preLoaderRoute: typeof OpportunitiesDomainRouteImport
+      parentRoute: typeof OpportunitiesRoute
+    }
     '/institution-admin/members': {
       id: '/institution-admin/members'
       path: '/members'
@@ -995,6 +1058,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DevBuildDiagnosticsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/chapters/$slug': {
+      id: '/chapters/$slug'
+      path: '/chapters/$slug'
+      fullPath: '/chapters/$slug'
+      preLoaderRoute: typeof ChaptersSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/challenges/$domain': {
+      id: '/challenges/$domain'
+      path: '/$domain'
+      fullPath: '/challenges/$domain'
+      preLoaderRoute: typeof ChallengesDomainRouteImport
+      parentRoute: typeof ChallengesRoute
+    }
     '/admin/config': {
       id: '/admin/config'
       path: '/config'
@@ -1024,6 +1101,18 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface ChallengesRouteChildren {
+  ChallengesDomainRoute: typeof ChallengesDomainRoute
+}
+
+const ChallengesRouteChildren: ChallengesRouteChildren = {
+  ChallengesDomainRoute: ChallengesDomainRoute,
+}
+
+const ChallengesRouteWithChildren = ChallengesRoute._addFileChildren(
+  ChallengesRouteChildren,
+)
+
 interface InstitutionAdminRouteChildren {
   InstitutionAdminAnalyticsRoute: typeof InstitutionAdminAnalyticsRoute
   InstitutionAdminCommunicationsRoute: typeof InstitutionAdminCommunicationsRoute
@@ -1038,6 +1127,30 @@ const InstitutionAdminRouteChildren: InstitutionAdminRouteChildren = {
 
 const InstitutionAdminRouteWithChildren =
   InstitutionAdminRoute._addFileChildren(InstitutionAdminRouteChildren)
+
+interface OpportunitiesRouteChildren {
+  OpportunitiesDomainRoute: typeof OpportunitiesDomainRoute
+}
+
+const OpportunitiesRouteChildren: OpportunitiesRouteChildren = {
+  OpportunitiesDomainRoute: OpportunitiesDomainRoute,
+}
+
+const OpportunitiesRouteWithChildren = OpportunitiesRoute._addFileChildren(
+  OpportunitiesRouteChildren,
+)
+
+interface ProjectsRouteChildren {
+  ProjectsDomainRoute: typeof ProjectsDomainRoute
+}
+
+const ProjectsRouteChildren: ProjectsRouteChildren = {
+  ProjectsDomainRoute: ProjectsDomainRoute,
+}
+
+const ProjectsRouteWithChildren = ProjectsRoute._addFileChildren(
+  ProjectsRouteChildren,
+)
 
 interface ScopeSuperAdminRouteChildren {
   ScopeSuperAdminRbacAuditRoute: typeof ScopeSuperAdminRbacAuditRoute
@@ -1060,7 +1173,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CampusRoute: CampusRoute,
   CampusLeaderRoute: CampusLeaderRoute,
-  ChallengesRoute: ChallengesRoute,
+  ChallengesRoute: ChallengesRouteWithChildren,
   CommunityGuidelinesRoute: CommunityGuidelinesRoute,
   ContactRoute: ContactRoute,
   CookiePolicyRoute: CookiePolicyRoute,
@@ -1074,12 +1187,12 @@ const rootRouteChildren: RootRouteChildren = {
   InstitutionAdminRoute: InstitutionAdminRouteWithChildren,
   LeaderboardsRoute: LeaderboardsRoute,
   NotificationsRoute: NotificationsRoute,
-  OpportunitiesRoute: OpportunitiesRoute,
+  OpportunitiesRoute: OpportunitiesRouteWithChildren,
   OpsRoute: OpsRoute,
   PortfolioRoute: PortfolioRoute,
   PrivacyRoute: PrivacyRoute,
   ProfileRoute: ProfileRoute,
-  ProjectsRoute: ProjectsRoute,
+  ProjectsRoute: ProjectsRouteWithChildren,
   ReferRoute: ReferRoute,
   ReportingRoute: ReportingRoute,
   ScopeAdminRoute: ScopeAdminRoute,
@@ -1091,6 +1204,7 @@ const rootRouteChildren: RootRouteChildren = {
   UnauthorizedRoute: UnauthorizedRoute,
   UpdatesRoute: UpdatesRoute,
   WaitlistRoute: WaitlistRoute,
+  ChaptersSlugRoute: ChaptersSlugRoute,
   DevBuildDiagnosticsRoute: DevBuildDiagnosticsRoute,
   FormsFormSlugRoute: FormsFormSlugRoute,
   GovernanceModerationRoute: GovernanceModerationRoute,
