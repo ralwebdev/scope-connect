@@ -10,13 +10,19 @@ import { opportunities } from "@/lib/scope-store";
 import { toast } from "sonner";
 import { CreateContentButton } from "@/components/governance/CreateContentButton";
 import { PublishedStrip } from "@/components/governance/PublishedStrip";
+import { AEO, faqJsonLdScript } from "@/lib/aeo-content";
 
 export const Route = createFileRoute("/opportunities")({
   head: () => ({
     meta: [
       { title: "Opportunities — Scope Connect" },
-      { name: "description", content: "Find collaborations, co-founders, internships and gigs across India's campus network." },
+      { name: "description", content: "Internships, collaborations and institution-supported growth pathways from India's student innovation ecosystem." },
+      { property: "og:title", content: "Opportunities — Scope Connect" },
+      { property: "og:description", content: "Internships, collaborations and institution-supported growth pathways from India's student innovation ecosystem." },
+      { property: "og:url", content: "/opportunities" },
     ],
+    links: [{ rel: "canonical", href: "/opportunities" }],
+    scripts: [faqJsonLdScript(AEO.opportunities.faqs)],
   }),
   component: () => <AuthGate><OpportunitiesPage /></AuthGate>,
 });

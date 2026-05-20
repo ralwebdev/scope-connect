@@ -26,13 +26,19 @@ import { analytics } from "@/lib/analytics";
 import { toast } from "sonner";
 import { CreateContentButton } from "@/components/governance/CreateContentButton";
 import { PublishedStrip } from "@/components/governance/PublishedStrip";
+import { AEO, faqJsonLdScript } from "@/lib/aeo-content";
 
 export const Route = createFileRoute("/projects")({
   head: () => ({
     meta: [
-      { title: "Projects & Opportunities — Scope Connect" },
-      { name: "description", content: "Curated live challenges, campus opportunities and open builds — launched by Scope." },
+      { title: "Projects — Scope Connect" },
+      { name: "description", content: "Execution-based, proof-of-work student projects from India's student innovation ecosystem." },
+      { property: "og:title", content: "Projects — Scope Connect" },
+      { property: "og:description", content: "Execution-based, proof-of-work student projects from India's student innovation ecosystem." },
+      { property: "og:url", content: "/projects" },
     ],
+    links: [{ rel: "canonical", href: "/projects" }],
+    scripts: [faqJsonLdScript(AEO.projects.faqs)],
   }),
   component: ProjectsPage,
 });

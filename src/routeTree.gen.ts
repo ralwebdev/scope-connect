@@ -30,6 +30,7 @@ import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LeaderboardsRouteImport } from './routes/leaderboards'
 import { Route as InstitutionAdminRouteImport } from './routes/institution-admin'
 import { Route as InnovationLabRouteImport } from './routes/innovation-lab'
+import { Route as GlossaryRouteImport } from './routes/glossary'
 import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as FeedRouteImport } from './routes/feed'
 import { Route as FaqsRouteImport } from './routes/faqs'
@@ -166,6 +167,11 @@ const InstitutionAdminRoute = InstitutionAdminRouteImport.update({
 const InnovationLabRoute = InnovationLabRouteImport.update({
   id: '/innovation-lab',
   path: '/innovation-lab',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GlossaryRoute = GlossaryRouteImport.update({
+  id: '/glossary',
+  path: '/glossary',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FeedbackRoute = FeedbackRouteImport.update({
@@ -351,6 +357,7 @@ export interface FileRoutesByFullPath {
   '/faqs': typeof FaqsRoute
   '/feed': typeof FeedRoute
   '/feedback': typeof FeedbackRoute
+  '/glossary': typeof GlossaryRoute
   '/innovation-lab': typeof InnovationLabRoute
   '/institution-admin': typeof InstitutionAdminRouteWithChildren
   '/leaderboards': typeof LeaderboardsRoute
@@ -406,6 +413,7 @@ export interface FileRoutesByTo {
   '/faqs': typeof FaqsRoute
   '/feed': typeof FeedRoute
   '/feedback': typeof FeedbackRoute
+  '/glossary': typeof GlossaryRoute
   '/innovation-lab': typeof InnovationLabRoute
   '/institution-admin': typeof InstitutionAdminRouteWithChildren
   '/leaderboards': typeof LeaderboardsRoute
@@ -462,6 +470,7 @@ export interface FileRoutesById {
   '/faqs': typeof FaqsRoute
   '/feed': typeof FeedRoute
   '/feedback': typeof FeedbackRoute
+  '/glossary': typeof GlossaryRoute
   '/innovation-lab': typeof InnovationLabRoute
   '/institution-admin': typeof InstitutionAdminRouteWithChildren
   '/leaderboards': typeof LeaderboardsRoute
@@ -519,6 +528,7 @@ export interface FileRouteTypes {
     | '/faqs'
     | '/feed'
     | '/feedback'
+    | '/glossary'
     | '/innovation-lab'
     | '/institution-admin'
     | '/leaderboards'
@@ -574,6 +584,7 @@ export interface FileRouteTypes {
     | '/faqs'
     | '/feed'
     | '/feedback'
+    | '/glossary'
     | '/innovation-lab'
     | '/institution-admin'
     | '/leaderboards'
@@ -629,6 +640,7 @@ export interface FileRouteTypes {
     | '/faqs'
     | '/feed'
     | '/feedback'
+    | '/glossary'
     | '/innovation-lab'
     | '/institution-admin'
     | '/leaderboards'
@@ -685,6 +697,7 @@ export interface RootRouteChildren {
   FaqsRoute: typeof FaqsRoute
   FeedRoute: typeof FeedRoute
   FeedbackRoute: typeof FeedbackRoute
+  GlossaryRoute: typeof GlossaryRoute
   InnovationLabRoute: typeof InnovationLabRoute
   InstitutionAdminRoute: typeof InstitutionAdminRouteWithChildren
   LeaderboardsRoute: typeof LeaderboardsRoute
@@ -860,6 +873,13 @@ declare module '@tanstack/react-router' {
       path: '/innovation-lab'
       fullPath: '/innovation-lab'
       preLoaderRoute: typeof InnovationLabRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/glossary': {
+      id: '/glossary'
+      path: '/glossary'
+      fullPath: '/glossary'
+      preLoaderRoute: typeof GlossaryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/feedback': {
@@ -1183,6 +1203,7 @@ const rootRouteChildren: RootRouteChildren = {
   FaqsRoute: FaqsRoute,
   FeedRoute: FeedRoute,
   FeedbackRoute: FeedbackRoute,
+  GlossaryRoute: GlossaryRoute,
   InnovationLabRoute: InnovationLabRoute,
   InstitutionAdminRoute: InstitutionAdminRouteWithChildren,
   LeaderboardsRoute: LeaderboardsRoute,

@@ -12,15 +12,19 @@ import { topChapters } from "@/lib/mock-data";
 import { toast } from "sonner";
 import { CreateContentButton } from "@/components/governance/CreateContentButton";
 import { PublishedStrip } from "@/components/governance/PublishedStrip";
+import { AEO, faqJsonLdScript } from "@/lib/aeo-content";
 
 export const Route = createFileRoute("/challenges")({
   head: () => ({
     meta: [
-      { title: "Challenges & Chapter Wars — Scope Connect" },
-      { name: "description", content: "Weekly builder challenges, XP bounties and chapter wars across India's campus network." },
-      { property: "og:title", content: "Challenges & Chapter Wars — Scope Connect" },
-      { property: "og:description", content: "Weekly builder challenges, XP bounties and chapter wars across India's campus network." },
+      { title: "Challenges — Scope Connect" },
+      { name: "description", content: "Skill-focused execution challenges and chapter wars across India's student innovation ecosystem." },
+      { property: "og:title", content: "Challenges — Scope Connect" },
+      { property: "og:description", content: "Skill-focused execution challenges and chapter wars across India's student innovation ecosystem." },
+      { property: "og:url", content: "/challenges" },
     ],
+    links: [{ rel: "canonical", href: "/challenges" }],
+    scripts: [faqJsonLdScript(AEO.challenges.faqs)],
   }),
   component: () => <AuthGate><ChallengesPage /></AuthGate>,
 });
