@@ -122,7 +122,18 @@ function ChapterPage() {
         </div>
       </section>
 
+      <AnswerBlock
+        block={{ ...AEO.chapters.answer, heading: `What is the ${record.name} chapter?` }}
+        citations={[
+          ...(record.city ? [{ label: "Location", value: `${record.city}, India` }] : []),
+          { label: "Active projects", value: String(activity.stats.projectCount) },
+          { label: "Active challenges", value: String(activity.stats.challengeCount) },
+          ...(AEO.chapters.citations ?? []),
+        ]}
+      />
+
       <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+
         <div className="grid gap-4 sm:grid-cols-3">
           <Stat label="Active projects" value={activity.stats.projectCount} />
           <Stat label="Live challenges" value={activity.stats.challengeCount} />
