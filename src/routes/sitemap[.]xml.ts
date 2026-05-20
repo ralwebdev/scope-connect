@@ -21,6 +21,7 @@ const STATIC_ENTRIES: Entry[] = [
   { path: "/opportunities", priority: "0.7", changefreq: "weekly" },
   { path: "/community-guidelines", priority: "0.6", changefreq: "monthly" },
   { path: "/support", priority: "0.6", changefreq: "monthly" },
+  { path: "/glossary", priority: "0.6", changefreq: "monthly" },
 ];
 
 function classify(path: string): Entry {
