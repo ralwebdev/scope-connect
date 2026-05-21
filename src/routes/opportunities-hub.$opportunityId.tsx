@@ -54,7 +54,7 @@ function OpportunityDetailPage() {
     userDepartment: undefined,
     userSkills: [],
     userXp: xp,
-    userXpLevel: level?.level ?? 1,
+    userXpLevel: levelOrdinal(level?.name),
     userReliability: 75,
     userProjectsCompleted: 2,
     userAverageContribution: 70,
