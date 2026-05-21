@@ -32,6 +32,12 @@ export const Route = createFileRoute("/opportunities-hub/$opportunityId")({
   component: OpportunityDetailPage,
 });
 
+const LEVEL_TIERS = ["Explorer", "Builder", "Innovator", "Leader", "Ambassador", "Legend"];
+function levelOrdinal(name?: string): number {
+  const i = name ? LEVEL_TIERS.indexOf(name) : -1;
+  return i < 0 ? 1 : i + 1;
+}
+
 function OpportunityDetailPage() {
   const { opportunityId } = Route.useParams();
   const navigate = useNavigate();
