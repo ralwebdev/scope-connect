@@ -439,20 +439,25 @@ export const execReporting = {
       const band = bandForScore(score);
 
       const existing = execReporting.scores.forParticipant(participantId);
+      const finalScore = Math.max(0, Math.min(100, score));
+      const sameAsExisting = existing
+        && existing.score === finalScore
+        && existing.band === band
+        && existing.components.deliverables === deliverables
+        && existing.components.reportingConsistency === reportingConsistency
+        && existing.components.peer === peer
+        && existing.components.mentor === mentor
+        && existing.components.engagement === engagement;
+      if (sameAsExisting && existing) return existing;
+
       const record: ExecContributionScore = {
         id: existing?.id ?? uid("cs"),
         projectId: part.projectId,
         participantId,
         userId: part.userId,
-        score: Math.max(0, Math.min(100, score)),
+        score: finalScore,
         band,
-        components: {
-          deliverables,
-          reportingConsistency,
-          peer,
-          mentor,
-          engagement,
-        },
+        components: { deliverables, reportingConsistency, peer, mentor, engagement },
         updatedAt: Date.now(),
       };
       const all = execReporting.scores.all();
