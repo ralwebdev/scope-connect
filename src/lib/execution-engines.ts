@@ -145,9 +145,13 @@ export const reliabilityEngine = {
 
 /* --------------------- Contribution Scoring -------------------------- */
 
+export type ContributionComponents = {
+  reporting: number; tasks: number; peer: number; mentor: number; deadline: number;
+};
+
 export const contributionScoringEngine = {
   /** Compute a 0..100 weighted score from sub-components. */
-  compute(components: { reporting: number; tasks: number; peer: number; mentor: number; deadline: number }): number {
+  compute(components: ContributionComponents): number {
     const w = { reporting: 0.25, tasks: 0.3, peer: 0.15, mentor: 0.15, deadline: 0.15 };
     const total =
       components.reporting * w.reporting +
@@ -158,7 +162,7 @@ export const contributionScoringEngine = {
     return Math.max(0, Math.min(100, Math.round(total)));
   },
 
-  upsert(input: { projectId: ID; userId: ID; components: Parameters<typeof contributionScoringEngine.compute>[0] }) {
+  upsert(input: { projectId: ID; userId: ID; components: ContributionComponents }) {
     const score = contributionScoringEngine.compute(input.components);
     return execution.contributions.upsert({
       projectId: input.projectId,
