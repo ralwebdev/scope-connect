@@ -20,7 +20,7 @@ import {
   type EligibilityContext,
   type ApplicationStatus,
 } from "@/lib/opportunity-engine-store";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/opportunities-hub/$opportunityId")({
   head: () => ({
