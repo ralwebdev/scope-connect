@@ -116,7 +116,12 @@ function ProjectDetail({ project }: { project: ExecutionProject }) {
                 <OverviewPanel project={project} />
               </TabsContent>
               <TabsContent value="room" className="mt-4 space-y-4">
-                <RoomPanel project={project} participants={participants} rooms={rooms} />
+                <RoomPanel
+                  project={project}
+                  participants={participants}
+                  rooms={rooms}
+                  actor={user ? { id: user.id, name: user.name ?? user.email ?? "User", role, isTemporaryCoordinator: isCoordinator } : null}
+                />
               </TabsContent>
               <TabsContent value="tasks" className="mt-4 space-y-4">
                 <TasksPanel
