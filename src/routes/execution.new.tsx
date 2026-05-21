@@ -78,7 +78,7 @@ function NewExecutionProjectPage() {
   if (!canCreateProject(role)) {
     return (
       <AppShell>
-        <AccessDenied requiredRoleLabel="Faculty Coordinator, Institutional Admin, Scope Admin or Super Admin" />
+        <AccessDenied role={role} title="Project creation restricted" message="Only Faculty Coordinators, Institutional Admins, Scope Admins or Super Admins can create execution projects." />
       </AppShell>
     );
   }

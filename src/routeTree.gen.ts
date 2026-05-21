@@ -36,6 +36,7 @@ import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as FeedRouteImport } from './routes/feed'
 import { Route as FaqsRouteImport } from './routes/faqs'
 import { Route as FacultyRouteImport } from './routes/faculty'
+import { Route as ExecutionRouteImport } from './routes/execution'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CookiePolicyRouteImport } from './routes/cookie-policy'
@@ -59,6 +60,8 @@ import { Route as InstitutionAdminCommunicationsRouteImport } from './routes/ins
 import { Route as InstitutionAdminAnalyticsRouteImport } from './routes/institution-admin.analytics'
 import { Route as GovernanceModerationRouteImport } from './routes/governance.moderation'
 import { Route as FormsFormSlugRouteImport } from './routes/forms.$formSlug'
+import { Route as ExecutionNewRouteImport } from './routes/execution.new'
+import { Route as ExecutionProjectIdRouteImport } from './routes/execution.$projectId'
 import { Route as DevSeoQaRouteImport } from './routes/dev.seo-qa'
 import { Route as DevBuildDiagnosticsRouteImport } from './routes/dev.build-diagnostics'
 import { Route as ChaptersSlugRouteImport } from './routes/chapters.$slug'
@@ -201,6 +204,11 @@ const FacultyRoute = FacultyRouteImport.update({
   path: '/faculty',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ExecutionRoute = ExecutionRouteImport.update({
+  id: '/execution',
+  path: '/execution',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EventsRoute = EventsRouteImport.update({
   id: '/events',
   path: '/events',
@@ -319,6 +327,16 @@ const FormsFormSlugRoute = FormsFormSlugRouteImport.update({
   path: '/forms/$formSlug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ExecutionNewRoute = ExecutionNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => ExecutionRoute,
+} as any)
+const ExecutionProjectIdRoute = ExecutionProjectIdRouteImport.update({
+  id: '/$projectId',
+  path: '/$projectId',
+  getParentRoute: () => ExecutionRoute,
+} as any)
 const DevSeoQaRoute = DevSeoQaRouteImport.update({
   id: '/dev/seo-qa',
   path: '/dev/seo-qa',
@@ -365,6 +383,7 @@ export interface FileRoutesByFullPath {
   '/cookie-policy': typeof CookiePolicyRoute
   '/dashboard': typeof DashboardRoute
   '/events': typeof EventsRoute
+  '/execution': typeof ExecutionRouteWithChildren
   '/faculty': typeof FacultyRoute
   '/faqs': typeof FaqsRoute
   '/feed': typeof FeedRoute
@@ -397,6 +416,8 @@ export interface FileRoutesByFullPath {
   '/chapters/$slug': typeof ChaptersSlugRoute
   '/dev/build-diagnostics': typeof DevBuildDiagnosticsRoute
   '/dev/seo-qa': typeof DevSeoQaRoute
+  '/execution/$projectId': typeof ExecutionProjectIdRoute
+  '/execution/new': typeof ExecutionNewRoute
   '/forms/$formSlug': typeof FormsFormSlugRoute
   '/governance/moderation': typeof GovernanceModerationRoute
   '/institution-admin/analytics': typeof InstitutionAdminAnalyticsRoute
@@ -423,6 +444,7 @@ export interface FileRoutesByTo {
   '/cookie-policy': typeof CookiePolicyRoute
   '/dashboard': typeof DashboardRoute
   '/events': typeof EventsRoute
+  '/execution': typeof ExecutionRouteWithChildren
   '/faculty': typeof FacultyRoute
   '/faqs': typeof FaqsRoute
   '/feed': typeof FeedRoute
@@ -455,6 +477,8 @@ export interface FileRoutesByTo {
   '/chapters/$slug': typeof ChaptersSlugRoute
   '/dev/build-diagnostics': typeof DevBuildDiagnosticsRoute
   '/dev/seo-qa': typeof DevSeoQaRoute
+  '/execution/$projectId': typeof ExecutionProjectIdRoute
+  '/execution/new': typeof ExecutionNewRoute
   '/forms/$formSlug': typeof FormsFormSlugRoute
   '/governance/moderation': typeof GovernanceModerationRoute
   '/institution-admin/analytics': typeof InstitutionAdminAnalyticsRoute
@@ -482,6 +506,7 @@ export interface FileRoutesById {
   '/cookie-policy': typeof CookiePolicyRoute
   '/dashboard': typeof DashboardRoute
   '/events': typeof EventsRoute
+  '/execution': typeof ExecutionRouteWithChildren
   '/faculty': typeof FacultyRoute
   '/faqs': typeof FaqsRoute
   '/feed': typeof FeedRoute
@@ -514,6 +539,8 @@ export interface FileRoutesById {
   '/chapters/$slug': typeof ChaptersSlugRoute
   '/dev/build-diagnostics': typeof DevBuildDiagnosticsRoute
   '/dev/seo-qa': typeof DevSeoQaRoute
+  '/execution/$projectId': typeof ExecutionProjectIdRoute
+  '/execution/new': typeof ExecutionNewRoute
   '/forms/$formSlug': typeof FormsFormSlugRoute
   '/governance/moderation': typeof GovernanceModerationRoute
   '/institution-admin/analytics': typeof InstitutionAdminAnalyticsRoute
@@ -542,6 +569,7 @@ export interface FileRouteTypes {
     | '/cookie-policy'
     | '/dashboard'
     | '/events'
+    | '/execution'
     | '/faculty'
     | '/faqs'
     | '/feed'
@@ -574,6 +602,8 @@ export interface FileRouteTypes {
     | '/chapters/$slug'
     | '/dev/build-diagnostics'
     | '/dev/seo-qa'
+    | '/execution/$projectId'
+    | '/execution/new'
     | '/forms/$formSlug'
     | '/governance/moderation'
     | '/institution-admin/analytics'
@@ -600,6 +630,7 @@ export interface FileRouteTypes {
     | '/cookie-policy'
     | '/dashboard'
     | '/events'
+    | '/execution'
     | '/faculty'
     | '/faqs'
     | '/feed'
@@ -632,6 +663,8 @@ export interface FileRouteTypes {
     | '/chapters/$slug'
     | '/dev/build-diagnostics'
     | '/dev/seo-qa'
+    | '/execution/$projectId'
+    | '/execution/new'
     | '/forms/$formSlug'
     | '/governance/moderation'
     | '/institution-admin/analytics'
@@ -658,6 +691,7 @@ export interface FileRouteTypes {
     | '/cookie-policy'
     | '/dashboard'
     | '/events'
+    | '/execution'
     | '/faculty'
     | '/faqs'
     | '/feed'
@@ -690,6 +724,8 @@ export interface FileRouteTypes {
     | '/chapters/$slug'
     | '/dev/build-diagnostics'
     | '/dev/seo-qa'
+    | '/execution/$projectId'
+    | '/execution/new'
     | '/forms/$formSlug'
     | '/governance/moderation'
     | '/institution-admin/analytics'
@@ -717,6 +753,7 @@ export interface RootRouteChildren {
   CookiePolicyRoute: typeof CookiePolicyRoute
   DashboardRoute: typeof DashboardRoute
   EventsRoute: typeof EventsRoute
+  ExecutionRoute: typeof ExecutionRouteWithChildren
   FacultyRoute: typeof FacultyRoute
   FaqsRoute: typeof FaqsRoute
   FeedRoute: typeof FeedRoute
@@ -943,6 +980,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FacultyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/execution': {
+      id: '/execution'
+      path: '/execution'
+      fullPath: '/execution'
+      preLoaderRoute: typeof ExecutionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/events': {
       id: '/events'
       path: '/events'
@@ -1104,6 +1148,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FormsFormSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/execution/new': {
+      id: '/execution/new'
+      path: '/new'
+      fullPath: '/execution/new'
+      preLoaderRoute: typeof ExecutionNewRouteImport
+      parentRoute: typeof ExecutionRoute
+    }
+    '/execution/$projectId': {
+      id: '/execution/$projectId'
+      path: '/$projectId'
+      fullPath: '/execution/$projectId'
+      preLoaderRoute: typeof ExecutionProjectIdRouteImport
+      parentRoute: typeof ExecutionRoute
+    }
     '/dev/seo-qa': {
       id: '/dev/seo-qa'
       path: '/dev/seo-qa'
@@ -1173,6 +1231,20 @@ const ChallengesRouteWithChildren = ChallengesRoute._addFileChildren(
   ChallengesRouteChildren,
 )
 
+interface ExecutionRouteChildren {
+  ExecutionProjectIdRoute: typeof ExecutionProjectIdRoute
+  ExecutionNewRoute: typeof ExecutionNewRoute
+}
+
+const ExecutionRouteChildren: ExecutionRouteChildren = {
+  ExecutionProjectIdRoute: ExecutionProjectIdRoute,
+  ExecutionNewRoute: ExecutionNewRoute,
+}
+
+const ExecutionRouteWithChildren = ExecutionRoute._addFileChildren(
+  ExecutionRouteChildren,
+)
+
 interface InstitutionAdminRouteChildren {
   InstitutionAdminAnalyticsRoute: typeof InstitutionAdminAnalyticsRoute
   InstitutionAdminCommunicationsRoute: typeof InstitutionAdminCommunicationsRoute
@@ -1239,6 +1311,7 @@ const rootRouteChildren: RootRouteChildren = {
   CookiePolicyRoute: CookiePolicyRoute,
   DashboardRoute: DashboardRoute,
   EventsRoute: EventsRoute,
+  ExecutionRoute: ExecutionRouteWithChildren,
   FacultyRoute: FacultyRoute,
   FaqsRoute: FaqsRoute,
   FeedRoute: FeedRoute,
