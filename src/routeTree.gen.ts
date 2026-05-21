@@ -26,6 +26,7 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PortfolioRouteImport } from './routes/portfolio'
 import { Route as PartnershipsRouteImport } from './routes/partnerships'
 import { Route as OpsRouteImport } from './routes/ops'
+import { Route as OpportunitiesHubRouteImport } from './routes/opportunities-hub'
 import { Route as OpportunitiesRouteImport } from './routes/opportunities'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LeaderboardsRouteImport } from './routes/leaderboards'
@@ -56,6 +57,8 @@ import { Route as UHandleRouteImport } from './routes/u.$handle'
 import { Route as ScopeSuperAdminRbacAuditRouteImport } from './routes/scope-super-admin.rbac-audit'
 import { Route as ProjectsDomainRouteImport } from './routes/projects.$domain'
 import { Route as OpportunitiesDomainRouteImport } from './routes/opportunities.$domain'
+import { Route as OpportunitiesHubNewRouteImport } from './routes/opportunities-hub.new'
+import { Route as OpportunitiesHubOpportunityIdRouteImport } from './routes/opportunities-hub.$opportunityId'
 import { Route as InstitutionAdminMembersRouteImport } from './routes/institution-admin.members'
 import { Route as InstitutionAdminCommunicationsRouteImport } from './routes/institution-admin.communications'
 import { Route as InstitutionAdminAnalyticsRouteImport } from './routes/institution-admin.analytics'
@@ -155,6 +158,11 @@ const PartnershipsRoute = PartnershipsRouteImport.update({
 const OpsRoute = OpsRouteImport.update({
   id: '/ops',
   path: '/ops',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OpportunitiesHubRoute = OpportunitiesHubRouteImport.update({
+  id: '/opportunities-hub',
+  path: '/opportunities-hub',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OpportunitiesRoute = OpportunitiesRouteImport.update({
@@ -308,6 +316,17 @@ const OpportunitiesDomainRoute = OpportunitiesDomainRouteImport.update({
   path: '/$domain',
   getParentRoute: () => OpportunitiesRoute,
 } as any)
+const OpportunitiesHubNewRoute = OpportunitiesHubNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => OpportunitiesHubRoute,
+} as any)
+const OpportunitiesHubOpportunityIdRoute =
+  OpportunitiesHubOpportunityIdRouteImport.update({
+    id: '/$opportunityId',
+    path: '/$opportunityId',
+    getParentRoute: () => OpportunitiesHubRoute,
+  } as any)
 const InstitutionAdminMembersRoute = InstitutionAdminMembersRouteImport.update({
   id: '/members',
   path: '/members',
@@ -414,6 +433,7 @@ export interface FileRoutesByFullPath {
   '/leaderboards': typeof LeaderboardsRoute
   '/notifications': typeof NotificationsRoute
   '/opportunities': typeof OpportunitiesRouteWithChildren
+  '/opportunities-hub': typeof OpportunitiesHubRouteWithChildren
   '/ops': typeof OpsRoute
   '/partnerships': typeof PartnershipsRoute
   '/portfolio': typeof PortfolioRoute
@@ -445,6 +465,8 @@ export interface FileRoutesByFullPath {
   '/institution-admin/analytics': typeof InstitutionAdminAnalyticsRoute
   '/institution-admin/communications': typeof InstitutionAdminCommunicationsRoute
   '/institution-admin/members': typeof InstitutionAdminMembersRoute
+  '/opportunities-hub/$opportunityId': typeof OpportunitiesHubOpportunityIdRoute
+  '/opportunities-hub/new': typeof OpportunitiesHubNewRoute
   '/opportunities/$domain': typeof OpportunitiesDomainRoute
   '/projects/$domain': typeof ProjectsDomainRoute
   '/scope-super-admin/rbac-audit': typeof ScopeSuperAdminRbacAuditRoute
@@ -478,6 +500,7 @@ export interface FileRoutesByTo {
   '/leaderboards': typeof LeaderboardsRoute
   '/notifications': typeof NotificationsRoute
   '/opportunities': typeof OpportunitiesRouteWithChildren
+  '/opportunities-hub': typeof OpportunitiesHubRouteWithChildren
   '/ops': typeof OpsRoute
   '/partnerships': typeof PartnershipsRoute
   '/portfolio': typeof PortfolioRoute
@@ -509,6 +532,8 @@ export interface FileRoutesByTo {
   '/institution-admin/analytics': typeof InstitutionAdminAnalyticsRoute
   '/institution-admin/communications': typeof InstitutionAdminCommunicationsRoute
   '/institution-admin/members': typeof InstitutionAdminMembersRoute
+  '/opportunities-hub/$opportunityId': typeof OpportunitiesHubOpportunityIdRoute
+  '/opportunities-hub/new': typeof OpportunitiesHubNewRoute
   '/opportunities/$domain': typeof OpportunitiesDomainRoute
   '/projects/$domain': typeof ProjectsDomainRoute
   '/scope-super-admin/rbac-audit': typeof ScopeSuperAdminRbacAuditRoute
@@ -543,6 +568,7 @@ export interface FileRoutesById {
   '/leaderboards': typeof LeaderboardsRoute
   '/notifications': typeof NotificationsRoute
   '/opportunities': typeof OpportunitiesRouteWithChildren
+  '/opportunities-hub': typeof OpportunitiesHubRouteWithChildren
   '/ops': typeof OpsRoute
   '/partnerships': typeof PartnershipsRoute
   '/portfolio': typeof PortfolioRoute
@@ -574,6 +600,8 @@ export interface FileRoutesById {
   '/institution-admin/analytics': typeof InstitutionAdminAnalyticsRoute
   '/institution-admin/communications': typeof InstitutionAdminCommunicationsRoute
   '/institution-admin/members': typeof InstitutionAdminMembersRoute
+  '/opportunities-hub/$opportunityId': typeof OpportunitiesHubOpportunityIdRoute
+  '/opportunities-hub/new': typeof OpportunitiesHubNewRoute
   '/opportunities/$domain': typeof OpportunitiesDomainRoute
   '/projects/$domain': typeof ProjectsDomainRoute
   '/scope-super-admin/rbac-audit': typeof ScopeSuperAdminRbacAuditRoute
@@ -609,6 +637,7 @@ export interface FileRouteTypes {
     | '/leaderboards'
     | '/notifications'
     | '/opportunities'
+    | '/opportunities-hub'
     | '/ops'
     | '/partnerships'
     | '/portfolio'
@@ -640,6 +669,8 @@ export interface FileRouteTypes {
     | '/institution-admin/analytics'
     | '/institution-admin/communications'
     | '/institution-admin/members'
+    | '/opportunities-hub/$opportunityId'
+    | '/opportunities-hub/new'
     | '/opportunities/$domain'
     | '/projects/$domain'
     | '/scope-super-admin/rbac-audit'
@@ -673,6 +704,7 @@ export interface FileRouteTypes {
     | '/leaderboards'
     | '/notifications'
     | '/opportunities'
+    | '/opportunities-hub'
     | '/ops'
     | '/partnerships'
     | '/portfolio'
@@ -704,6 +736,8 @@ export interface FileRouteTypes {
     | '/institution-admin/analytics'
     | '/institution-admin/communications'
     | '/institution-admin/members'
+    | '/opportunities-hub/$opportunityId'
+    | '/opportunities-hub/new'
     | '/opportunities/$domain'
     | '/projects/$domain'
     | '/scope-super-admin/rbac-audit'
@@ -737,6 +771,7 @@ export interface FileRouteTypes {
     | '/leaderboards'
     | '/notifications'
     | '/opportunities'
+    | '/opportunities-hub'
     | '/ops'
     | '/partnerships'
     | '/portfolio'
@@ -768,6 +803,8 @@ export interface FileRouteTypes {
     | '/institution-admin/analytics'
     | '/institution-admin/communications'
     | '/institution-admin/members'
+    | '/opportunities-hub/$opportunityId'
+    | '/opportunities-hub/new'
     | '/opportunities/$domain'
     | '/projects/$domain'
     | '/scope-super-admin/rbac-audit'
@@ -802,6 +839,7 @@ export interface RootRouteChildren {
   LeaderboardsRoute: typeof LeaderboardsRoute
   NotificationsRoute: typeof NotificationsRoute
   OpportunitiesRoute: typeof OpportunitiesRouteWithChildren
+  OpportunitiesHubRoute: typeof OpportunitiesHubRouteWithChildren
   OpsRoute: typeof OpsRoute
   PartnershipsRoute: typeof PartnershipsRoute
   PortfolioRoute: typeof PortfolioRoute
@@ -946,6 +984,13 @@ declare module '@tanstack/react-router' {
       path: '/ops'
       fullPath: '/ops'
       preLoaderRoute: typeof OpsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/opportunities-hub': {
+      id: '/opportunities-hub'
+      path: '/opportunities-hub'
+      fullPath: '/opportunities-hub'
+      preLoaderRoute: typeof OpportunitiesHubRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/opportunities': {
@@ -1158,6 +1203,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OpportunitiesDomainRouteImport
       parentRoute: typeof OpportunitiesRoute
     }
+    '/opportunities-hub/new': {
+      id: '/opportunities-hub/new'
+      path: '/new'
+      fullPath: '/opportunities-hub/new'
+      preLoaderRoute: typeof OpportunitiesHubNewRouteImport
+      parentRoute: typeof OpportunitiesHubRoute
+    }
+    '/opportunities-hub/$opportunityId': {
+      id: '/opportunities-hub/$opportunityId'
+      path: '/$opportunityId'
+      fullPath: '/opportunities-hub/$opportunityId'
+      preLoaderRoute: typeof OpportunitiesHubOpportunityIdRouteImport
+      parentRoute: typeof OpportunitiesHubRoute
+    }
     '/institution-admin/members': {
       id: '/institution-admin/members'
       path: '/members'
@@ -1345,6 +1404,19 @@ const OpportunitiesRouteWithChildren = OpportunitiesRoute._addFileChildren(
   OpportunitiesRouteChildren,
 )
 
+interface OpportunitiesHubRouteChildren {
+  OpportunitiesHubOpportunityIdRoute: typeof OpportunitiesHubOpportunityIdRoute
+  OpportunitiesHubNewRoute: typeof OpportunitiesHubNewRoute
+}
+
+const OpportunitiesHubRouteChildren: OpportunitiesHubRouteChildren = {
+  OpportunitiesHubOpportunityIdRoute: OpportunitiesHubOpportunityIdRoute,
+  OpportunitiesHubNewRoute: OpportunitiesHubNewRoute,
+}
+
+const OpportunitiesHubRouteWithChildren =
+  OpportunitiesHubRoute._addFileChildren(OpportunitiesHubRouteChildren)
+
 interface ProjectsRouteChildren {
   ProjectsDomainRoute: typeof ProjectsDomainRoute
 }
@@ -1396,6 +1468,7 @@ const rootRouteChildren: RootRouteChildren = {
   LeaderboardsRoute: LeaderboardsRoute,
   NotificationsRoute: NotificationsRoute,
   OpportunitiesRoute: OpportunitiesRouteWithChildren,
+  OpportunitiesHubRoute: OpportunitiesHubRouteWithChildren,
   OpsRoute: OpsRoute,
   PartnershipsRoute: PartnershipsRoute,
   PortfolioRoute: PortfolioRoute,
