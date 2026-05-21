@@ -263,6 +263,7 @@ function JoinPanel({
   const user = useUser();
   const role = useRole();
   const [open, setOpen] = useState(false);
+  const [success, setSuccess] = useState<null | { roomName: string; wasFirst: boolean }>(null);
   const [selectedRoleId, setSelectedRoleId] = useState<string>(project.roles[0]?.id ?? "");
 
   const eligibility = useMemo(() => evaluateEligibility(project, userContext), [project, userContext]);
@@ -276,12 +277,18 @@ function JoinPanel({
         <p className="mt-1 text-xs text-muted-foreground">
           {myParticipant.xpCommittedAmount} Reputation XP committed. Stay active — inactivity triggers full forfeiture.
         </p>
+        {myParticipant.isTemporaryCoordinator && (
+          <Badge variant="secondary" className="mt-3">
+            <Crown className="mr-1 h-3 w-3" /> Temporary Coordinator
+          </Badge>
+        )}
       </Card>
     );
   }
 
   function handleJoin() {
     if (!user) return toast.error("Sign in to join.");
+    const wasFirst = projectsExec.participants.byProject(project.id).length === 0;
     const out = joinProject({
       project,
       user: { id: user.id, name: user.name, role },
@@ -291,6 +298,15 @@ function JoinPanel({
     if (!out.ok) return toast.error(out.reason);
     toast.success(`Joined. ${out.commitment.amount} XP committed.`);
     setOpen(false);
+    setSuccess({ roomName: out.room.roomName, wasFirst });
+  }
+
+  function enterRoom() {
+    setSuccess(null);
+    if (typeof document === "undefined") return;
+    const trigger = document.querySelector<HTMLButtonElement>('[role="tab"][data-state][value="room"], [role="tab"][value="room"]');
+    trigger?.click();
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   return (
@@ -344,6 +360,28 @@ function JoinPanel({
             <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
             <Button className="bg-gradient-brand text-brand-foreground" onClick={handleJoin}>
               Confirm & lock XP
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!success} onOpenChange={(o) => !o && setSuccess(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <CheckCircle2 className="h-5 w-5 text-success" />
+              {success?.wasFirst ? "Project Room Created" : "You've joined the Project Room"}
+            </DialogTitle>
+            <DialogDescription>
+              {success?.wasFirst
+                ? <>Your collaboration room <strong>{success?.roomName}</strong> has been created. You are now the <strong>Temporary Coordinator</strong> for this project.</>
+                : <>You've been mapped into <strong>{success?.roomName}</strong>. Open the room to see participants and tasks.</>}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setSuccess(null)}>Stay here</Button>
+            <Button className="bg-gradient-brand text-brand-foreground" onClick={enterRoom}>
+              Enter Room
             </Button>
           </DialogFooter>
         </DialogContent>
