@@ -208,20 +208,18 @@ function ApplyPanel({
       portfolioLinks: links,
     });
     if (res.ok) {
-      toast({ title: "Application submitted", description: "Your merit snapshot was recorded." });
+      toast.success("Application submitted", { description: "Your merit snapshot was recorded." });
       onDone();
     } else {
-      toast({
-        title: "Could not submit",
-        description: res.reason === "missing_statement"
+      const description =
+        res.reason === "missing_statement"
           ? "Statement of interest must be at least 20 characters."
           : res.reason === "already_applied"
           ? "You have already applied to this opportunity."
           : res.reason === "not_eligible"
           ? "Eligibility checks did not pass."
-          : "This opportunity is not currently accepting applications.",
-        variant: "destructive",
-      });
+          : "This opportunity is not currently accepting applications.";
+      toast.error("Could not submit", { description });
     }
   }
 
