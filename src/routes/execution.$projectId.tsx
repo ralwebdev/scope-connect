@@ -29,6 +29,7 @@ import {
 } from "@/lib/projects-execution-store";
 import { reliabilityEngine } from "@/lib/execution-engines";
 import { ReportingPanel } from "@/components/execution/ReportingPanel";
+import { ParticipantModerationActions } from "@/components/governance/ParticipantModerationActions";
 
 export const Route = createFileRoute("/execution/$projectId")({
   head: ({ params }) => ({
@@ -116,7 +117,12 @@ function ProjectDetail({ project }: { project: ExecutionProject }) {
                 <OverviewPanel project={project} />
               </TabsContent>
               <TabsContent value="room" className="mt-4 space-y-4">
-                <RoomPanel project={project} participants={participants} rooms={rooms} />
+                <RoomPanel
+                  project={project}
+                  participants={participants}
+                  rooms={rooms}
+                  actor={user ? { id: user.id, name: user.name ?? user.email ?? "User", role, isTemporaryCoordinator: isCoordinator } : null}
+                />
               </TabsContent>
               <TabsContent value="tasks" className="mt-4 space-y-4">
                 <TasksPanel
@@ -208,8 +214,13 @@ function OverviewPanel({ project }: { project: ExecutionProject }) {
 }
 
 function RoomPanel({
-  project, participants, rooms,
-}: { project: ExecutionProject; participants: RoomParticipant[]; rooms: ReturnType<typeof projectsExec.rooms.byProject> }) {
+  project, participants, rooms, actor,
+}: {
+  project: ExecutionProject;
+  participants: RoomParticipant[];
+  rooms: ReturnType<typeof projectsExec.rooms.byProject>;
+  actor: import("@/lib/moderation-governance-store").ActorContext | null;
+}) {
   const room = rooms[0];
   return (
     <Card className="p-5">
@@ -229,25 +240,29 @@ function RoomPanel({
           <p className="text-sm text-muted-foreground">No participants yet.</p>
         )}
         {participants.map((p) => (
-          <div key={p.id} className="flex items-center justify-between rounded-md border border-border/60 p-3">
-            <div>
-              <p className="text-sm font-medium">
-                {p.userName}
-                {p.isTemporaryCoordinator && (
-                  <Badge variant="secondary" className="ml-2"><Crown className="mr-1 h-3 w-3" /> Temporary Coordinator</Badge>
-                )}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {p.assignedRoleName ?? "No role assigned"} · {p.xpCommittedAmount} XP locked · {p.status}
-              </p>
+          <div key={p.id} className="rounded-md border border-border/60 p-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <p className="text-sm font-medium">
+                  {p.userName}
+                  {p.isTemporaryCoordinator && (
+                    <Badge variant="secondary" className="ml-2"><Crown className="mr-1 h-3 w-3" /> Temporary Coordinator</Badge>
+                  )}
+                  <Badge variant="outline" className="ml-2 capitalize">{p.status}</Badge>
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {p.assignedRoleName ?? "No role assigned"} · {p.xpCommittedAmount} XP locked
+                </p>
+              </div>
+              <Badge variant="outline">Joined {new Date(p.joinedAt).toLocaleDateString()}</Badge>
             </div>
-            <Badge variant="outline">Joined {new Date(p.joinedAt).toLocaleDateString()}</Badge>
+            {actor && <ParticipantModerationActions participant={p} actor={actor} />}
           </div>
         ))}
       </div>
       <p className="mt-4 text-[11px] text-muted-foreground">
         Capacity: {participants.filter((p) => p.status === "active").length} / {project.participantsNeeded}.
-        Room locks when capacity is reached.
+        Room locks when capacity is reached. Removed seats reopen automatically.
       </p>
     </Card>
   );
