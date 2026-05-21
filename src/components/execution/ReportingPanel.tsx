@@ -110,13 +110,18 @@ function EscalationBanner({
       </Card>
     );
   }
-  const tone =
-    status.level >= 5 ? "destructive" :
-    status.level >= 3 ? "warning" : "muted";
+  const isCritical = status.level >= 5;
+  const isHigh = status.level >= 3;
+  const cls = isCritical
+    ? "border-destructive/40 bg-destructive/5"
+    : isHigh
+      ? "border-warning/40 bg-warning/5"
+      : "border-border/60 bg-muted/40";
+  const iconCls = isCritical ? "text-destructive" : isHigh ? "text-warning" : "text-muted-foreground";
   return (
-    <Card className={`p-3 text-sm border-${tone}/40 bg-${tone}/5`}>
+    <Card className={`p-3 text-sm ${cls}`}>
       <div className="flex items-start gap-2">
-        <AlertTriangle className={`mt-0.5 h-4 w-4 text-${tone}`} />
+        <AlertTriangle className={`mt-0.5 h-4 w-4 ${iconCls}`} />
         <div className="flex-1">
           <p className="font-semibold capitalize">{status.status.replace(/_/g, " ")}</p>
           <p className="text-xs text-muted-foreground">
