@@ -28,6 +28,7 @@ import {
   type TaskPriority, type TaskSubmissionEvidence, type TaskReviewAction,
 } from "@/lib/projects-execution-store";
 import { reliabilityEngine } from "@/lib/execution-engines";
+import { ReportingPanel } from "@/components/execution/ReportingPanel";
 
 export const Route = createFileRoute("/execution/$projectId")({
   head: ({ params }) => ({
