@@ -331,7 +331,7 @@ export const execReporting = {
           }
         }
       }
-      write(KEYS.warnings, next);
+      if (next.length !== all.length) write(KEYS.warnings, next);
       return next;
     },
   },
