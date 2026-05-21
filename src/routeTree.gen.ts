@@ -42,6 +42,7 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CookiePolicyRouteImport } from './routes/cookie-policy'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CommunityGuidelinesRouteImport } from './routes/community-guidelines'
+import { Route as ChallengesArenaRouteImport } from './routes/challenges-arena'
 import { Route as ChallengesRouteImport } from './routes/challenges'
 import { Route as CampusLeaderRouteImport } from './routes/campus-leader'
 import { Route as CampusRouteImport } from './routes/campus'
@@ -66,6 +67,8 @@ import { Route as DevSeoQaRouteImport } from './routes/dev.seo-qa'
 import { Route as DevBuildDiagnosticsRouteImport } from './routes/dev.build-diagnostics'
 import { Route as ChaptersSlugRouteImport } from './routes/chapters.$slug'
 import { Route as ChallengesDomainRouteImport } from './routes/challenges.$domain'
+import { Route as ChallengesArenaNewRouteImport } from './routes/challenges-arena.new'
+import { Route as ChallengesArenaChallengeIdRouteImport } from './routes/challenges-arena.$challengeId'
 import { Route as AdminConfigRouteImport } from './routes/admin.config'
 import { Route as AdminCampusesNewRouteImport } from './routes/admin.campuses.new'
 
@@ -234,6 +237,11 @@ const CommunityGuidelinesRoute = CommunityGuidelinesRouteImport.update({
   path: '/community-guidelines',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ChallengesArenaRoute = ChallengesArenaRouteImport.update({
+  id: '/challenges-arena',
+  path: '/challenges-arena',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ChallengesRoute = ChallengesRouteImport.update({
   id: '/challenges',
   path: '/challenges',
@@ -357,6 +365,17 @@ const ChallengesDomainRoute = ChallengesDomainRouteImport.update({
   path: '/$domain',
   getParentRoute: () => ChallengesRoute,
 } as any)
+const ChallengesArenaNewRoute = ChallengesArenaNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => ChallengesArenaRoute,
+} as any)
+const ChallengesArenaChallengeIdRoute =
+  ChallengesArenaChallengeIdRouteImport.update({
+    id: '/$challengeId',
+    path: '/$challengeId',
+    getParentRoute: () => ChallengesArenaRoute,
+  } as any)
 const AdminConfigRoute = AdminConfigRouteImport.update({
   id: '/config',
   path: '/config',
@@ -378,6 +397,7 @@ export interface FileRoutesByFullPath {
   '/campus': typeof CampusRoute
   '/campus-leader': typeof CampusLeaderRoute
   '/challenges': typeof ChallengesRouteWithChildren
+  '/challenges-arena': typeof ChallengesArenaRouteWithChildren
   '/community-guidelines': typeof CommunityGuidelinesRoute
   '/contact': typeof ContactRoute
   '/cookie-policy': typeof CookiePolicyRoute
@@ -412,6 +432,8 @@ export interface FileRoutesByFullPath {
   '/updates': typeof UpdatesRoute
   '/waitlist': typeof WaitlistRoute
   '/admin/config': typeof AdminConfigRoute
+  '/challenges-arena/$challengeId': typeof ChallengesArenaChallengeIdRoute
+  '/challenges-arena/new': typeof ChallengesArenaNewRoute
   '/challenges/$domain': typeof ChallengesDomainRoute
   '/chapters/$slug': typeof ChaptersSlugRoute
   '/dev/build-diagnostics': typeof DevBuildDiagnosticsRoute
@@ -439,6 +461,7 @@ export interface FileRoutesByTo {
   '/campus': typeof CampusRoute
   '/campus-leader': typeof CampusLeaderRoute
   '/challenges': typeof ChallengesRouteWithChildren
+  '/challenges-arena': typeof ChallengesArenaRouteWithChildren
   '/community-guidelines': typeof CommunityGuidelinesRoute
   '/contact': typeof ContactRoute
   '/cookie-policy': typeof CookiePolicyRoute
@@ -473,6 +496,8 @@ export interface FileRoutesByTo {
   '/updates': typeof UpdatesRoute
   '/waitlist': typeof WaitlistRoute
   '/admin/config': typeof AdminConfigRoute
+  '/challenges-arena/$challengeId': typeof ChallengesArenaChallengeIdRoute
+  '/challenges-arena/new': typeof ChallengesArenaNewRoute
   '/challenges/$domain': typeof ChallengesDomainRoute
   '/chapters/$slug': typeof ChaptersSlugRoute
   '/dev/build-diagnostics': typeof DevBuildDiagnosticsRoute
@@ -501,6 +526,7 @@ export interface FileRoutesById {
   '/campus': typeof CampusRoute
   '/campus-leader': typeof CampusLeaderRoute
   '/challenges': typeof ChallengesRouteWithChildren
+  '/challenges-arena': typeof ChallengesArenaRouteWithChildren
   '/community-guidelines': typeof CommunityGuidelinesRoute
   '/contact': typeof ContactRoute
   '/cookie-policy': typeof CookiePolicyRoute
@@ -535,6 +561,8 @@ export interface FileRoutesById {
   '/updates': typeof UpdatesRoute
   '/waitlist': typeof WaitlistRoute
   '/admin/config': typeof AdminConfigRoute
+  '/challenges-arena/$challengeId': typeof ChallengesArenaChallengeIdRoute
+  '/challenges-arena/new': typeof ChallengesArenaNewRoute
   '/challenges/$domain': typeof ChallengesDomainRoute
   '/chapters/$slug': typeof ChaptersSlugRoute
   '/dev/build-diagnostics': typeof DevBuildDiagnosticsRoute
@@ -564,6 +592,7 @@ export interface FileRouteTypes {
     | '/campus'
     | '/campus-leader'
     | '/challenges'
+    | '/challenges-arena'
     | '/community-guidelines'
     | '/contact'
     | '/cookie-policy'
@@ -598,6 +627,8 @@ export interface FileRouteTypes {
     | '/updates'
     | '/waitlist'
     | '/admin/config'
+    | '/challenges-arena/$challengeId'
+    | '/challenges-arena/new'
     | '/challenges/$domain'
     | '/chapters/$slug'
     | '/dev/build-diagnostics'
@@ -625,6 +656,7 @@ export interface FileRouteTypes {
     | '/campus'
     | '/campus-leader'
     | '/challenges'
+    | '/challenges-arena'
     | '/community-guidelines'
     | '/contact'
     | '/cookie-policy'
@@ -659,6 +691,8 @@ export interface FileRouteTypes {
     | '/updates'
     | '/waitlist'
     | '/admin/config'
+    | '/challenges-arena/$challengeId'
+    | '/challenges-arena/new'
     | '/challenges/$domain'
     | '/chapters/$slug'
     | '/dev/build-diagnostics'
@@ -686,6 +720,7 @@ export interface FileRouteTypes {
     | '/campus'
     | '/campus-leader'
     | '/challenges'
+    | '/challenges-arena'
     | '/community-guidelines'
     | '/contact'
     | '/cookie-policy'
@@ -720,6 +755,8 @@ export interface FileRouteTypes {
     | '/updates'
     | '/waitlist'
     | '/admin/config'
+    | '/challenges-arena/$challengeId'
+    | '/challenges-arena/new'
     | '/challenges/$domain'
     | '/chapters/$slug'
     | '/dev/build-diagnostics'
@@ -748,6 +785,7 @@ export interface RootRouteChildren {
   CampusRoute: typeof CampusRoute
   CampusLeaderRoute: typeof CampusLeaderRoute
   ChallengesRoute: typeof ChallengesRouteWithChildren
+  ChallengesArenaRoute: typeof ChallengesArenaRouteWithChildren
   CommunityGuidelinesRoute: typeof CommunityGuidelinesRoute
   ContactRoute: typeof ContactRoute
   CookiePolicyRoute: typeof CookiePolicyRoute
@@ -1022,6 +1060,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CommunityGuidelinesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/challenges-arena': {
+      id: '/challenges-arena'
+      path: '/challenges-arena'
+      fullPath: '/challenges-arena'
+      preLoaderRoute: typeof ChallengesArenaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/challenges': {
       id: '/challenges'
       path: '/challenges'
@@ -1190,6 +1235,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ChallengesDomainRouteImport
       parentRoute: typeof ChallengesRoute
     }
+    '/challenges-arena/new': {
+      id: '/challenges-arena/new'
+      path: '/new'
+      fullPath: '/challenges-arena/new'
+      preLoaderRoute: typeof ChallengesArenaNewRouteImport
+      parentRoute: typeof ChallengesArenaRoute
+    }
+    '/challenges-arena/$challengeId': {
+      id: '/challenges-arena/$challengeId'
+      path: '/$challengeId'
+      fullPath: '/challenges-arena/$challengeId'
+      preLoaderRoute: typeof ChallengesArenaChallengeIdRouteImport
+      parentRoute: typeof ChallengesArenaRoute
+    }
     '/admin/config': {
       id: '/admin/config'
       path: '/config'
@@ -1229,6 +1288,20 @@ const ChallengesRouteChildren: ChallengesRouteChildren = {
 
 const ChallengesRouteWithChildren = ChallengesRoute._addFileChildren(
   ChallengesRouteChildren,
+)
+
+interface ChallengesArenaRouteChildren {
+  ChallengesArenaChallengeIdRoute: typeof ChallengesArenaChallengeIdRoute
+  ChallengesArenaNewRoute: typeof ChallengesArenaNewRoute
+}
+
+const ChallengesArenaRouteChildren: ChallengesArenaRouteChildren = {
+  ChallengesArenaChallengeIdRoute: ChallengesArenaChallengeIdRoute,
+  ChallengesArenaNewRoute: ChallengesArenaNewRoute,
+}
+
+const ChallengesArenaRouteWithChildren = ChallengesArenaRoute._addFileChildren(
+  ChallengesArenaRouteChildren,
 )
 
 interface ExecutionRouteChildren {
@@ -1306,6 +1379,7 @@ const rootRouteChildren: RootRouteChildren = {
   CampusRoute: CampusRoute,
   CampusLeaderRoute: CampusLeaderRoute,
   ChallengesRoute: ChallengesRouteWithChildren,
+  ChallengesArenaRoute: ChallengesArenaRouteWithChildren,
   CommunityGuidelinesRoute: CommunityGuidelinesRoute,
   ContactRoute: ContactRoute,
   CookiePolicyRoute: CookiePolicyRoute,
