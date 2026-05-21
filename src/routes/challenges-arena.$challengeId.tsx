@@ -226,21 +226,23 @@ function JoinSubmitPanel({
   const [open, setOpen] = useState(false);
   const [sub, setSub] = useState({ title: "", description: "", links: "" });
 
-  if (!user) return <Card className="p-6 text-sm text-muted-foreground">Sign in to join this challenge.</Card>;
-  if (!challenge) return null;
-
   const checks = useMemo(
     () =>
-      evaluateChallengeEligibility(challenge, {
-        userId: user.id,
-        userRole: role,
-        userXp,
-        userReliability: 100,
-        userInstitution: undefined,
-        userSkills: [],
-      }),
+      challenge && user
+        ? evaluateChallengeEligibility(challenge, {
+            userId: user.id,
+            userRole: role,
+            userXp,
+            userReliability: 100,
+            userInstitution: undefined,
+            userSkills: [],
+          })
+        : [],
     [challenge, user, role, userXp],
   );
+
+  if (!user) return <Card className="p-6 text-sm text-muted-foreground">Sign in to join this challenge.</Card>;
+  if (!challenge) return null;
 
   function doJoin() {
     const result = joinChallenge(challengeId, {
@@ -259,7 +261,7 @@ function JoinSubmitPanel({
       localStorage.setItem("scope_ch4_participants_v1", JSON.stringify(list));
       window.dispatchEvent(new CustomEvent("scope:store-change", { detail: { key: "scope_ch4_participants_v1" } }));
     } catch { /* noop */ }
-    xpStore.add(-challenge!.commitmentStakeXp, `Committed to ${challenge!.challengeTitle}`);
+    xpStore.add(-challenge!.commitmentStakeXp);
     notifications.push({ icon: "trophy", text: `Joined challenge: ${challenge!.challengeTitle} · ${challenge!.commitmentStakeXp} XP staked` });
     toast.success("Joined. Commitment XP locked.");
   }
