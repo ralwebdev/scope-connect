@@ -29,6 +29,7 @@ import {
 } from "@/lib/projects-execution-store";
 import { reliabilityEngine } from "@/lib/execution-engines";
 import { ReportingPanel } from "@/components/execution/ReportingPanel";
+import { ParticipantModerationActions } from "@/components/governance/ParticipantModerationActions";
 
 export const Route = createFileRoute("/execution/$projectId")({
   head: ({ params }) => ({
