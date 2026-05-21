@@ -350,7 +350,7 @@ function ApplicantsPanel({ opportunityId }: { opportunityId: string }) {
 
   function setStatus(id: string, status: ApplicationStatus) {
     opportunityEngine.applications.setStatus(id, status);
-    toast({ title: "Application updated", description: `Marked as ${status.replace(/_/g, " ")}` });
+    toast.success("Application updated", { description: `Marked as ${status.replace(/_/g, " ")}` });
   }
 
   if (list.length === 0) {
