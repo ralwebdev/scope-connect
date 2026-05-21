@@ -28,6 +28,7 @@ import {
   type TaskPriority, type TaskSubmissionEvidence, type TaskReviewAction,
 } from "@/lib/projects-execution-store";
 import { reliabilityEngine } from "@/lib/execution-engines";
+import { ReportingPanel } from "@/components/execution/ReportingPanel";
 
 export const Route = createFileRoute("/execution/$projectId")({
   head: ({ params }) => ({
@@ -107,6 +108,7 @@ function ProjectDetail({ project }: { project: ExecutionProject }) {
                 <TabsTrigger value="overview">Overview</TabsTrigger>
                 <TabsTrigger value="room">Room</TabsTrigger>
                 <TabsTrigger value="tasks">Tasks</TabsTrigger>
+                <TabsTrigger value="reporting">Reporting</TabsTrigger>
                 <TabsTrigger value="activity">Activity</TabsTrigger>
               </TabsList>
 
@@ -123,6 +125,14 @@ function ProjectDetail({ project }: { project: ExecutionProject }) {
                   participants={participants}
                   meIsCoordinator={isCoordinator}
                   myParticipantId={myParticipant?.id}
+                />
+              </TabsContent>
+              <TabsContent value="reporting" className="mt-4 space-y-4">
+                <ReportingPanel
+                  project={project}
+                  participants={participants}
+                  myParticipant={myParticipant}
+                  meIsCoordinator={isCoordinator}
                 />
               </TabsContent>
               <TabsContent value="activity" className="mt-4 space-y-3">
